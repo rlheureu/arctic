@@ -7,7 +7,7 @@ def get_all_cpus():
     return db.session().query(models.CPUComponent).all()
 
 def get_all_gpus():
-    return db.session().query(models.CPUComponent).all()
+    return db.session().query(models.GPUComponent).all()
 
 def get_all_mobos():
     return db.session().query(models.MotherboardComponent).all()
@@ -59,7 +59,7 @@ def get_compatible_parts(target=None, motherboard_id = None, gpu_id = None, memo
         """
         check anything? 
         """
-        pass
+        return get_all_gpus()
     elif target == 'mobo':
         """
         check processor and memory
@@ -147,11 +147,8 @@ def get_compatible_memory_map(motherboard_id = None, gpu_id = None, memory_id = 
 def get_compatible_cpu_map(motherboard_id = None, gpu_id = None, memory_id = None, display_id = None, cpu_id=None):
     """
     CPU constraints:
-    - Motherboard - YES
-    - Memory - YES. A certain choice can affect which mobo (indirect constraint)
-    
-    Assume that the passed in build is already valid. Use the following priority order:
-    Motherboard, then GPU, then Memory
+    - Motherboard
+    - Memory
     """
     
     compat_q = None

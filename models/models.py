@@ -58,6 +58,12 @@ class CPUComponent(BaseComponent):
         'polymorphic_identity' : 'CPU'
     }
 
+class GPUComponent(BaseComponent):
+    
+    __mapper_args__ = {
+        'polymorphic_identity' : 'GPU'
+    }
+
 class MemoryComponent(BaseComponent):
     
     memory_capacity = Column('memory_capacity', String(500))

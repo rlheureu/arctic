@@ -30,17 +30,25 @@
         <div class="col-md-4">
           <div class="well">
             <h3>Display</h3>
-            <a href="#" class="btn btn-primary btn-xs">Select Display</a>
+            <span id="selected-display"></span>
+            <button data-toggle="modal" data-target="#myModal" data-datatype="display" class="btn btn-primary btn-xs">Select Display</button>
+            
           </div>
         </div>
         <div class="col-md-4">
           <div class="well">
             <h3>Motherboard</h3>
+            <span id="selected-mobo"></span>
+            <button data-toggle="modal" data-target="#myModal" data-datatype="mobo" class="btn btn-primary btn-xs">Select Motherboard</button>
+            
            </div>
         </div>
         <div class="col-md-4">
           <div class="well">
             <h3>CPU</h3>
+            <span id="selected-cpu"></span>
+            <button data-toggle="modal" data-target="#myModal" data-datatype="cpu" class="btn btn-primary btn-xs">Select CPU</button>
+            
           </div>
         </div>
       </div>
@@ -48,17 +56,57 @@
         <div class="col-md-4">
           <div class="well">
             <h3>GPU</h3>
-            <a href="#" class="btn btn-primary btn-xs">Select Display</a>
+            <span id="selected-gpu"></span>
+            <button data-toggle="modal" data-target="#myModal" data-datatype="gpu" class="btn btn-primary btn-xs">Select GPU</button>
+            
           </div>
         </div>
         <div class="col-md-4">
           <div class="well">
             <h3>Memory</h3>
+            <span id="selected-memory"></span>
+            <button data-toggle="modal" data-target="#myModal" data-datatype="memory" class="btn btn-primary btn-xs">Select Memory</button>
+            
           </div>
         </div>
         <div class="col-md-4">
           <div class="well">
             <h3>Chassis</h3>
+            <button data-toggle="modal" data-target="#myModal" data-datatype="chassis" class="btn btn-primary btn-xs">Select Chassis</button>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal" id="myModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Select component</h4>
+          </div>
+          <div class="modal-body">
+            <h3>Compatible components</h3>
+            <form id="component-select">
+              <table class="compat-components">
+                <thead>
+                  <tr>
+                    <td style="padding:10px;"></td>
+                    <td>Component</td>
+                  </tr>
+                </thead>
+                
+                <tbody id="compat-tbody">
+                </tbody>
+                
+              </table>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="select-component-button">Save changes</button>
           </div>
         </div>
       </div>
@@ -68,5 +116,74 @@
     <script src="{{ url_for('static', filename='js/jquery-1.12.0.min.js') }}"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    
+    <script type="text/javascript">
+    
+    var currentRig = {};
+    
+    $('#myModal').on('hide.bs.modal', function (event) {
+    	
+    });
+    
+    $('#select-component-button').click(function(){
+    	$('#myModal').modal('hide')
+    	var value = $('input[name=compSelectRadio]:checked', '#component-select').val();
+    	switch (currentRig.target) {
+        case 'cpu':
+            currentRig.cpu_id = value;
+            $('#selected-cpu').empty();
+            $('#selected-cpu').append(value);
+            break;
+        case 'gpu':
+        	currentRig.gpu_id = value;
+            $('#selected-gpu').empty();
+            $('#selected-gpu').append(value);
+            break;
+        case 'mobo':
+        	currentRig.motherboard_id = value;
+            $('#selected-mobo').empty();
+            $('#selected-mobo').append(value);
+            break;
+        case 'memory':
+        	currentRig.memory_id = value;
+            $('#selected-memory').empty();
+            $('#selected-memory').append(value);
+            break;
+        case 'display':
+        	currentRig.display_id = value;
+            $('#selected-display').empty();
+            $('#selected-display').append(value);
+            break;
+    	}
+    });
+    
+    
+    $('#myModal').on('show.bs.modal', function (event) {
+    	var button = $(event.relatedTarget)     // Button that triggered the modal
+        var datatype = button.data('datatype') // Extract info from data-* attributes
+        
+        // Call server with datatype and current PC config
+        currentRig.target = datatype;
+        $.getJSON( "getparts", currentRig).success(function(data) {
+        	var modal = $(this);
+        	var ctbody = $('#compat-tbody');
+        	ctbody.empty();
+        	compatible = JSON.parse(data.compatible);
+        	for (c in compatible) {
+        		var component = compatible[c];
+        		ctbody.append('<tr><td><input name="compSelectRadio" value="' + component.id + '" type="radio" /></td><td>' + component.id + ' ' + component.vendor + ' ' + component.model_number + ' ' + '</td></tr>');
+        		console.log(component);
+        	}
+            //modal.find('.modal-title').text('New message to ' + recipient)
+            //modal.find('.modal-body input').val(recipient)
+        }).fail(function() {
+            console.log( "error" );
+        });
+        
+        var modal = $(this)
+        //modal.find('.modal-title').text('New message to ' + recipient)
+        //modal.find('.modal-body input').val(recipient)
+  	});
+    </script>
   </body>
 </html>
