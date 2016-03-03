@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css"></style>
+{% endblock %}
+
+{% block navleft %}
+<p class="navbar-text navbar-center">
+  Step 1: Configure&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
+  <b>Step 2: Refine</b>&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
+  Step 3: Finalize
+</p>
+{% endblock %}
+
+{% block navright %}
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <h2 style="text-align:center;">Please select a preset</h2>
+        <hr/>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+    
+    <div class="row">
+      
+      <div class="col-md-4">
+        <div class="jumbotron">
+          <h3>Oculus Ready PC</h3>
+          <p><a class="btn btn-primary btn-lg" href="namecube">Go</a></p>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="jumbotron">
+        <h3>4K Ready PC</h3>
+        <p><a class="btn btn-primary btn-lg" href="namecube">Go</a></p>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="jumbotron">
+          <h3>Professional Spec</h3>
+          <p><a class="btn btn-primary btn-lg" href="namecube">Go</a></p>
+        </div>
+      </div>
+      
+      </div>
+    </div>
+  </div>
+{% endblock %}

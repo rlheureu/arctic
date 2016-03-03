@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+  .benchtab{
+    display: inline-block;
+    position: relative;
+    top:11px;
+    padding-bottom:15px;
+    cursor: pointer;
+  }
+  .benchtabsep{
+    display: inline-block;
+    position: relative;
+    top:11px;
+    padding:15px; 
+  }
+  .benchtabactive{
+    border-bottom: 2px solid #ababab;
+  }
+  </style>
+{% endblock %}
+
+{% block navleft %}
+<p class="navbar-text navbar-center">
+  Step 1: Configure&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
+  Step 2: Refine&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
+  <b>Step 3: Finalize</b>
+</p>
+{% endblock %}
+
+{% block navright %}
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2">
+        <img src="{{ url_for('static', filename='images/default-cube-avatar.png') }}"/>
+      </div>
+      <div class="col-md-10">
+        <div class="row">
+          <div class="col-md-5">
+            <h2>THE BEAST</h2>
+            <br>
+          </div>
+        </div>
+        <div class="row"  style="border-bottom: 1px solid #5a5a5a; position:relative;top:-40px;">
+          <div class="col-md-3">
+          </div>
+          <div class="col-md-7" style="text-align: right;margin-bottom:10px;font-size: 15px;">
+            <div class="benchtab benchtabactive" id="benchtab-cubesummary" data-tabname="bench-cube-view">Cube Summary</div>
+            <div class="benchtabsep">|</div>
+            <div class="benchtab" id="benchtab-components" data-tabname="bench-component-view">Components</div>
+            <div class="benchtabsep">|</div>
+            <div class="benchtab" id="benchtab-share">Share Your Cube</div>
+          </div>
+          <div class="col-md-2">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row benchtabview" id="bench-cube-view">
+      <div class="col-md-1"></div>
+      <div class="col-md-10"><h1>The cube!</h1></div>
+      <div class="col-md-1"></div>
+    </div>
+    <div class="row benchtabview" id="bench-component-view">
+      <h1>The components!</h1>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+	$(function(){
+		
+		// hide component view by default
+		$('#bench-component-view').hide();
+		
+		$('.benchtab').click(function(){
+			// show the correct view and hide the current view
+			
+			// hide current views
+			$('.benchtabview').hide();
+			
+			// show selected view
+			var tabname = $(this).attr('data-tabname');
+			$('#' + tabname).show();
+			
+			// make all tabs inactive, and mark this active
+			$('.benchtab').removeClass('benchtabactive');
+			$(this).addClass('benchtabactive');
+		});
+	});
+</script>
+{% endblock %}
+
+

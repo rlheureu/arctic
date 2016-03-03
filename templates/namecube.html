@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css"></style>
+{% endblock %}
+
+{% block navleft %}
+<p class="navbar-text navbar-center">
+  Step 1: Configure&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
+  <b>Step 2: Refine</b>&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
+  Step 3: Finalize
+</p>
+{% endblock %}
+
+{% block navright %}
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <h2 style="text-align:center;">Any good Cube starts with a name</h2>
+        <br/><br/><br/>
+    
+        <p>Name your cube below. You can change it later or even skip this step if you desire</p>
+        
+        <b>NAME INPUT</b>
+        
+        <hr>
+        <a href="bench" class="btn btn-primary">Name my Cube</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="bench" class="btn btn-primary">Skip this step</a>
+        
+      </div>
+      <div class="col-md-2">
+      </div>
+    </div>
+  </div>
+{% endblock %}

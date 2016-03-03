@@ -35,13 +35,73 @@ def load_user(user_id):
 #@login_required
 def home():
     
+    context = {}
+
+    return render_template('home.html', **context)
+
+@app.route("/pickconfig", methods=['GET'])
+#@login_required
+def pickconfig():
+    
+    context = {}
+
+    return render_template('pickconfig.html', **context)
+
+@app.route("/preset", methods=['GET'])
+#@login_required
+def preset():
+    
+    context = {}
+
+    return render_template('preset.html', **context)
+
+@app.route("/custom", methods=['GET'])
+#@login_required
+def custom():
+    
+    context = {}
+
+    return render_template('custom.html', **context)
+
+@app.route("/bench", methods=['GET'])
+#@login_required
+def bench():
+    
+    context = {}
+
+    return render_template('bench.html', **context)
+
+@app.route("/namecube", methods=['GET'])
+#@login_required
+def namecube():
+    
+    context = {}
+
+    return render_template('namecube.html', **context)
+
+@app.route("/cubetemp", methods=['GET'])
+#@login_required
+def cubetemp():
+    
     cpus = dataaccess.get_all_cpus()
     for cpu in cpus:
         print 'cpus: ' + str(cpu.id)
     
     context = {'cpus' : cpus}
     print context
-    return render_template('home.html', **context)
+    return render_template('cube-temp.html', **context)
+
+@app.route("/cube", methods=['GET'])
+#@login_required
+def cube():
+    
+    cpus = dataaccess.get_all_cpus()
+    for cpu in cpus:
+        print 'cpus: ' + str(cpu.id)
+    
+    context = {'cpus' : cpus}
+    print context
+    return render_template('cube.html', **context)
 
 @app.route("/getparts", methods=['GET'])
 #@login_required

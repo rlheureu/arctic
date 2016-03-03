@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Amdahl Cube</title>
+
+    <!-- Bootstrap -->
+    
+    
+    <link href="{{ url_for('static', filename='css/lumen-bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <style type="text/css">
+    
+    body{
+      background-color: black;
+    }
+    
+    .cube-middle{
+      position:absolute;
+      left:14px;
+      top:80px;
+    }
+    
+    .cube-bottom{
+      position:absolute;
+      left:201px;
+      top:404px;
+    }
+    
+    .cube-top-right{
+      position: absolute;
+      top: 181px;
+      left: 370px;
+    }
+    
+    .cube-bottom-right{
+      position: absolute;
+      top: 362px;
+      left: 319px;
+    }
+    </style>
+    
+  </head>
+  <body>
+    
+  
+    
+    <br/>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+          <div>
+            <h3>Stuff</h3>
+            <input id="position-input" type="text" placeholder="Position" />
+            <input id="color-input" type="text" placeholder="Color" />
+            <button id="changecube">Change cube!</button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div>
+            <h3>Cube</h3>
+            
+            <div>
+              <!-- Cube canvas -->
+              <br/>
+              <div class="cube-bg">
+                <img src="{{ url_for('static', filename='cube-images/bg.png') }}" />
+                <img src="{{ url_for('static', filename='cube-images/cube-middle-default.png') }}" class="cube-middle" />
+<!--                 <img src="{{ url_for('static', filename='cube-images/cube-top-left-default.png') }}"  class="cube-top-left"></img> -->
+                <img src="{{ url_for('static', filename='cube-images/cube-bottom-default.png') }}"  class="cube-bottom" />
+                <img src="{{ url_for('static', filename='cube-images/cube-bottom-right-default.png') }}"  class="cube-bottom-right" />
+                <img src="{{ url_for('static', filename='cube-images/cube-top-right-default.png') }}"  class="cube-top-right" />
+              </div>
+            </div>
+            
+           </div>
+        </div>
+        <div class="col-md-3">
+          <div>
+            <h3>Other stuff</h3>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{{ url_for('static', filename='js/jquery-1.12.0.min.js') }}"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    
+    <script type="text/javascript">
+    
+    	$(function(){
+    		$('#changecube').click(function(){
+        		var position = $('#position-input').val();
+        		var color = $('#color-input').val();
+    			$('.cube-' + position).attr('src', '/static/cube-images/cube-' + position + '-' + color + '.png');
+    		});
+    	});
+    
+    </script>
+  </body>
+</html>
