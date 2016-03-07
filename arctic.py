@@ -12,6 +12,7 @@ from flask_login import login_required, LoginManager
 from database import dataaccess
 from database.database import db
 from utils.gen_utils import jsonify_sql_alchemy_model
+from cherrypy._cpreqbody import Part
 
 
 app = Flask(__name__)
@@ -107,11 +108,34 @@ def cube():
 #@login_required
 def get_parts():
     
-    
+    """
+    get compatible parts
+    """
     compat_parts = dataaccess.get_compatible_parts(**request.args.to_dict())
-    compat_parts = json.dumps(compat_parts, cls=jsonify_sql_alchemy_model(), check_circular=False)
     
-    return jsonify({'compatible':compat_parts})    
+    """
+    get all parts
+    """
+    all_parts = dataaccess.get_compatible_parts(target=request.args.get('target'))
+    
+    """
+    join the lists (and remove duplicates)!
+    """
+    render_parts = []
+    added = set()
+    for part in compat_parts:
+        added.add(part.id)
+        part.compatible = True
+        render_parts.append(part)
+    
+    for part in all_parts:
+        if part.id not in added:
+            part.compatible = False
+            render_parts.append(part)
+    
+    render_parts = json.dumps(render_parts, cls=jsonify_sql_alchemy_model(), check_circular=False)
+    
+    return jsonify({'compatible':render_parts})    
 
         
 

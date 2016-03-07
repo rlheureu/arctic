@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block head %}
+{% block styling %}
   {{ super() }}
   <style type="text/css">
   .benchtab{
@@ -18,11 +18,106 @@
   .benchtabactive{
     border-bottom: 2px solid #ababab;
   }
+  hr {
+    border-top: 1px solid #ababab;
+  }
+  #pick-part-modal{
+    position:fixed;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f2f2f2;
+    text-shadow: none;
+    color: #010101;
+  }
+  .equip-part-item{
+    border: solid 1px #d9d9d9;
+    display: inline-block;
+    width: 445px;
+    margin: 8px;
+    text-align: left;
+  }
+  .part-item-title{
+    font-size: 18px;
+    display: block;
+  }
+  .part-item-sub{
+    color:#9f9f9f;
+    display:block;
+    font-size: 11px;
+  }
+  .part-item-border{
+    border-left: solid 17px #f3f3f3;
+  }
+  .part-item-content {
+    padding:8px;
+    display:inline-block;
+    height:75px;
+    vertical-align: top;
+    padding-left:15px;
+  }
+  .part-item-icon{
+    position: relative;
+    width: 32px;
+    left: -25px;
+    top: 8px;
+  }
+  .part-item-flag{
+    display: inline-block;
+    background-color: #3e3e3e;
+    color: white;
+    padding: 3px;
+    width: 128px;
+    text-align: center;
+    position: relative;
+    left: 54px;
+    top: 9px;
+    font-size: 12px;
+  }
+  .part-icon-div{
+    display:inline-block;
+    vertical-align: top;
+    width: 0px;
+  }
+  .bg-yellow {
+    background-color: #fede86;
+  }
+  .border-yellow{
+    border-color: #fede86;
+  }
+  .fg-yellow{
+    color: #e6d55e;
+  }
+  .fg-inc{
+    color: #b9b9b9;
+  }
+  .fg-inc-red{
+    color: #f4101a;
+    font-weight: bold;
+  }
+  .blue-button{
+    background-color:#1A9DFC;
+  }
+  .modal-button{
+    color:white;
+    font-weight: normal;
+    font-size: 10px;
+    padding-left: 50px;
+    padding-right:50px;
+    margin:5px;
+  }
+  #part-item-list{
+    padding:10px;
+    background-color:#ffffff;
+    border-bottom: solid 1px #c1c1c1;
+    overflow-y:auto;
+    height:300px;
+  }
   </style>
 {% endblock %}
 
 {% block navleft %}
-<p class="navbar-text navbar-center">
+<p class="navsteps">
   Step 1: Configure&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
   Step 2: Refine&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
   <b>Step 3: Finalize</b>
@@ -59,26 +154,157 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="row benchtabview" id="bench-cube-view">
-      <div class="col-md-1"></div>
-      <div class="col-md-10"><h1>The cube!</h1></div>
-      <div class="col-md-1"></div>
+    </div>    
+    <div class="benchtabview" id="bench-cube-view">
+      <div class="row">
+        <div class="col-md-3">
+          <div style="padding-top:120px; text-align: right;">
+            <h3 class="">Graphics</h3>
+            <hr>
+            <button class="btn btn-primary btn-sm equipbutton" data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">Equip a graphics card +</button>
+          </div>
+          
+        </div>
+        <div class="col-md-6" style="text-align:center;">
+          <img src="{{ url_for('static', filename='cube-images/bg.png') }}" />
+        </div>
+        <div class="col-md-3">
+          <div style="padding-top:20px; text-align: left;">
+            <h3 class="">Display</h3>
+            <hr>
+            
+            <button class="btn btn-primary btn-sm equipbutton" data-equip-type="display" data-equip-title="EQUIP A DISPLAY">Equip a display +</button>
+            
+            
+          </div>
+          <div style="padding-top:200px; text-align: left;">
+            <h3 class="">Processor</h3>
+            <hr>
+            <button class="btn btn-primary btn-sm equipbutton" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">Equip a processor +</button>
+          </div>
+          
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5"></div>
+        <div class="col-md-3">
+          <div style="padding-top:20px; text-align: left;">
+            <h3 class="">Memory</h3>
+            <hr>
+            <button class="btn btn-primary btn-sm equipbutton" data-equip-type="memory" data-equip-title="EQUIP MEMORY">Equip memory +</button>
+          </div>
+        </div>
+        <div class="col-md-4"></div>
+      </div>
+      
     </div>
     <div class="row benchtabview" id="bench-component-view">
       <h1>The components!</h1>
     </div>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    
   </div>
+  
+  <div class="container" id="pick-part-modal">
+    <div class="row">
+      <div class="col-md-12" style="padding:0px;">
+        <div style="text-align: center; padding:15px; border-bottom: solid 1px #c1c1c1;">
+          <b><span id="equip-modal-title"></span></b>
+        </div>
+        <div style="padding:10px; background-color:#d9d9d9; border-bottom: solid 1px #c1c1c1;">
+          <div class="pull-left">
+            <input type="text" placeholder="Search for part"/>&nbsp;&nbsp;&nbsp;
+            <input type="checkbox"/>&nbsp;&nbsp;&nbsp;<label for="">Show only compatible</label>
+          </div>
+          <div class="pull-right">
+            <span>Sort by:&nbsp;&nbsp;</span>
+            <select>
+              <option value="volvo">All manufacturers</option>
+            </select>
+            <select>
+              <option value="volvo">Amdahl Rank</option>
+            </select>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+        
+        <!-- ITEM LIST -->
+        <div id="part-item-list">
+          <div class="equip-part-item">
+            <div class="part-item-border border-yellow">
+              <div class="part-icon-div">
+                <img src="/static/images/part-item-yellow.png" class="part-item-icon"/>
+              </div>
+              <div class="part-item-content">
+                <span class="part-item-title fg-yellow">Samsung 28" UHD Monitor</span>
+                <span class="part-item-sub">4K RESOLUTION</span>
+                <span class="part-item-sub">10 MS RESPONSE</span>
+              </div>
+              <div class="part-item-flag">
+                RECOMMENDED
+              </div>
+            </div>
+          </div>
+          <div class="equip-part-item">
+            <div class="part-item-border">
+              <div class="part-icon-div">
+                <img src="/static/images/part-item-inc.png" class="part-item-icon"/>
+              </div>
+              <div class="part-item-content">
+                <span class="part-item-title fg-inc">Samsung 28" UHD Monitor</span>
+                <span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>
+              </div>
+            </div>
+          </div>
+          <div class="equip-part-item">
+            <div class="part-item-border">
+              <div class="part-icon-div">
+                <img src="/static/images/part-item-inc.png" class="part-item-icon"/>
+              </div>
+              <div class="part-item-content">
+                <span class="part-item-title fg-inc">Samsung 28" UHD Monitor</span>
+                <span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:10px; border-bottom: solid 1px #c1c1c1; text-align: center;">
+          <button class="blue-link modal-button" id="modal-save-btn">SAVE PART »</button>
+          <button class="blue-link modal-button" id="modal-cancel-btn">CANCEL »</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 {% endblock %}
 
 {% block javascript %}
 <script type="text/javascript">
 	$(function(){
 		
+		// initialize rig (local storage)
+		var currentRig = {};
+		
 		// hide component view by default
 		$('#bench-component-view').hide();
+ 		$('#pick-part-modal').hide();
+ 		
+ 		//
+ 		// dismiss modal after saving
+ 		//
+ 		$('#modal-save-btn').click(function(){
+ 			$('#pick-part-modal').hide();
+ 		});
+ 		
+ 		//
+ 		// dismiss modal (cancel)
+ 		//
+ 		$('#modal-cancel-btn').click(function(){
+ 			$('#pick-part-modal').hide();
+ 		});
 		
+ 		//
+ 		// tabbing behavior on bench screen
+ 		//
 		$('.benchtab').click(function(){
 			// show the correct view and hide the current view
 			
@@ -93,7 +319,73 @@
 			$('.benchtab').removeClass('benchtabactive');
 			$(this).addClass('benchtabactive');
 		});
+		
+		//
+		// equip buttons - show modal and load parts
+		//
+		$('.equipbutton').click(function(){
+			
+			// set title
+			var equipTitle = $(this).data('equip-title');
+			$('#equip-modal-title').html(equipTitle);
+			
+			var eType = $(this).data('equip-type');
+	        
+	        // Call server with datatype and current PC config
+	        currentRig.target = eType;
+	        $.getJSON( "getparts", currentRig).success(function(data) {
+	        	
+	        	var itemListView = $('#part-item-list');
+	        	itemListView.empty();
+	        	
+				var partsList = JSON.parse(data.compatible);
+	        	console.log(partsList);
+	        	for (part in partsList) {
+	        		var component = partsList[part];
+	        		
+        			var itemDiv = $('<div class="equip-part-item"></div>')
+        			var borderDiv = $('<div class="part-item-border"></div>');
+        			var contentDiv = $('<div class="part-item-content"></div>')
+        			var iconDiv = $('<div class="part-icon-div"></div>')
+        			var titleSpan = $('<span class="part-item-title">'+component.vendor+' ' + component.model_number + '</span>');
+        			
+        			itemDiv.append(borderDiv);
+        			borderDiv.append(iconDiv);
+        			borderDiv.append(contentDiv);
+        			contentDiv.append(titleSpan);
+        			
+        			if (component.compatible === true) {
+        				borderDiv.addClass('border-yellow'); 														// border color
+        				iconDiv.append('<img src="/static/images/part-item-yellow.png" class="part-item-icon"/>') 	// color icon
+        				titleSpan.addClass('fg-yellow');															// style title span
+        				contentDiv.append('<span class="part-item-sub">4K RESOLUTION</span>') 							// append product additional information
+        				.append('<span class="part-item-sub">10 MS RESPONSE</span>');
+        				
+        				// add any flags
+            			// adding recommended to all for now
+            			borderDiv.append = $('<div class="part-item-flag">RECOMMENDED</div>');
+        				
+        			} else {        				
+        				iconDiv.append('<img src="/static/images/part-item-inc.png" class="part-item-icon"/>') 	// append incompat icon
+        				contentDiv.append('<span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>'); 			// incompatible text
+        				titleSpan.addClass('fg-inc'); 															// title color
+        			}
+        			
+        			itemListView.append(itemDiv);
+        			
+	        	}
+
+	        }).fail(function() {
+	            console.log( "error" );
+	        });
+			
+			$('#pick-part-modal').show();
+		});
+		
 	});
+
+	
+	
 </script>
 {% endblock %}
 
