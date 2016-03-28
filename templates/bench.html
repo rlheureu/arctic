@@ -96,6 +96,15 @@
   .border-purple{
     border-color: #fe4aea;
   }
+  .border-blue{
+    border-color: #29a0de;
+  }
+  .border-gray{
+    border-color: #333;
+  }
+  .border-black{
+    border-color: #000;
+  }
   .fg-purple{
     color: #fe4aea;
   }
@@ -103,7 +112,16 @@
     color: #e6d55e;
   }
   .fg-gray{
-    color: #b9b9b9;
+    color: #777;
+  }
+  .fg-gray{
+    color: #777;
+  }
+  .fg-white{
+    color: #888;
+  }
+  .fg-blue{
+    color: #29a0de;
   }
   .fg-inc{
     color: #b9b9b9;
@@ -181,7 +199,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-2">
-        <img src="{{ url_for('static', filename='images/default-cube-avatar.png') }}"/>
+        <img src="{{ url_for('static', filename='images/default-cube-avatar.png') }}" id="cube-avatar"/>
       </div>
       <div class="col-md-10">
         <div class="row">
@@ -211,7 +229,7 @@
           <div style="padding-top:120px; text-align: right;" data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
             <h3 class="equip-clickable">Graphics</h3>
             <hr>
-            <div id="gpu-section" class="equip-clickable">
+            <div id="gpu-section" class="equip-clickable item-slot-section">
             </div>
             <button class="btn btn-primary btn-sm equipbutton">Equip a graphics card +</button>
           </div>
@@ -223,7 +241,7 @@
           <!-- CUBE DISPLAY -->
           <!-- - - - - - - - -->
           <!-- Default cube images go here! -->
-          <img src="{{ url_for('static', filename='cube-images/bg.png') }}" id="cubedisplay-bg"/>
+          <img src="{{ url_for('static', filename='cube-images/bg.png') }}" id="cubedisplay-bg" class=""/>
           <img src="/static/cube-images/cube-middle-default.png" id="cubedisplay-middle" />
           <img src="/static/cube-images/cube-display-default.png" id="cubedisplay-display" />
           <img src="/static/cube-images/cube-memory-default.png" id="cubedisplay-memory" />
@@ -237,7 +255,7 @@
           <div style="padding-top:20px; text-align: left;"  data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
             <h3 class="equip-clickable">Display</h3>
             <hr>
-            <div id="display-section" class="equip-clickable">
+            <div id="display-section" class="equip-clickable item-slot-section">
             </div>
             <button class="btn btn-primary btn-sm equipbutton">Equip a display +</button>
             
@@ -246,7 +264,7 @@
           <div style="padding-top:200px; text-align: left;" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
             <h3 class="equip-clickable">Processor</h3>
             <hr>
-            <div id="cpu-section" class="equip-clickable">
+            <div id="cpu-section" class="equip-clickable item-slot-section">
             </div>
             <button class="btn btn-primary btn-sm equipbutton">Equip a processor +</button>
           </div>
@@ -260,7 +278,7 @@
           <div style="padding-top:20px; text-align: left;" data-equip-type="memory" data-equip-title="EQUIP MEMORY">
             <h3 class="equip-clickable">Memory</h3>
             <hr>
-            <div id="memory-section" class="equip-clickable">
+            <div id="memory-section" class="equip-clickable item-slot-section">
             </div>
             <button class="btn btn-primary btn-sm equipbutton">Equip memory +</button>
           </div>
@@ -280,6 +298,8 @@
       <div class="col-md-12" style="padding:0px;">
         <div style="text-align: center; padding:15px; border-bottom: solid 1px #c1c1c1;">
           <b><span id="equip-modal-title"></span></b>
+          <button class="blue-link modal-button pull-right" id="modal-unequip-btn">UNEQUIP »</button>
+          <div class="clearfix"></div>
         </div>
         <div style="padding:10px; background-color:#d9d9d9; border-bottom: solid 1px #c1c1c1;">
           <div class="pull-left">
@@ -370,18 +390,15 @@
  		// dismiss modal after saving
  		//
  		$('#modal-save-btn').click(function(){
- 			//
- 			// set part if selected
- 			if (toEquip == null) {
- 				alert('Need to select a part before saving!');
- 				return;
- 			}
- 			
  			console.log('equip ' + equipType + ' ' + toEquip);
  			currentRig[equipType + '_id'] = toEquip;
- 			
  			$('#pick-part-modal').hide();
- 			
+ 			renderRig();
+ 		});
+ 		
+ 		$('#modal-unequip-btn').click(function(){
+ 			currentRig[equipType + '_id'] = null;
+ 			$('#pick-part-modal').hide();
  			renderRig();
  		});
  		
@@ -524,8 +541,25 @@
 		function renderRig() {
 			console.log('Rendering Rig');
 			
+			//
+			//
+			// RESET Cube positions
+			$('#cubedisplay-middle').attr('src','/static/cube-images/cube-middle-default.png');
+			$('#cubedisplay-display').attr('src','/static/cube-images/cube-display-default.png');
+			$('#cubedisplay-memory').attr('src','/static/cube-images/cube-memory-default.png');
+			$('#cubedisplay-cpu').attr('src','/static/cube-images/cube-cpu-default.png');
+			$('#cubedisplay-gpu').attr('src','/static/cube-images/cube-gpu-default.png');
+			$('#cube-avatar').attr('src', '/static/cube-images/cube-avatar-default.png');
+			
+			//
+			//
+			// Remove display titles
+			$('.item-slot-section').empty();
+			
+			
 			var componentCount = 0;
 			var worstComponent = null;
+			var worstComponentDetail = null;
 			
 			// render the current rig
 			for (comp in currentRig) {
@@ -563,12 +597,15 @@
 						'/static/cube-images/cube-' + compType + '-' + partDetail.perf_color + '.png');
 				
 				if (worstComponent == null || partDetail.perf_color_coded < worstComponent) {
-					worstComponent = partDetail;
+					worstComponent = partDetail.perf_color_coded;
+					worstComponentDetail = partDetail;
 				}
 			}
 			
 			if (componentCount == 4) {
-				alert('All 4 ... aaaaannnd............     ' + worstComponent.perf_color);
+				//alert('All 4 ... aaaaannnd............     ' + worstComponent.perf_color);
+				$('#cubedisplay-middle').attr('src','/static/cube-images/cube-middle-' + worstComponentDetail.perf_color + '.png');
+				$('#cube-avatar').attr('src', '/static/cube-images/cube-avatar-' + worstComponentDetail.perf_color + '.png');
 			}
 			
 		}
