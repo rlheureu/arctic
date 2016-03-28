@@ -36,6 +36,13 @@
     width: 445px;
     margin: 8px;
     text-align: left;
+    cursor: pointer;
+  }
+  .not-equipped:hover{
+    background-color: #eee;
+  }
+  .equipped{
+    background-color:#2F2F2F;
   }
   .part-item-title{
     font-size: 18px;
@@ -70,23 +77,33 @@
     width: 128px;
     text-align: center;
     position: relative;
-    left: 54px;
+    right: -5px;
     top: 9px;
     font-size: 12px;
+    float:right;
   }
   .part-icon-div{
     display:inline-block;
     vertical-align: top;
     width: 0px;
   }
-  .bg-yellow {
+  .bg-orange {
     background-color: #fede86;
   }
-  .border-yellow{
+  .border-orange{
     border-color: #fede86;
   }
-  .fg-yellow{
+  .border-purple{
+    border-color: #fe4aea;
+  }
+  .fg-purple{
+    color: #fe4aea;
+  }
+  .fg-orange{
     color: #e6d55e;
+  }
+  .fg-gray{
+    color: #b9b9b9;
   }
   .fg-inc{
     color: #b9b9b9;
@@ -112,6 +129,39 @@
     border-bottom: solid 1px #c1c1c1;
     overflow-y:auto;
     height:300px;
+  }
+  .equip-clickable{
+    cursor: pointer;
+  }
+  
+  #cubedisplay-bg{
+    position: absolute;
+    left:17px;
+  }
+  #cubedisplay-middle{
+    position: absolute;
+    top: 0px;
+    left: 17px;
+  }
+  #cubedisplay-display{
+    position: absolute;
+    top: -15px;
+    left: 385px;
+  }
+  #cubedisplay-memory{
+    position: absolute;
+    top: 329px;
+    left: 203px;
+  }
+  #cubedisplay-cpu{
+    position: absolute;
+    top: 285px;
+    left: 320px;
+  }
+  #cubedisplay-gpu{
+    position: absolute;
+    top: 108px;
+    left: 39px;
   }
   </style>
 {% endblock %}
@@ -158,29 +208,47 @@
     <div class="benchtabview" id="bench-cube-view">
       <div class="row">
         <div class="col-md-3">
-          <div style="padding-top:120px; text-align: right;">
-            <h3 class="">Graphics</h3>
+          <div style="padding-top:120px; text-align: right;" data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
+            <h3 class="equip-clickable">Graphics</h3>
             <hr>
-            <button class="btn btn-primary btn-sm equipbutton" data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">Equip a graphics card +</button>
+            <div id="gpu-section" class="equip-clickable">
+            </div>
+            <button class="btn btn-primary btn-sm equipbutton">Equip a graphics card +</button>
           </div>
           
         </div>
         <div class="col-md-6" style="text-align:center;">
-          <img src="{{ url_for('static', filename='cube-images/bg.png') }}" />
+        
+          
+          <!-- CUBE DISPLAY -->
+          <!-- - - - - - - - -->
+          <!-- Default cube images go here! -->
+          <img src="{{ url_for('static', filename='cube-images/bg.png') }}" id="cubedisplay-bg"/>
+          <img src="/static/cube-images/cube-middle-default.png" id="cubedisplay-middle" />
+          <img src="/static/cube-images/cube-display-default.png" id="cubedisplay-display" />
+          <img src="/static/cube-images/cube-memory-default.png" id="cubedisplay-memory" />
+          <img src="/static/cube-images/cube-cpu-default.png" id="cubedisplay-cpu" />
+          <img src="/static/cube-images/cube-gpu-default.png" id="cubedisplay-gpu" />
+          <!--// Cube DISPLAY -->
+          
+          
         </div>
         <div class="col-md-3">
-          <div style="padding-top:20px; text-align: left;">
-            <h3 class="">Display</h3>
+          <div style="padding-top:20px; text-align: left;"  data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
+            <h3 class="equip-clickable">Display</h3>
             <hr>
-            
-            <button class="btn btn-primary btn-sm equipbutton" data-equip-type="display" data-equip-title="EQUIP A DISPLAY">Equip a display +</button>
+            <div id="display-section" class="equip-clickable">
+            </div>
+            <button class="btn btn-primary btn-sm equipbutton">Equip a display +</button>
             
             
           </div>
-          <div style="padding-top:200px; text-align: left;">
-            <h3 class="">Processor</h3>
+          <div style="padding-top:200px; text-align: left;" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
+            <h3 class="equip-clickable">Processor</h3>
             <hr>
-            <button class="btn btn-primary btn-sm equipbutton" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">Equip a processor +</button>
+            <div id="cpu-section" class="equip-clickable">
+            </div>
+            <button class="btn btn-primary btn-sm equipbutton">Equip a processor +</button>
           </div>
           
         </div>
@@ -188,10 +256,13 @@
       <div class="row">
         <div class="col-md-5"></div>
         <div class="col-md-3">
-          <div style="padding-top:20px; text-align: left;">
-            <h3 class="">Memory</h3>
+          <br><br>
+          <div style="padding-top:20px; text-align: left;" data-equip-type="memory" data-equip-title="EQUIP MEMORY">
+            <h3 class="equip-clickable">Memory</h3>
             <hr>
-            <button class="btn btn-primary btn-sm equipbutton" data-equip-type="memory" data-equip-title="EQUIP MEMORY">Equip memory +</button>
+            <div id="memory-section" class="equip-clickable">
+            </div>
+            <button class="btn btn-primary btn-sm equipbutton">Equip memory +</button>
           </div>
         </div>
         <div class="col-md-4"></div>
@@ -230,12 +301,12 @@
         <!-- ITEM LIST -->
         <div id="part-item-list">
           <div class="equip-part-item">
-            <div class="part-item-border border-yellow">
+            <div class="part-item-border border-orange">
               <div class="part-icon-div">
-                <img src="/static/images/part-item-yellow.png" class="part-item-icon"/>
+                <img src="/static/images/part-item-orange.png" class="part-item-icon"/>
               </div>
               <div class="part-item-content">
-                <span class="part-item-title fg-yellow">Samsung 28" UHD Monitor</span>
+                <span class="part-item-title fg-orange">Samsung 28" UHD Monitor</span>
                 <span class="part-item-sub">4K RESOLUTION</span>
                 <span class="part-item-sub">10 MS RESPONSE</span>
               </div>
@@ -268,8 +339,8 @@
           </div>
         </div>
         <div style="padding:10px; border-bottom: solid 1px #c1c1c1; text-align: center;">
-          <button class="blue-link modal-button" id="modal-save-btn">SAVE PART »</button>
           <button class="blue-link modal-button" id="modal-cancel-btn">CANCEL »</button>
+          <button class="blue-link modal-button" id="modal-save-btn">SAVE PART »</button>
         </div>
       </div>
     </div>
@@ -284,6 +355,13 @@
 		// initialize rig (local storage)
 		var currentRig = {};
 		
+		// selected item prior to save
+		var toEquip = null;
+		var equipType = null;
+		
+		// initialize parts cache with part data by id
+		var partsCache = {};
+		
 		// hide component view by default
 		$('#bench-component-view').hide();
  		$('#pick-part-modal').hide();
@@ -292,7 +370,19 @@
  		// dismiss modal after saving
  		//
  		$('#modal-save-btn').click(function(){
+ 			//
+ 			// set part if selected
+ 			if (toEquip == null) {
+ 				alert('Need to select a part before saving!');
+ 				return;
+ 			}
+ 			
+ 			console.log('equip ' + equipType + ' ' + toEquip);
+ 			currentRig[equipType + '_id'] = toEquip;
+ 			
  			$('#pick-part-modal').hide();
+ 			
+ 			renderRig();
  		});
  		
  		//
@@ -323,13 +413,23 @@
 		//
 		// equip buttons - show modal and load parts
 		//
-		$('.equipbutton').click(function(){
+		$('.equipbutton').click(renderPartPickerModal);
+		$('.equip-clickable').click(renderPartPickerModal);
+		
+		function renderPartPickerModal() {
+			//
+			// clear out any previously selected parts
+			toEquip = null;
 			
+			//
 			// set title
-			var equipTitle = $(this).data('equip-title');
+			var equipTitle = $(this).parent().data('equip-title');
 			$('#equip-modal-title').html(equipTitle);
 			
-			var eType = $(this).data('equip-type');
+			var eType = $(this).parent().data('equip-type');
+			equipType = eType;
+			
+			var currentEquippedId = currentRig[eType + '_id'];
 	        
 	        // Call server with datatype and current PC config
 	        currentRig.target = eType;
@@ -340,30 +440,49 @@
 	        	
 				var partsList = JSON.parse(data.compatible);
 	        	console.log(partsList);
-	        	for (part in partsList) {
+	        	for (part in partsList) {	        		
 	        		var component = partsList[part];
+	        		
+	        		//
+	        		// add to parts cache (needed later)
+	        		partsCache[component.id] = component;
 	        		
         			var itemDiv = $('<div class="equip-part-item"></div>')
         			var borderDiv = $('<div class="part-item-border"></div>');
         			var contentDiv = $('<div class="part-item-content"></div>')
         			var iconDiv = $('<div class="part-icon-div"></div>')
-        			var titleSpan = $('<span class="part-item-title">'+component.vendor+' ' + component.model_number + '</span>');
+        			var titleSpan = $('<span class="part-item-title">' + constructDisplayName(component) + '</span>');
         			
         			itemDiv.append(borderDiv);
         			borderDiv.append(iconDiv);
         			borderDiv.append(contentDiv);
         			contentDiv.append(titleSpan);
         			
+        			//
+        			// set component ID
+        			//
+        			console.log('the id ' + component.id);
+        			itemDiv.data('component-id', component.id);
+        			
+        			// style current equipped if exists
+        			if (currentEquippedId === component.id) {
+        				itemDiv.addClass('equipped');
+        			} else {
+        				itemDiv.addClass("not-equipped");
+        			}
+        			
         			if (component.compatible === true) {
-        				borderDiv.addClass('border-yellow'); 														// border color
-        				iconDiv.append('<img src="/static/images/part-item-yellow.png" class="part-item-icon"/>') 	// color icon
-        				titleSpan.addClass('fg-yellow');															// style title span
-        				contentDiv.append('<span class="part-item-sub">4K RESOLUTION</span>') 							// append product additional information
+        				borderDiv.addClass('border-' + component.perf_color); 										// border color
+        				iconDiv.append('<img src="/static/images/part-item-'+component.perf_color+'.png" class="part-item-icon"/>') 	// color icon
+        				titleSpan.addClass('fg-' + component.perf_color);											// style title span
+        				contentDiv.append('<span class="part-item-sub">4K RESOLUTION</span>') 						// append product additional information
         				.append('<span class="part-item-sub">10 MS RESPONSE</span>');
         				
         				// add any flags
             			// adding recommended to all for now
-            			borderDiv.append = $('<div class="part-item-flag">RECOMMENDED</div>');
+            			if (component.recommended === true ) {
+            				borderDiv.append('<div class="part-item-flag">RECOMMENDED</div>');
+            			}
         				
         			} else {        				
         				iconDiv.append('<img src="/static/images/part-item-inc.png" class="part-item-icon"/>') 	// append incompat icon
@@ -374,13 +493,93 @@
         			itemListView.append(itemDiv);
         			
 	        	}
+	        	
+	        	bindEquipListener();
 
 	        }).fail(function() {
 	            console.log( "error" );
 	        });
 			
 			$('#pick-part-modal').show();
-		});
+		}
+		
+		//
+		// Equip Part Item onClick
+		// Change styling
+		//
+		function bindEquipListener(){
+			$('.equip-part-item').click(function(){
+				// remove equip styling from all components
+				$('.equip-part-item').removeClass('equipped');
+				$(this).addClass('equipped');
+				$(this).removeClass('not-equipped');
+				toEquip = $(this).data('component-id');
+				console.log('the data: ' + toEquip);
+			});
+		}
+		
+		//
+		// Render Bench View
+		//
+		function renderRig() {
+			console.log('Rendering Rig');
+			
+			var componentCount = 0;
+			var worstComponent = null;
+			
+			// render the current rig
+			for (comp in currentRig) {
+				
+				if (comp === 'target') continue;
+				
+				var compId = currentRig[comp];
+				if (compId === null || compId === undefined) {
+					continue;
+				}
+				
+				// incremenent component count... will be used later
+				componentCount++;
+				
+				// pull part and information from cache
+				var partDetail = partsCache[compId];
+				
+				// comptype
+				var compType = comp.substr(0, comp.indexOf('_id'));
+				console.log('comp type: ' + compType);
+				
+				// modify view
+				var view = $('#' + compType + '-section');
+				view.empty();
+				
+				var displaySpan = $('<span></span>');
+				displaySpan.append(constructDisplayName(partDetail));
+				displaySpan.addClass('fg-' + partDetail.perf_color);
+				displaySpan.addClass('part-item-title');
+				
+				view.append(displaySpan);
+				
+				// modify colors
+				$('#cubedisplay-' + compType).attr('src',
+						'/static/cube-images/cube-' + compType + '-' + partDetail.perf_color + '.png');
+				
+				if (worstComponent == null || partDetail.perf_color_coded < worstComponent) {
+					worstComponent = partDetail;
+				}
+			}
+			
+			if (componentCount == 4) {
+				alert('All 4 ... aaaaannnd............     ' + worstComponent.perf_color);
+			}
+			
+		}
+		
+		function constructDisplayName(part){
+			var partName = "";
+			if (part.vendor !== undefined && part.vendor !== null) partName += part.vendor + ' ';
+			if (part.brand_name !== undefined && part.brand_name !== null) partName += part.brand_name + ' ';
+			if (part.model_number !== undefined && part.model_number !== null) partName += part.model_number;
+			return partName;
+		}
 		
 	});
 

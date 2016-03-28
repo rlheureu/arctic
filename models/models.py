@@ -30,6 +30,8 @@ class BaseComponent(Base):
     socket = Column('socket', String(500))
     unlocked = Column('unlocked', Boolean)
     
+    recommended = Column('recommended', Boolean)
+    
     
     type = Column('data_type_discriminator', String(45))
 
@@ -118,6 +120,8 @@ class Rig(Base):
     name = Column('name', String(500))
     cpu_component_id = Column('cpu_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
     cpu_component = relationship('CPUComponent', foreign_keys='Rig.cpu_component_id')
+    gpu_component_id = Column('gpu_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
+    gpu_component = relationship('GPUComponent', foreign_keys='Rig.gpu_component_id')
     memory_component_id = Column('memory_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
     memory_component = relationship('MemoryComponent', foreign_keys='Rig.memory_component_id')
     motherboard_component_id = Column('motherboard_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))

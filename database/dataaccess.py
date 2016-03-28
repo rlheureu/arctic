@@ -41,7 +41,12 @@ def save_rig(rig_dict, user_id):
     
     return rig
 
-def get_compatible_parts(target=None, motherboard_id = None, gpu_id = None, memory_id = None, display_id = None, cpu_id=None):
+def get_compatible_parts(target=None,
+                         motherboard_id = None,
+                         gpu_id = None,
+                         memory_id = None,
+                         display_id = None,
+                         cpu_id=None):
     
     if target == 'cpu':
         return get_compatible_cpu_map(motherboard_id, gpu_id, memory_id, display_id, cpu_id)

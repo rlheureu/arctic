@@ -13,6 +13,7 @@ from database import dataaccess
 from database.database import db
 from utils.gen_utils import jsonify_sql_alchemy_model
 from cherrypy._cpreqbody import Part
+from utils import perf_utils
 
 
 app = Flask(__name__)
@@ -132,6 +133,11 @@ def get_parts():
         if part.id not in added:
             part.compatible = False
             render_parts.append(part)
+            
+    """
+    set performance color for parts
+    """
+    perf_utils.set_performance_color_for_parts(render_parts)
     
     render_parts = json.dumps(render_parts, cls=jsonify_sql_alchemy_model(), check_circular=False)
     
