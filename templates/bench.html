@@ -46,7 +46,9 @@
   }
   .part-item-title{
     font-size: 18px;
-    display: block;
+  }
+  .component-tab-cube-image{
+    width:30px;
   }
   .part-item-sub{
     color:#9f9f9f;
@@ -288,7 +290,47 @@
       
     </div>
     <div class="row benchtabview" id="bench-component-view">
-      <h1>The components!</h1>
+      <!--  - - - - - -  -->
+      <!--  - - - - - -  -->
+      <!-- COMPONENT TAB -->
+      <!--  - - - - - -  -->
+      <!--  - - - - - -  -->
+      <div class="col-md-2"></div>
+      <div class="col-md-5">
+        <h3>Core Stats</h3>
+        <div data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
+          <h4 class="equip-clickable">Display</h4>
+          <hr>
+          <div id="display-section-component-tab" class="equip-clickable item-slot-section">
+          </div>
+          <button class="btn btn-primary btn-sm equipbutton">Equip a display +</button>
+        </div>
+        <div data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
+          <h4 class="equip-clickable">Processor</h4>
+          <hr>
+          <div id="cpu-section-component-tab" class="equip-clickable item-slot-section">
+          </div>
+          <button class="btn btn-primary btn-sm equipbutton">Equip a processor +</button>
+        </div>
+        <div data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
+          <h4 class="equip-clickable">Graphics</h4>
+          <hr>
+          <div id="gpu-section-component-tab" class="equip-clickable item-slot-section">
+          </div>
+          <button class="btn btn-primary btn-sm equipbutton">Equip a graphics card +</button>
+        </div>
+        <div data-equip-type="memory" data-equip-title="EQUIP MEMORY">
+          <h4 class="equip-clickable">Memory</h4>
+          <hr>
+          <div id="memory-section-component-tab" class="equip-clickable item-slot-section">
+          </div>
+          <button class="btn btn-primary btn-sm equipbutton">Equip memory +</button>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <h3>Secondary Stats</h3>
+      </div>
+      <div class="col-md-2"></div>
     </div>
     
   </div>
@@ -583,14 +625,22 @@
 				
 				// modify view
 				var view = $('#' + compType + '-section');
+				var viewCompTab = $('#' + compType + '-section-component-tab');
 				view.empty();
+				viewCompTab.empty();
+				
+				var componentTabCubeImage = $('<img src="/static/cube-images/cube-display-tab-'+partDetail.perf_color+'.png" />');
+				componentTabCubeImage.addClass('component-tab-cube-image');
+				viewCompTab.append(componentTabCubeImage);
 				
 				var displaySpan = $('<span></span>');
 				displaySpan.append(constructDisplayName(partDetail));
 				displaySpan.addClass('fg-' + partDetail.perf_color);
 				displaySpan.addClass('part-item-title');
 				
-				view.append(displaySpan);
+				
+				viewCompTab.append(displaySpan);
+				view.append(displaySpan.clone());
 				
 				// modify colors
 				$('#cubedisplay-' + compType).attr('src',
