@@ -329,6 +329,13 @@
       </div>
       <div class="col-md-5">
         <h3>Secondary Stats</h3>
+        <div data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
+          <h4 class="equip-clickable">Motherboard</h4>
+          <hr>
+          <div id="motherboard-section-component-tab" class="equip-clickable item-slot-section">
+          </div>
+          <button class="btn btn-primary btn-sm equipbutton">Equip a motherboard +</button>
+        </div>
       </div>
       <div class="col-md-2"></div>
     </div>
@@ -599,7 +606,7 @@
 			$('.item-slot-section').empty();
 			
 			
-			var componentCount = 0;
+			var coreComponentCount = 0;
 			var worstComponent = null;
 			var worstComponentDetail = null;
 			
@@ -612,9 +619,6 @@
 				if (compId === null || compId === undefined) {
 					continue;
 				}
-				
-				// incremenent component count... will be used later
-				componentCount++;
 				
 				// pull part and information from cache
 				var partDetail = partsCache[compId];
@@ -646,13 +650,19 @@
 				$('#cubedisplay-' + compType).attr('src',
 						'/static/cube-images/cube-' + compType + '-' + partDetail.perf_color + '.png');
 				
-				if (worstComponent == null || partDetail.perf_color_coded < worstComponent) {
-					worstComponent = partDetail.perf_color_coded;
-					worstComponentDetail = partDetail;
+				//
+				// incremenent component count
+				// and set worst component
+				if (isCoreComponent(compType)) {
+					coreComponentCount++;
+					if (worstComponent == null || partDetail.perf_color_coded < worstComponent) {
+  						worstComponent = partDetail.perf_color_coded;
+  						worstComponentDetail = partDetail;
+					}
 				}
 			}
 			
-			if (componentCount == 4) {
+			if (coreComponentCount == 4) {
 				//alert('All 4 ... aaaaannnd............     ' + worstComponent.perf_color);
 				$('#cubedisplay-middle').attr('src','/static/cube-images/cube-middle-' + worstComponentDetail.perf_color + '.png');
 				$('#cube-avatar').attr('src', '/static/cube-images/cube-avatar-' + worstComponentDetail.perf_color + '.png');
@@ -666,6 +676,10 @@
 			if (part.brand_name !== undefined && part.brand_name !== null) partName += part.brand_name + ' ';
 			if (part.model_number !== undefined && part.model_number !== null) partName += part.model_number;
 			return partName;
+		}
+		
+		function isCoreComponent(compType) {
+			return compType === 'memory' || compType === 'display' || compType === 'cpu' || compType === 'gpu';
 		}
 		
 	});

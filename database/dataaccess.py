@@ -65,7 +65,7 @@ def get_compatible_parts(target=None,
         check anything? 
         """
         return get_all_gpus()
-    elif target == 'mobo':
+    elif target == 'motherboard':
         """
         check processor and memory
         """
