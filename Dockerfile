@@ -34,6 +34,8 @@ EXPOSE 80
 # Set the default directory where CMD will execute
 WORKDIR /arctic
 
+ENV ARCTIC_DEV_UNAME gamer
+ENV ARCTIC_DEV_PWD password
 ENV DB_HOST 127.0.0.1
 ENV DB_PORT 3306
 ENV DB_USER root
