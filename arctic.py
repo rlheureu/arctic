@@ -1,19 +1,21 @@
 import datetime
+from functools import wraps
 import json
 import logging
 import os
 
+from cherrypy._cpreqbody import Part
 from flask.app import Flask
 from flask.globals import request
 from flask.json import jsonify
 from flask.templating import render_template
+from flask.wrappers import Response
 from flask_login import login_required, LoginManager
 
 from database import dataaccess
 from database.database import db
-from utils.gen_utils import jsonify_sql_alchemy_model
-from cherrypy._cpreqbody import Part
 from utils import perf_utils
+from utils.gen_utils import jsonify_sql_alchemy_model
 
 
 app = Flask(__name__)
@@ -33,8 +35,35 @@ def load_user(user_id):
     #return UserService().retrieve_entity_by_id(user_id)
     pass
 
+
+def check_auth(username, password):
+    """This function is called to check if a username /
+    password combination is valid.
+    """
+    
+    uname = os.environ.get('ARCTIC_DEV_UNAME')
+    pwd = os.environ.get('ARCTIC_DEV_PWD')
+    
+    return username == uname and password == pwd
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+    'Could not verify your access level for that URL.\n'
+    'You have to login with proper credentials', 401,
+    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
 @app.route("/", methods=['GET'])
-#@login_required
+@requires_auth
 def home():
     
     context = {}
@@ -42,7 +71,7 @@ def home():
     return render_template('home.html', **context)
 
 @app.route("/pickconfig", methods=['GET'])
-#@login_required
+@requires_auth
 def pickconfig():
     
     context = {}
@@ -50,7 +79,7 @@ def pickconfig():
     return render_template('pickconfig.html', **context)
 
 @app.route("/preset", methods=['GET'])
-#@login_required
+@requires_auth
 def preset():
     
     context = {}
@@ -58,7 +87,7 @@ def preset():
     return render_template('preset.html', **context)
 
 @app.route("/custom", methods=['GET'])
-#@login_required
+@requires_auth
 def custom():
     
     context = {}
@@ -66,7 +95,7 @@ def custom():
     return render_template('custom.html', **context)
 
 @app.route("/bench", methods=['GET'])
-#@login_required
+@requires_auth
 def bench():
     
     context = {}
@@ -74,7 +103,7 @@ def bench():
     return render_template('bench.html', **context)
 
 @app.route("/namecube", methods=['GET'])
-#@login_required
+@requires_auth
 def namecube():
     
     context = {}
@@ -82,7 +111,7 @@ def namecube():
     return render_template('namecube.html', **context)
 
 @app.route("/cubetemp", methods=['GET'])
-#@login_required
+@requires_auth
 def cubetemp():
     
     cpus = dataaccess.get_all_cpus()
@@ -94,7 +123,7 @@ def cubetemp():
     return render_template('cube-temp.html', **context)
 
 @app.route("/cube", methods=['GET'])
-#@login_required
+@requires_auth
 def cube():
     
     cpus = dataaccess.get_all_cpus()
@@ -106,7 +135,7 @@ def cube():
     return render_template('cube.html', **context)
 
 @app.route("/getparts", methods=['GET'])
-#@login_required
+@requires_auth
 def get_parts():
     
     """
@@ -146,7 +175,7 @@ def get_parts():
         
 
 @app.route("/saverig", methods=['POST'])
-#@login_required
+@requires_auth
 def save_rig():
     """
     rig_json = request.get_json().get('rig')
@@ -158,7 +187,7 @@ def save_rig():
     return jsonify({'response' : rig.id})
 
 @app.route("/getrig", methods=['GET'])
-#@login_required
+@requires_auth
 def get_rig():
     cpus = dataaccess.get_rig(request.args.get('rig_id', None))
     return jsonify(compatible = cpus)
