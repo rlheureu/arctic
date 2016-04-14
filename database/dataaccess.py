@@ -3,6 +3,9 @@
 from database import db
 from models import models
 
+def get_rig_presets():
+    return db.session().query(models.Rig).filter(models.Rig.rig_preset == True).all()
+
 def get_all_cpus():
     return db.session().query(models.CPUComponent).all()
 

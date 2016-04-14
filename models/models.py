@@ -32,6 +32,7 @@ class BaseComponent(Base):
     
     recommended = Column('recommended', Boolean)
     
+    sort_order = Column('sort_order', Integer)
     
     type = Column('data_type_discriminator', String(45))
 
@@ -117,7 +118,7 @@ class Rig(Base):
     __tablename__ = 'arctic_rig'
 
     id = Column('arctic_rig_id', Integer, primary_key=True)
-    name = Column('name', String(500))
+    name = Column('name', String(400))
     cpu_component_id = Column('cpu_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
     cpu_component = relationship('CPUComponent', foreign_keys='Rig.cpu_component_id')
     gpu_component_id = Column('gpu_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
@@ -130,4 +131,8 @@ class Rig(Base):
     display_component = relationship('DisplayComponent', foreign_keys='Rig.display_component_id')
     user_id = Column('user_id', Integer, ForeignKey('arctic_user.arctic_user_id'))
     user = relationship('User', foreign_keys='Rig.user_id')
+    rig_preset = Column('rig_preset', Boolean)
+    rig_preset_name = Column('rig_preset_name', String(400))
+    rig_preset_sort_order = Column('rig_preset_sort_order', Integer)
+    
     

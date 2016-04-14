@@ -24,13 +24,18 @@
         <br/><br/><br/>
     
         <p>Name your cube below. You can change it later or even skip this step if you desire</p>
+        <form method="get" action="bench">
+          <input type="text" name="name" placeholder="Name cube.." />
+          
+          {% if preset %}
+          <input type="text" name="preset" style="display:none;" value="{{preset}}"/>
+          {% endif %}
+          
+          <hr>
+          <input type="submit" class="btn btn-primary" value="Name my Cube">
+        </form>
         
-        <b>NAME INPUT</b>
-        
-        <hr>
-        <a href="bench" class="btn btn-primary">Name my Cube</a>
-        &nbsp;&nbsp;&nbsp;
-        <a href="bench" class="btn btn-primary">Skip this step</a>
+        <a href="bench{% if preset %}?preset={{preset}}{% endif %}" class="btn btn-primary">Skip this step</a>
         
       </div>
       <div class="col-md-2">

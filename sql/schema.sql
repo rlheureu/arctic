@@ -34,9 +34,13 @@ CREATE TABLE `arctic_component` (
   `pcie_bus` varchar(500) DEFAULT NULL,
   `mpcie` varchar(500) DEFAULT NULL,
   `size` varchar(500) DEFAULT NULL,
+  `resolution` varchar(500) DEFAULT NULL,
+  `max_framerate` varchar(500) DEFAULT NULL,
   `recommended` int(11) DEFAULT NULL,
+  `sort_order` int(11) DEFAULT '0',
   PRIMARY KEY (`arctic_component_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=latin1;
+
 
 CREATE TABLE `arctic_user` (
   `arctic_user_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -47,22 +51,29 @@ CREATE TABLE `arctic_user` (
 
 CREATE TABLE `arctic_rig` (
   `arctic_rig_id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` int(11) DEFAULT NULL,
+  `name` varchar(400) DEFAULT NULL,
   `cpu_component_id` int(11) DEFAULT NULL,
   `memory_component_id` int(11) DEFAULT NULL,
   `motherboard_component_id` int(11) DEFAULT NULL,
   `display_component_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
+  `gpu_component_id` int(11) DEFAULT NULL,
+  `rig_preset` int(11) DEFAULT '0',
+  `rig_preset_name` varchar(400) DEFAULT NULL,
+  `rig_preset_sort_order` int(11) DEFAULT '0',
   PRIMARY KEY (`arctic_rig_id`),
   KEY `cpu_component_id_idx` (`cpu_component_id`),
   KEY `user_idx` (`user_id`),
   KEY `display_component_idx` (`display_component_id`),
   KEY `memory_component_idx` (`memory_component_id`),
   KEY `motherboard_compoent_idx` (`motherboard_component_id`),
+  KEY `gpu_component_idx` (`gpu_component_id`),
   CONSTRAINT `cpu_component` FOREIGN KEY (`cpu_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `display_component` FOREIGN KEY (`display_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `gpu_component` FOREIGN KEY (`gpu_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `memory_component` FOREIGN KEY (`memory_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `motherboard_compoent` FOREIGN KEY (`motherboard_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `user` FOREIGN KEY (`user_id`) REFERENCES `arctic_user` (`arctic_user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+
 

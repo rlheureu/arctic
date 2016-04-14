@@ -27,28 +27,13 @@
     </div>
     
     <div class="row">
-      
-      <div class="col-md-4">
-        <div class="jumbotron">
-          <h3>Oculus Ready PC</h3>
-          <p><a class="btn btn-primary btn-lg" href="namecube">Go</a></p>
+      <div class="col-md-12">
+      {% for rig in rig_presets %}
+        <div class="jumbotron" style="display:inline-block;">
+          <h3>{{rig.rig_preset_name}}</h3>
+          <p><a class="btn btn-primary btn-lg" href="namecube?preset={{rig.id}}">Go</a></p>
         </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="jumbotron">
-        <h3>4K Ready PC</h3>
-        <p><a class="btn btn-primary btn-lg" href="namecube">Go</a></p>
-        </div>
-      </div>
-      
-      <div class="col-md-4">
-        <div class="jumbotron">
-          <h3>Professional Spec</h3>
-          <p><a class="btn btn-primary btn-lg" href="namecube">Go</a></p>
-        </div>
-      </div>
-      
+      {% endfor %}
       </div>
     </div>
   </div>

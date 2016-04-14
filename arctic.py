@@ -81,8 +81,8 @@ def pickconfig():
 @app.route("/preset", methods=['GET'])
 @requires_auth
 def preset():
-    
-    context = {}
+    rig_presets = dataaccess.get_rig_presets()
+    context = {'rig_presets' : rig_presets}
 
     return render_template('preset.html', **context)
 
@@ -107,6 +107,11 @@ def bench():
 def namecube():
     
     context = {}
+    
+    preset = request.args.get('preset', None)
+    
+    if preset: context['preset'] = preset
+    
 
     return render_template('namecube.html', **context)
 
@@ -167,6 +172,11 @@ def get_parts():
     set performance color for parts
     """
     perf_utils.set_performance_color_for_parts(render_parts)
+    
+    """
+    sort by sort order
+    """
+    render_parts = sorted(render_parts, key=lambda part: part.sort_order, reverse=True)
     
     render_parts = json.dumps(render_parts, cls=jsonify_sql_alchemy_model(), check_circular=False)
     
