@@ -489,6 +489,7 @@
  		});
  		
  		$('#modal-unequip-btn').click(function(){
+ 			console.log('unequip ' + equipType);
  			currentRig['parts'][equipType + '_id'] = null;
  			$('#pick-part-modal').hide();
  			renderRig();
@@ -550,7 +551,6 @@
 	        	itemListView.empty();
 	        	
 				var partsList = JSON.parse(data.parts);
-	        	console.log(partsList);
 	        	for (part in partsList) {	        		
 	        		var component = partsList[part];
 	        		
@@ -572,7 +572,6 @@
         			//
         			// set component ID
         			//
-        			console.log('the id ' + component.id);
         			itemDiv.data('component-id', component.id);
         			
         			// style current equipped if exists
