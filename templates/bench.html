@@ -206,7 +206,7 @@
       <div class="col-md-10">
         <div class="row">
           <div class="col-md-5">
-            <h2>THE BEAST</h2>
+            <h2 id="rig_name_main">THE BEAST</h2>
             <br>
           </div>
         </div>
@@ -415,14 +415,57 @@
     </div>
   </div>
   
+  <!-- HIDDEN values (set during wizard) -->
+  {% if cube_name %}
+  <input type="text" value="{{cube_name}}" style="display:none;"/>
+  {% endif %}
+  {% if preset %}
+  <input type="text" value="{{preset}}" style="display:none;"/>
+  {% endif %}
+  
 {% endblock %}
 
 {% block javascript %}
+
 <script type="text/javascript">
+	//
+	// initialize globals
+	var AC_GLOBALS = function(){
+		return {
+			cubeName : {% if cube_name %}'{{cube_name}}'{% else %}null{% endif %},
+			preset : {% if preset %}'{{preset}}'{% else %}null{% endif %},
+		};
+	}();
+
+</script>
+
+<script type="text/javascript">
+    //initialize rig (local storage)
+    var currentRig = {}; currentRig['parts'] = {};
 	$(function(){
 		
-		// initialize rig (local storage)
-		var currentRig = {};
+		// set cube name
+		if (AC_GLOBALS.cubeName !== null) {
+			currentRig['name'] = AC_GLOBALS.cubeName;
+		}
+		
+		// prepare preset values
+		if (AC_GLOBALS.preset !== null) {
+			// get preset config from server
+			$.getJSON( "getrig", {rig_id: AC_GLOBALS.preset}).success(function(data) {
+				var presetRig = JSON.parse(data.rig);
+				console.log(presetRig);
+				if (presetRig['motherboard_component_id'] !== undefined) currentRig['parts']['motherboard_id'] = presetRig['motherboard_component_id'];
+                if (presetRig['gpu_component_id'] !== undefined) currentRig['parts']['gpu_id'] = presetRig['gpu_component_id'];
+                if (presetRig['memory_component_id'] !== undefined) currentRig['parts']['memory_id'] = presetRig['memory_component_id'];
+                if (presetRig['display_component_id'] !== undefined) currentRig['parts']['display_id'] = presetRig['display_component_id'];
+                if (presetRig['cpu_component_id'] !== undefined) currentRig['parts']['cpu_id'] = presetRig['cpu_component_id'];
+                
+                // pull down part data and render rig
+                refreshPartsCache(renderRig);
+                
+			});
+		}
 		
 		// selected item prior to save
 		var toEquip = null;
@@ -440,13 +483,13 @@
  		//
  		$('#modal-save-btn').click(function(){
  			console.log('equip ' + equipType + ' ' + toEquip);
- 			currentRig[equipType + '_id'] = toEquip;
+ 			currentRig['parts'][equipType + '_id'] = toEquip;
  			$('#pick-part-modal').hide();
  			renderRig();
  		});
  		
  		$('#modal-unequip-btn').click(function(){
- 			currentRig[equipType + '_id'] = null;
+ 			currentRig['parts'][equipType + '_id'] = null;
  			$('#pick-part-modal').hide();
  			renderRig();
  		});
@@ -495,16 +538,18 @@
 			var eType = $(this).parent().data('equip-type');
 			equipType = eType;
 			
-			var currentEquippedId = currentRig[eType + '_id'];
+			var currentEquippedId = currentRig['parts'][eType + '_id'];
 	        
 	        // Call server with datatype and current PC config
-	        currentRig.target = eType;
-	        $.getJSON( "getparts", currentRig).success(function(data) {
+	        var getPartsParams = {};
+	        getPartsParams.target = eType;
+	        $.extend(getPartsParams, currentRig['parts']);
+	        $.getJSON( "getparts", getPartsParams).success(function(data) {
 	        	
 	        	var itemListView = $('#part-item-list');
 	        	itemListView.empty();
 	        	
-				var partsList = JSON.parse(data.compatible);
+				var partsList = JSON.parse(data.parts);
 	        	console.log(partsList);
 	        	for (part in partsList) {	        		
 	        		var component = partsList[part];
@@ -589,6 +634,7 @@
 		//
 		function renderRig() {
 			console.log('Rendering Rig');
+			console.log(currentRig);
 			
 			//
 			//
@@ -611,11 +657,9 @@
 			var worstComponentDetail = null;
 			
 			// render the current rig
-			for (comp in currentRig) {
+			for (comp in currentRig['parts']) {
 				
-				if (comp === 'target') continue;
-				
-				var compId = currentRig[comp];
+				var compId = currentRig['parts'][comp];
 				if (compId === null || compId === undefined) {
 					continue;
 				}
@@ -668,6 +712,11 @@
 				$('#cube-avatar').attr('src', '/static/cube-images/cube-avatar-' + worstComponentDetail.perf_color + '.png');
 			}
 			
+			// set rig name
+			if (currentRig.name !== undefined) {
+				$('#rig_name_main').html(currentRig.name);
+			}
+			
 		}
 		
 		function constructDisplayName(part){
@@ -681,6 +730,34 @@
 		function isCoreComponent(compType) {
 			return compType === 'memory' || compType === 'display' || compType === 'cpu' || compType === 'gpu';
 		}
+		
+		function refreshPartsCache(renderFunc){
+			// retrieve necessary parts from server
+			var ids = '';
+			var count = 0;
+			for (part in currentRig['parts']) {
+				count++;
+				if (currentRig['parts'][part] === null) continue;
+				
+				ids += currentRig['parts'][part];
+				if (count < Object.keys(currentRig.parts).length) {
+					ids += ',';
+				}
+			}
+			$.getJSON( "getparts", {ids:ids}).success(function(data) {
+				var partsList = JSON.parse(data.parts);
+	        	for (part in partsList) {
+	        		var component = partsList[part];
+	        		partsCache[component.id] = component;
+	        	}
+	        	
+	        	if (renderFunc !== null) {
+	        		renderFunc();
+	        	}
+			});
+		}
+		
+		
 		
 	});
 

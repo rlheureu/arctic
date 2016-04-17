@@ -99,6 +99,12 @@ def custom():
 def bench():
     
     context = {}
+    
+    
+    cube_name = request.args.get('name', None)
+    preset = request.args.get('preset', None)
+    if cube_name: context['cube_name'] = cube_name
+    if preset: context['preset'] = preset
 
     return render_template('bench.html', **context)
 
@@ -143,30 +149,51 @@ def cube():
 @requires_auth
 def get_parts():
     
-    """
-    get compatible parts
-    """
-    compat_parts = dataaccess.get_compatible_parts(**request.args.to_dict())
-    
-    """
-    get all parts
-    """
-    all_parts = dataaccess.get_compatible_parts(target=request.args.get('target'))
-    
-    """
-    join the lists (and remove duplicates)!
-    """
     render_parts = []
-    added = set()
-    for part in compat_parts:
-        added.add(part.id)
-        part.compatible = True
-        render_parts.append(part)
+    reqdict = request.args.to_dict()
     
-    for part in all_parts:
-        if part.id not in added:
-            part.compatible = False
+    if reqdict.get('ids'):
+        """
+        list of IDs provided for explicit parts
+        """
+        
+        ids = reqdict.get('ids')
+        
+        for cid in ids.split(','):
+            render_parts.append(dataaccess.get_component(cid))
+        
+    else:
+    
+        getpartsparams = ['motherboard_id', 'gpu_id', 'memory_id', 'display_id', 'cpu_id', 'target']
+        for k in reqdict.keys():
+            if k not in getpartsparams:
+                del reqdict[k]
+            
+        
+        """
+        get compatible parts
+        """
+        compat_parts = dataaccess.get_compatible_parts(**reqdict)
+        
+        """
+        get all parts
+        """
+        all_parts = dataaccess.get_compatible_parts(target=reqdict.get('target'))
+        
+        """
+        join the lists (and remove duplicates)!
+        """
+        
+        added = set()
+        for part in compat_parts:
+            added.add(part.id)
+            part.compatible = True
             render_parts.append(part)
+        
+        for part in all_parts:
+            if part.id not in added:
+                part.compatible = False
+                render_parts.append(part)
             
     """
     set performance color for parts
@@ -180,7 +207,7 @@ def get_parts():
     
     render_parts = json.dumps(render_parts, cls=jsonify_sql_alchemy_model(), check_circular=False)
     
-    return jsonify({'compatible':render_parts})    
+    return jsonify({'parts':render_parts})    
 
         
 
@@ -199,8 +226,9 @@ def save_rig():
 @app.route("/getrig", methods=['GET'])
 @requires_auth
 def get_rig():
-    cpus = dataaccess.get_rig(request.args.get('rig_id', None))
-    return jsonify(compatible = cpus)
+    rig = dataaccess.get_rig(request.args.get('rig_id', None))
+    print rig.id
+    return jsonify({'rig':json.dumps(rig, cls=jsonify_sql_alchemy_model(), check_circular=False)})
 
 
 @app.teardown_appcontext
