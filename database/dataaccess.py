@@ -33,10 +33,12 @@ def get_rig(rig_id):
 def save_rig(rig_dict, user_id):
     
     rig = get_rig(rig_dict.get('rig_id')) if rig_dict.get('rig_id') else models.Rig()
-    rig.cpu_component = get_component(rig_dict.get('cpu_component_id'))
-    rig.display_component = get_component(rig_dict.get('display_component_id'))
-    rig.memory_component = get_component(rig_dict.get('memory_component_id'))
-    rig.motherboard_component = get_component(rig_dict.get('motherboard_component_id'))
+    rig.cpu_component = get_component(rig_dict.get('cpu_id'))
+    rig.display_component = get_component(rig_dict.get('display_id'))
+    rig.memory_component = get_component(rig_dict.get('memory_id'))
+    rig.motherboard_component = get_component(rig_dict.get('motherboard_id'))
+    rig.gpu_component = get_component(rig_dict.get('gpu_id'))
+    rig.name = rig_dict.get('name')
     rig.user_id = user_id
     
     db.session().add(rig)
@@ -208,3 +210,13 @@ def get_compat_cpu_for_memspec_queries(memspec):
                                                                     models.CPUComponent.ddr3l != '' and
                                                                     models.CPUComponent.ddr3l != None)
     return compat
+
+def get_user_by_email(email):
+    return db.session().query(models.User).filter(models.User.email == email).first()
+
+def get_user_by_id(userid):
+    return db.session().query(models.User).filter(models.User.id == userid).first()
+
+def create_user(user):
+    db.session().add(user)
+    db.session().commit()

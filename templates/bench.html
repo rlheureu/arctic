@@ -9,6 +9,9 @@
     padding-bottom:15px;
     cursor: pointer;
   }
+  .benchtab-disabled{
+    cursor: default;
+  }
   .benchtabsep{
     display: inline-block;
     position: relative;
@@ -194,8 +197,6 @@
 </p>
 {% endblock %}
 
-{% block navright %}
-{% endblock %}
 
 {% block content %}
   <div class="container">
@@ -228,7 +229,9 @@
     <div class="benchtabview" id="bench-cube-view">
       <div class="row">
         <div class="col-md-3">
-          <div style="padding-top:120px; text-align: right;" data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
+          <div><button class="pull-right btn btn-default" id="save-my-cube-button">Save my cube</button></div>
+          <div><button class="pull-right btn btn-default" id="reset-cube-button">Reset</button></div>
+          <div style="padding-top:120px; text-align: right;" data-equip-type="gpu_component" data-equip-title="EQUIP A GRAPHICS CARD">
             <h3 class="equip-clickable">Graphics</h3>
             <hr>
             <div id="gpu-section" class="equip-clickable item-slot-section">
@@ -414,15 +417,6 @@
       </div>
     </div>
   </div>
-  
-  <!-- HIDDEN values (set during wizard) -->
-  {% if cube_name %}
-  <input type="text" value="{{cube_name}}" style="display:none;"/>
-  {% endif %}
-  {% if preset %}
-  <input type="text" value="{{preset}}" style="display:none;"/>
-  {% endif %}
-  
 {% endblock %}
 
 {% block javascript %}
@@ -434,6 +428,7 @@
 		return {
 			cubeName : {% if cube_name %}'{{cube_name}}'{% else %}null{% endif %},
 			preset : {% if preset %}'{{preset}}'{% else %}null{% endif %},
+			rig : {% if rig %}'{{rig.id}}'{% else %}null{% endif %}
 		};
 	}();
 
@@ -441,14 +436,12 @@
 
 <script type="text/javascript">
     //initialize rig (local storage)
-    var currentRig = {}; currentRig['parts'] = {};
+    var currentRig = {};
+    currentRig['parts'] = currentRig['parts'] || {};
 	$(function(){
 		
 		// set cube name
-		if (AC_GLOBALS.cubeName !== null) {
-			currentRig['name'] = AC_GLOBALS.cubeName;
-			renderRig();
-		}
+		currentRig['name'] = (AC_GLOBALS.cubeName !== null) ? AC_GLOBALS.cubeName : 'The Beast';
 		
 		// prepare preset values
 		if (AC_GLOBALS.preset !== null) {
@@ -462,10 +455,48 @@
                 if (presetRig['display_component_id'] !== undefined) currentRig['parts']['display_id'] = presetRig['display_component_id'];
                 if (presetRig['cpu_component_id'] !== undefined) currentRig['parts']['cpu_id'] = presetRig['cpu_component_id'];
                 
-                // pull down part data and render rig
                 refreshPartsCache(renderRig);
-                
 			});
+		}
+		
+		// initial render
+		refreshPartsCache(renderRig);
+		
+		//
+		//
+		// initialization complete
+		// set up bindings etc.
+		//
+		//
+		
+		$('#save-my-cube-button').click(function(){
+			// if the user is logged in this link will click off save
+			// else the user will need to register before they can save
+			ArcticBasics.isLoggedIn(saveCube, function(){
+				// not logged in
+				ArcticBasics.initLogin(saveCube);
+			});
+		});
+		
+		function saveCube(){
+			alert('INIT SAVE!!');
+			
+			var postRig = currentRig['parts'];
+			postRig['name'] = currentRig['name'];
+			//postRig.rig_id = //TODO
+			
+			$.post('/savecube', postRig).success(function(data){
+				alert('response ' + data)
+			});
+			
+		}
+	
+		$('#reset-cube-button').click(resetCube);
+		
+		function resetCube(){
+		    currentRig = {};
+		    currentRig['parts'] = {};
+		    renderRig();
 		}
 		
 		// selected item prior to save
@@ -509,16 +540,18 @@
 		$('.benchtab').click(function(){
 			// show the correct view and hide the current view
 			
-			// hide current views
-			$('.benchtabview').hide();
-			
-			// show selected view
-			var tabname = $(this).attr('data-tabname');
-			$('#' + tabname).show();
-			
-			// make all tabs inactive, and mark this active
-			$('.benchtab').removeClass('benchtabactive');
-			$(this).addClass('benchtabactive');
+			if (!$(this).hasClass('benchtab-disabled')) {
+    			// hide current views
+    			$('.benchtabview').hide();
+    			
+    			// show selected view
+    			var tabname = $(this).attr('data-tabname');
+    			$('#' + tabname).show();
+    			
+    			// make all tabs inactive, and mark this active
+    			$('.benchtab').removeClass('benchtabactive');
+    			$(this).addClass('benchtabactive');
+			}
 		});
 		
 		//
@@ -651,6 +684,11 @@
 			// Remove display titles
 			$('.item-slot-section').empty();
 			
+			//
+			//
+			// Disable save and share button (assume cube positions have not all been filled)
+			$('#save-my-cube-button').prop('disabled', true);
+			$('#benchtab-share').addClass('benchtab-disabled');
 			
 			var coreComponentCount = 0;
 			var worstComponent = null;
@@ -707,15 +745,19 @@
 			}
 			
 			if (coreComponentCount == 4) {
-				//alert('All 4 ... aaaaannnd............     ' + worstComponent.perf_color);
+				// set center cube and avatar cubes
 				$('#cubedisplay-middle').attr('src','/static/cube-images/cube-middle-' + worstComponentDetail.perf_color + '.png');
 				$('#cube-avatar').attr('src', '/static/cube-images/cube-avatar-' + worstComponentDetail.perf_color + '.png');
+				
+				// enable save button and share button
+				$('#save-my-cube-button').prop('disabled', false);
+				$('#benchtab-share').removeClass('benchtab-disabled');
 			}
 			
 			// set rig name
 			if (currentRig.name !== undefined) {
 				$('#rig_name_main').html(currentRig.name);
-			}
+			}		
 			
 		}
 		
@@ -744,6 +786,7 @@
 					ids += ',';
 				}
 			}
+			if (ids.length === 0) return;
 			$.getJSON( "getparts", {ids:ids}).success(function(data) {
 				var partsList = JSON.parse(data.parts);
 	        	for (part in partsList) {

@@ -8,3 +8,4 @@ oauth2client==1.4.11
 google-api-python-client==1.4.1
 pytz==2015.7
 paste==2.0.2
+flask-security==1.7.5

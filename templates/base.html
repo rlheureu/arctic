@@ -80,8 +80,15 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{{ url_for('static', filename='js/jquery-1.12.0.min.js') }}"></script>
+    
   </head>
   <body>
+  
+  
+  
     <nav class="navbar navbar-inverse">
       <div class="container-fluid">
         <div class="row">
@@ -98,8 +105,15 @@
           </div>
           <div class="col-md-3 align-text-left ">
             {% block navright %}
-              <a class="landing-nav-links" href="#">Login</a>
-              <a class="blue-link" href="pickconfig">GET STARTED »</a>
+              {% if current_user.is_authenticated %}
+              <a class="landing-nav-links" href="#">Account</a>
+              &nbsp;&nbsp;|&nbsp;&nbsp;
+              <a class="landing-nav-links" href="/logoutuser">Logout</a>
+              {% elif show_get_started %}
+              <a class="landing-nav-links" style="cursor: pointer;" id="navloginbutton">Login</a>
+              <a class="blue-link" href="presets">GET STARTED »</a>
+              {% else %}
+              {% endif %}
             </ul>
             {% endblock %}
           </div>
@@ -109,11 +123,127 @@
     
     <div id="content">{% block content %}{% endblock %}</div>
     
+    <!-- ----------- -->
+    <!-- LOGIN MODAL -->
+    <!-- ----------- -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="login-modal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h3 class="modal-title">Sign up or Login</h3>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h4>Sign up for an account</h4>
+                <div class="form">
+                  <div class="form-group">
+                    <input type="text" placeholder="Profile name" name="username" class="form-control" id="signup-username" />
+                  </div>
+                  <div class="form-group">
+                    <input type="email" placeholder="Email address" name="email" class="form-control" id="signup-email" />
+                  </div>
+                  <div class="form-group">
+                    <input type="password" placeholder="Password" name="password" class="form-control" id="signup-password" />
+                  </div>
+                  <div class="form-group">
+                    <input type="text" placeholder="How did you hear about us?" name="howheard" class="form-control" id="signup-howheard" />
+                  </div>
+                  <button class="btn btn-primary" id="signup-button">Sign up</button>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h4>Login</h4>
+                <div class="form">
+                  <div class="form-group">
+                    <input type="email" placeholder="Email address" name="email" class="form-control" id="signin-email"/>
+                  </div>
+                  <div class="form-group">
+                    <input type="password" placeholder="Password" name="password" class="form-control" id="signin-password"/>
+                  </div>
+                  <button class="btn btn-primary" id="signin-button">Sign in</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
     
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="{{ url_for('static', filename='js/jquery-1.12.0.min.js') }}"></script>
+    
+    <!-- DEBUGGING -->
+    <span id="status"></span>
+    
+    
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    
+    <script type="text/javascript">
+    var ArcticBasics = function(){
+    	
+    	var self = this;
+    	self.loginCompleteCB = null;
+    	
+    	//
+    	// Show login/signup modal
+		//
+    	self.initLogin = function(loginCompleteCB){
+    		$('#login-modal').modal({show:true});
+    		self.loginCompleteCB = loginCompleteCB;
+    	};
+    	
+    	self.isLoggedIn = function(loggedInCB, notCB){
+			$.getJSON('/isloggedin', function(data){
+				if (data.loggedin === true) {
+					loggedInCB();
+				} else {
+					notCB();
+				}
+			})
+		};
+		
+		self.loginComplete = function(){
+			$('#login-modal').modal('hide');
+			if (self.loginCompleteCB !== null) {
+				self.loginCompleteCB();
+			}
+		}
+    	
+    	return {
+    		"initLogin" : self.initLogin,
+    		"loginComplete" : self.loginComplete,
+    		"isLoggedIn" : self.isLoggedIn
+    	}
+    }();
+    
+    $(function(){
+    	
+    	$('#signin-button').click(function(){
+    		var email = $('#signin-email').val();
+    		var password = $('#signin-password').val();
+    		$.post('loginuser', {email:email,password:password}).success(function(data){
+    			if (data.authenticated === true){
+    				alert('Logged in');	
+    				ArcticBasics.loginComplete();
+    			} else{
+    				alert('Unable to log in: ' + data.reason);
+    			}
+    			
+    		})
+    	});
+    	
+    	$('#navloginbutton').click(function(){
+    		ArcticBasics.initLogin(function(){
+    			// user is logging in from the home page
+    			// after the login we probably want to redirect to the bench
+    			window.location = '/';
+    		});
+    	});
+    	
+    });
+    </script>
+    
     {% block javascript %}
     {% endblock %}
     

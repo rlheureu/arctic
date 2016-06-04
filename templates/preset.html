@@ -12,29 +12,42 @@
 </p>
 {% endblock %}
 
-{% block navright %}
-{% endblock %}
-
 {% block content %}
   <div class="container">
     <div class="row">
       <div class="col-md-2"></div>
       <div class="col-md-8">
-        <h2 style="text-align:center;">Please select a preset</h2>
-        <hr/>
+        <h2 style="text-align:center;">Build Your PC the Amdahl Cube Way</h2>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8" style="border:1px solid #ccc">
+        <h3>Customize</h3>
+        <p><a class="btn btn-primary btn-lg" href="namecube">Go</a></p>
       </div>
       <div class="col-md-2"></div>
     </div>
     
     <div class="row">
-      <div class="col-md-12">
-      {% for rig in rig_presets %}
-        <div class="jumbotron" style="display:inline-block;">
-          <h3>{{rig.rig_preset_name}}</h3>
-          <p><a class="btn btn-primary btn-lg" href="namecube?preset={{rig.id}}">Go</a></p>
-        </div>
-      {% endfor %}
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <h2 style="text-align:center;">Or... Select From Our Presets</h2>
       </div>
+      <div class="col-md-2"></div>
     </div>
+    
+    {% for rig in rig_presets %}
+    <br>
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8" style="border:1px solid #ccc">
+        <h3>{{rig.rig_preset_name}}</h3>
+        <p><a class="btn btn-primary btn-lg" href="namecube?preset={{rig.id}}">Go</a></p>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+    {% endfor %}
   </div>
 {% endblock %}

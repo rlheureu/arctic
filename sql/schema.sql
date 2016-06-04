@@ -46,8 +46,35 @@ CREATE TABLE `arctic_user` (
   `arctic_user_id` int(11) NOT NULL AUTO_INCREMENT,
   `first_name` varchar(100) DEFAULT NULL,
   `last_name` varchar(100) DEFAULT NULL,
+  `fb_id` varchar(100) DEFAULT NULL,
+  `profile_name` varchar(100) DEFAULT NULL,
+  `how_hear` varchar(1000) DEFAULT NULL,
+  `fb_token` text,
+  `email` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `active` int(11) DEFAULT NULL,
+  `confirmed_at` datetime DEFAULT NULL,
   PRIMARY KEY (`arctic_user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `arctic_user_role` (
+  `arctic_user_role_id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`arctic_user_role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `arctic_roles_users` (
+  `user_id` int(11) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  KEY `roles_users_role_idx` (`role_id`),
+  KEY `roles_users_user_idx` (`user_id`),
+  CONSTRAINT `roles_users_role` FOREIGN KEY (`role_id`) REFERENCES `arctic_user_role` (`arctic_user_role_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `roles_users_user` FOREIGN KEY (`user_id`) REFERENCES `arctic_user` (`arctic_user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 CREATE TABLE `arctic_rig` (
   `arctic_rig_id` int(11) NOT NULL AUTO_INCREMENT,

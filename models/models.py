@@ -5,15 +5,14 @@ Core model types defined here
 '''
 from datetime import datetime
 
+from flask_login import UserMixin
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey, Column
-from sqlalchemy.sql.sqltypes import Integer, String, Boolean
+from sqlalchemy.sql.sqltypes import Integer, String, Boolean, Text, DateTime
 
 
 Base = declarative_base()
-
-
 
 class BaseComponent(Base):
     __tablename__ = 'arctic_component'
@@ -107,12 +106,33 @@ class DisplayComponent(BaseComponent):
         'polymorphic_identity' : 'DISPLAY'
     }
 
-class User(Base):
+class User(Base, UserMixin):
     __tablename__ = 'arctic_user'
 
     id = Column('arctic_user_id', Integer, primary_key=True)
+    email = Column('email', String(255), unique=True)
+    password = Column('password', String(255))
+    active = Column('active', Boolean())
+    confirmed_at = Column('confirmed_at', DateTime())
+    fb_id = Column('fb_id', String(100))
+    profile_name = Column('profile_name', String(100))
+    how_hear = Column('how_hear', String(1000))
     first_name = Column('first_name', String(100))
     last_name = Column('last_name', String(100))
+    fb_token = Column('fb_token', Text)
+
+    def __init__(self):
+        self.authenticated = False
+        self.active = False
+        self.anonymous = False
+    
+    def get_id(self): return self.id
+    
+    """ NOTE the below have been set to True, meaning the session
+    will manage whether a user is logged in or not, this needs to be fixed """
+    def is_authenticated(self): return True
+    def is_active(self): return True
+    def is_anonymous(self): return False
 
 class Rig(Base):
     __tablename__ = 'arctic_rig'
