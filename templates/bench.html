@@ -200,63 +200,119 @@
   
   
   #ac-cube-section-gpu{
+    text-align:left;
     position: absolute;
     top: 179px;
-    left: 35px;
+    left: 70px;
   }
   #ac-cube-section-cpu{
+    text-align:left;
     position: absolute;
     top: 20px;
-    left: 35px;
+    left: 70px;
   }
   #ac-cube-section-memory{
+    text-align:left;
     position: absolute;
     top: 348px;
-    left: 35px;
+    left: 70px;
   }
   #ac-cube-section-display{
+    text-align:left;
     position: absolute;
     top: 523px;
-    left: 35px;
+    left: 70px;
   }
   
   #ac-cubedisplay-middle{
     position: absolute;
     top: 144px;
-    left: 675px;
+    left: 710px;
   }
   #ac-cubedisplay-gpu{
     position: absolute;
     top: 136px;
-    left: 585px;
+    left: 620px;
   }
   #ac-cubedisplay-cpu{
     position: absolute;
     top: 135px;
-    left: 882px;
+    left: 917px;
   }
   #ac-cubedisplay-memory{
     position: absolute;
     top: 396px;
-    left: 734px;
+    left: 769px;
   }
   #ac-cubedisplay-display{
     position: absolute;
     top: 418px;
-    left: 886px;
+    left: 919px;
   }
   
   #bench-cube-title{
     border-left: solid 4px #cccccc;
     display: inline-block;
     padding-left: 15px;
+    left: 34px;
+    position: relative;
   }
   #bench-cube-subtitle{
     font-size: 14px;
     display: block;
     top: -10px;
-    padding-left: 20px;
+    padding-left: 53px;
     position: relative;
+  }
+  #componentsection_motherboard{
+    position: absolute;
+    top: 87px;
+    left: 476px;
+  }
+  #componentsection_storage{
+    position: absolute;
+    top: 209px;
+    left: 542px;
+  }
+  #componentsection_power{
+    position: absolute;
+    top: 336px;
+    left: 542px;
+  }
+  #componentsection_audio{
+    position: absolute;
+    top: 457px;
+    left: 476px;
+  }
+  
+  #other-components-bg{
+    background-image: url("/static/images/bg-white.jpg");
+    width:100%;
+  }
+  
+  #ac-cube-section-motherboard{
+    position: absolute;
+    top: 104px;
+    left: 750px;
+    text-align: left;
+  }
+  #ac-cube-section-storage{
+    position: absolute;
+    top: 224px;
+    left: 750px;
+    text-align: left;
+  }
+  #ac-cube-section-power{
+    position: absolute;
+    top: 353px;
+    left: 750px;
+    text-align: left;
+  }
+  #ac-cube-section-audio{
+    position: absolute;
+    top: 476px;
+    left: 750px;
+    text-align: left;
   }
   </style>
 {% endblock %}
@@ -291,7 +347,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-sm-12" style="text-align:center;">
         
         <img src="/static/images/cube-with-lines.png">
         <div id="ac-cube-section-cpu" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
@@ -327,10 +383,58 @@
         <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-memory" />
         <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-display" />
         <!--// Cube DISPLAY -->
+        <br><br><br><br><br>
       </div>
     </div>   
     
   </div>
+
+
+  <div id="other-components-bg">
+    <br><br><br>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6"></div>
+        <div class="col-sm-6">
+          <h1 class="pull-right" style="color: #696c7f;display: inline-block;border-left: solid 4px #cac9d1;padding-left: 15px;">OTHER COMPONENTS</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12" style="text-align: center;">
+          <img src="/static/images/component-bg.png">
+          <img src="/static/images/component-filled.png" id="componentsection_motherboard">
+          <img src="/static/images/component-filled.png" id="componentsection_storage">
+          <img src="/static/images/component-filled.png" id="componentsection_power">
+          <img src="/static/images/component-filled.png" id="componentsection_audio">
+          
+          <div id="ac-cube-section-motherboard" data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
+            <span class=acbench-item-heading style="display:block;">Motherboard</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div id="ac-motherboard-section" class="equip-clickable item-slot-section"></div>
+          </div>
+          <div id="ac-cube-section-storage" data-equip-type="display" data-equip-title="EQUIP STORAGE">
+            <span class="acbench-item-heading" style="display:block;">Storage</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
+          </div>
+          <div id="ac-cube-section-power" data-equip-type="power" data-equip-title="EQUIP A POWER SUPPLY">
+            <span class="acbench-item-heading" style="display:block;">Power Supply</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
+          </div>
+          <div id="ac-cube-section-audio" data-equip-type="audio" data-equip-title="EQUIP AUDIO">
+            <span class="acbench-item-heading" style="display:block;">Audio</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
+          </div>
+          
+          
+          <br><br><br><br><br>
+        </div>
+      </div>
+    </div>
+  </div>
+
   
   <div class="container" id="pick-part-modal">
     <div class="row">
@@ -641,7 +745,8 @@
 			$('#ac-cubedisplay-cpu').attr('src','/static/cube-images/ac-cube-small-default.png');
 			$('#ac-cubedisplay-memory').attr('src','/static/cube-images/ac-cube-small-default.png');
 			$('#ac-cubedisplay-display').attr('src','/static/cube-images/ac-cube-small-default.png');
-			$('#cube-avatar').attr('src', '/static/cube-images/cube-avatar-default.png');
+			$('#bench-cube-title').removeClass();
+			$('#bench-cube-subtitle').empty();
 			
 			//
 			//
@@ -710,8 +815,8 @@
 			if (coreComponentCount == 4) {
 				// set center cube and avatar cubes
 				$('#ac-cubedisplay-middle').attr('src','/static/cube-images/ac-cube-middle-' + worstComponentDetail.perf_color + '.png');
-				//$('#cube-avatar').attr('src', '/static/cube-images/cube-avatar-' + worstComponentDetail.perf_color + '.png');
 				$('#bench-cube-title').addClass('border-' + worstComponentDetail.perf_color);
+				$('#bench-cube-subtitle').html(constructPerformanceNote(worstComponentDetail));
 				
 				// enable save button and share button
 				$('#save-my-cube-button').prop('disabled', false);
@@ -720,7 +825,7 @@
 			
 			// set rig name
 			if (currentRig.name !== undefined) {
-				$('#rig_name_main').html(currentRig['name']);
+				$('#bench-cube-title').html(currentRig['name']);
 			}		
 			
 		}
