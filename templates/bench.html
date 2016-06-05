@@ -402,10 +402,10 @@
       <div class="row">
         <div class="col-sm-12" style="text-align: center;">
           <img src="/static/images/component-bg.png">
-          <img src="/static/images/component-filled.png" id="componentsection_motherboard">
-          <img src="/static/images/component-filled.png" id="componentsection_storage">
-          <img src="/static/images/component-filled.png" id="componentsection_power">
-          <img src="/static/images/component-filled.png" id="componentsection_audio">
+          <img src="/static/images/component-default.png" id="componentsection_motherboard">
+          <img src="/static/images/component-default.png" id="componentsection_storage">
+          <img src="/static/images/component-default.png" id="componentsection_power">
+          <img src="/static/images/component-default.png" id="componentsection_audio">
           
           <div id="ac-cube-section-motherboard" data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
             <span class=acbench-item-heading style="display:block;">Motherboard</span>
@@ -737,26 +737,8 @@
 			console.log('Rendering Rig');
 			console.log(currentRig);
 			
-			//
-			//
-			// RESET Cube positions
-			$('#ac-cubedisplay-middle').attr('src','/static/cube-images/ac-cube-middle-default.png');
-			$('#ac-cubedisplay-gpu').attr('src','/static/cube-images/ac-cube-small-default.png');
-			$('#ac-cubedisplay-cpu').attr('src','/static/cube-images/ac-cube-small-default.png');
-			$('#ac-cubedisplay-memory').attr('src','/static/cube-images/ac-cube-small-default.png');
-			$('#ac-cubedisplay-display').attr('src','/static/cube-images/ac-cube-small-default.png');
-			$('#bench-cube-title').removeClass();
-			$('#bench-cube-subtitle').empty();
-			
-			//
-			//
-			// show all equip buttons
-			$('.equipbutton').show();
-			
-			//
-			//
-			// Remove display titles
-			$('.item-slot-section').empty();
+			// reset to fresh UI
+			resetBenchUI();
 			
 			//
 			//
@@ -784,32 +766,25 @@
 				console.log('comp type: ' + compType);
 				
 				// modify view
-				var view = $('#ac-' + compType + '-section');
-				view.prev().hide();
-				view.empty();
-				
-				var displaySpan = $('<span></span>');
-				displaySpan.append(constructDisplayName(partDetail));
-				displaySpan.addClass('fg-' + partDetail.perf_color);
-				displaySpan.addClass('part-item-title');
-
-				view.append(displaySpan.clone());
-				view.append('<br><span>' + constructPerformanceNote(partDetail) + '</span>')
-				
-				// modify colors
-				$('#ac-cubedisplay-' + compType).attr('src',
-						'/static/cube-images/ac-cube-small-' + partDetail.perf_color + '.png');
-				
-				//
-				// incremenent component count
-				// and set worst component
 				if (isCoreComponent(compType)) {
-					coreComponentCount++;
-					if (worstComponent == null || partDetail.perf_color_coded < worstComponent) {
-  						worstComponent = partDetail.perf_color_coded;
-  						worstComponentDetail = partDetail;
+					// modify core view
+					renderCoreComponent(compType, partDetail);
+					
+					//
+					// incremenent component count
+					// and set worst component
+					if (isCoreComponent(compType)) {
+						coreComponentCount++;
+						if (worstComponent == null || partDetail.perf_color_coded < worstComponent) {
+								worstComponent = partDetail.perf_color_coded;
+								worstComponentDetail = partDetail;
+						}
 					}
+				} else{
+					// modify other view
+					renderOtherComponent(compType, partDetail);
 				}
+				
 			}
 			
 			if (coreComponentCount == 4) {
@@ -828,6 +803,72 @@
 				$('#bench-cube-title').html(currentRig['name']);
 			}		
 			
+		}
+		
+		function renderCoreComponent(compType, partDetail){
+			// modify core view
+			var view = $('#ac-' + compType + '-section');
+			view.prev().hide();// hide equip button
+			view.empty();
+			
+			var displaySpan = $('<span></span>');
+			displaySpan.append(constructDisplayName(partDetail));
+			displaySpan.addClass('fg-' + partDetail.perf_color);
+			displaySpan.addClass('part-item-title'); // styling
+
+			view.append(displaySpan.clone());
+			view.append('<br><span>' + constructPerformanceNote(partDetail) + '</span>')
+			
+			// modify colors
+			$('#ac-cubedisplay-' + compType).attr('src',
+					'/static/cube-images/ac-cube-small-' + partDetail.perf_color + '.png');
+		}
+		
+		function renderOtherComponent(compType, partDetail){
+			// modify core view
+			var view = $('#ac-' + compType + '-section');
+			view.prev().hide(); // hide equip button
+			view.empty();
+			
+			var displaySpan = $('<span></span>');
+			displaySpan.append(constructDisplayName(partDetail));
+			displaySpan.addClass('part-item-title'); // styling
+
+			view.append(displaySpan.clone());
+			
+			// set filled cube
+			$('#componentsection_' + compType).attr('src','/static/images/component-filled.png');
+		}
+		
+		function resetBenchUI(){
+			//
+			//
+			// RESET Cube positions
+			$('#ac-cubedisplay-middle').attr('src','/static/cube-images/ac-cube-middle-default.png');
+			$('#ac-cubedisplay-gpu').attr('src','/static/cube-images/ac-cube-small-default.png');
+			$('#ac-cubedisplay-cpu').attr('src','/static/cube-images/ac-cube-small-default.png');
+			$('#ac-cubedisplay-memory').attr('src','/static/cube-images/ac-cube-small-default.png');
+			$('#ac-cubedisplay-display').attr('src','/static/cube-images/ac-cube-small-default.png');
+			$('#bench-cube-title').removeClass();
+			$('#bench-cube-subtitle').empty();
+			
+			//
+			//
+			// Reset component cubes
+			$('#componentsection_motherboard').attr('src','/static/images/component-default.png');
+			$('#componentsection_storage').attr('src','/static/images/component-default.png');
+			$('#componentsection_power').attr('src','/static/images/component-default.png');
+			$('#componentsection_audio').attr('src','/static/images/component-default.png');
+			
+			//
+			//
+			// Remove display titles
+			$('.item-slot-section').empty();
+			
+			//
+			//
+			// show all equip buttons
+			$('.equipbutton').show();
 		}
 		
 		function constructDisplayName(part){
