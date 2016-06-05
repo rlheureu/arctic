@@ -105,8 +105,25 @@
         font-weight: 700;
         color: #ffffff;
       }
+      input[type="text"].ac-input-light {
+        padding: 8px;
+        border: solid 2px #54505C;
+        font-size: 25px;
+        background: transparent;
+        font-weight: 700;
+        color: #333333;
+      }
+      input[type="text"].ac-input-light:focus,
+      input[type="text"].ac-input-light.focus {
+        padding: 8px;
+        border: solid 2px #54505C;
+        font-size: 25px;
+        background: transparent;
+        font-weight: 700;
+        color: #333333;
+      }
       .ac-btn{
-        background-color: #000000;
+        background-color: transparent;
         padding-left:30px;
         padding-right:30px;
         border:solid 4px #14243d;
@@ -174,6 +191,26 @@
         padding-top:17px;
         text-decoration: none;
         text-shadow: none;
+      }
+      .modal-content{
+        background-image: url("/static/images/bg-white.jpg");
+        border-radius:0px;
+      }
+      .modal-header{
+        border-bottom: 1px solid #ccc;
+        text-align: center;
+      }
+      .modal-title{
+        font-weight:300;
+        font-size:20px;
+        color:#333333;
+      }
+      .modal-footer{
+        background-image: url("/static/images/bg-dark.jpg");
+        border-radius:0px;
+        border: 1px solid #777777;
+        border-top:3px solid #777777;
+        text-align: center;
       }
     </style>
     {% endblock %}

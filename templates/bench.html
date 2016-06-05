@@ -157,7 +157,7 @@
     overflow-y:auto;
     height:300px;
   }
-  .equip-clickable{
+  .equip-clickable, .pointer{
     cursor: pointer;
   }
   
@@ -347,12 +347,12 @@
   
     <div class="row">
       <div class="col-md-8">
-        <h1 id="bench-cube-title">Cube Title</h1>
-        <span id="bench-cube-subtitle">Performance subtitle</span>
+        <h1 id="bench-cube-title">Cube Name</h1>
+        <span id="bench-cube-subtitle"></span>
       </div>
       <div class="col-md-4">
         <br>
-        <button class="ac-btn">Save Cube</button>
+        <button class="ac-btn" id="save-cube-button">Save Cube</button>
       </div>
     </div>
     <div class="row">
@@ -413,24 +413,24 @@
           <img src="/static/images/component-bg.png">
           
           <div id="ac-cube-section-motherboard" data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
-            <img src="/static/images/component-default.png" id="componentsection_motherboard" class="equip-clickable other-clickable">
-            <span class="acbench-item-heading equip-clickable other-clickable" style="display:block;">Motherboard <span class="other-component-note">*</span></span>
-            <div id="ac-motherboard-section" class="equip-clickable item-slot-section other-clickable"></div>
+            <img src="/static/images/component-default.png" id="componentsection_motherboard" class="other-clickable">
+            <span class="acbench-item-heading other-clickable" style="display:block;">Motherboard <span class="other-component-note">*</span></span>
+            <div id="ac-motherboard-section" class="item-slot-section other-clickable"></div>
           </div>
           <div id="ac-cube-section-storage" data-equip-type="display" data-equip-title="EQUIP STORAGE">
-            <img src="/static/images/component-default.png" id="componentsection_storage" class="equip-clickable other-clickable">
-            <span class="acbench-item-heading equip-clickable other-clickable" style="display:block;">Storage <span class="other-component-note">*</span></span>
-            <div id="ac-display-section" class="equip-clickable item-slot-section other-clickable"></div>
+            <img src="/static/images/component-default.png" id="componentsection_storage" class="other-clickable">
+            <span class="acbench-item-heading other-clickable" style="display:block;">Storage <span class="other-component-note">*</span></span>
+            <div id="ac-display-section" class="item-slot-section other-clickable"></div>
           </div>
           <div id="ac-cube-section-power" data-equip-type="power" data-equip-title="EQUIP A POWER SUPPLY">
-            <img src="/static/images/component-default.png" id="componentsection_power" class="equip-clickable other-clickable">
-            <span class="acbench-item-heading equip-clickable other-clickable" style="display:block;">Power Supply <span class="other-component-note">*</span></span>
-            <div id="ac-display-section" class="equip-clickable item-slot-section other-clickable"></div>
+            <img src="/static/images/component-default.png" id="componentsection_power" class="other-clickable">
+            <span class="acbench-item-heading other-clickable" style="display:block;">Power Supply <span class="other-component-note">*</span></span>
+            <div id="ac-display-section" class="item-slot-section other-clickable"></div>
           </div>
           <div id="ac-cube-section-audio" data-equip-type="audio" data-equip-title="EQUIP AUDIO">
-            <img src="/static/images/component-default.png" id="componentsection_audio" class="equip-clickable other-clickable">
-            <span class="acbench-item-heading equip-clickable other-clickable" style="display:block;">Audio <span class="other-component-note">*</span></span>
-            <div id="ac-display-section" class="equip-clickable item-slot-section other-clickable"></div>
+            <img src="/static/images/component-default.png" id="componentsection_audio" class="other-clickable">
+            <span class="acbench-item-heading other-clickable" style="display:block;">Audio <span class="other-component-note">*</span></span>
+            <div id="ac-display-section" class="item-slot-section other-clickable"></div>
           </div>
           
           <span id="other-component-note-span" class="other-component-note">* Equip core items to fill in secondary stats</span>
@@ -440,7 +440,32 @@
     </div>
   </div>
 
-  
+  <!-- --------------- -->
+  <!-- --------------- -->
+  <!-- EDIT NAME MODAL -->
+  <!-- --------------- -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="edit-name-modal">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Edit Name</h4>
+        </div>
+        <div class="modal-body">
+          <p><input type="text" class="ac-input-light" style="width:100%;" id="change-name-input"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="ac-btn" id="save-name-change-button">Save</button>
+          &nbsp;&nbsp;
+          <button type="button" class="ac-btn" data-dismiss="modal">Cancel</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- --------------- -->
+  <!-- --------------- -->
+  <!-- PART PICKER MODAL -->
+  <!-- --------------- -->
   <div class="container" id="pick-part-modal">
     <div class="row">
       <div class="col-md-12" style="padding:0px;">
@@ -537,7 +562,7 @@
 	$(function(){
 		
 		// set cube name
-		currentRig['name'] = (AC_GLOBALS.cubeName !== null) ? AC_GLOBALS.cubeName : 'The Beast';
+		currentRig['name'] = (AC_GLOBALS.cubeName !== null) ? AC_GLOBALS.cubeName : 'Cube Name';
 		
 		// prepare preset values
 		if (AC_GLOBALS.preset !== null) {
@@ -565,7 +590,18 @@
 		//
 		//
 		
-		$('#save-my-cube-button').click(function(){
+		$('#bench-cube-title').css('cursor','pointer');
+		$('#bench-cube-title').click(function(){
+			$('#edit-name-modal').modal('show');
+			$('#change-name-input').val(currentRig.name);
+		});
+		$('#save-name-change-button').click(function(){
+			$('#edit-name-modal').modal('hide');
+			currentRig.name = $('#change-name-input').val();
+			renderRig();
+		});
+		
+		$('#save-cube-button').click(function(){
 			// if the user is logged in this link will click off save
 			// else the user will need to register before they can save
 			ArcticBasics.isLoggedIn(saveCube, function(){
@@ -586,8 +622,6 @@
 			});
 			
 		}
-	
-		$('#reset-cube-button').click(resetCube);
 		
 		function resetCube(){
 		    currentRig = {};
@@ -803,7 +837,7 @@
 				$('#benchtab-share').removeClass('benchtab-disabled');
 				
 				// enable equiping secondary components
-				$('.other-clickable').addClass('equip-clickable');
+				$('.other-clickable').addClass('pointer');
 				$('.other-clickable').click(renderPartPickerModal);
 				$('.other-component-note').hide();
 			}
@@ -882,7 +916,7 @@
 			//
 			//
 			// Other components cannot be edited by default (assuming cube not filled)
-			$('.other-clickable').removeClass('equip-clickable');
+			$('.other-clickable').removeClass('pointer');
 			$('.other-clickable').unbind();
 			$('.other-component-note').show();
 		}
