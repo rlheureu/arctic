@@ -231,23 +231,23 @@
   }
   #ac-cubedisplay-gpu{
     position: absolute;
-    top: 136px;
-    left: 620px;
+    top: -43px;
+    left: 548px;
   }
   #ac-cubedisplay-cpu{
     position: absolute;
-    top: 135px;
-    left: 917px;
+    top: 117px;
+    left: 847px;
   }
   #ac-cubedisplay-memory{
     position: absolute;
-    top: 396px;
-    left: 769px;
+    top: 48px;
+    left: 698px;
   }
   #ac-cubedisplay-display{
     position: absolute;
-    top: 418px;
-    left: 919px;
+    top: -105px;
+    left: 850px;
   }
   
   #bench-cube-title{
@@ -266,23 +266,24 @@
   }
   #componentsection_motherboard{
     position: absolute;
-    top: 87px;
-    left: 476px;
+    top: -16px;
+    left: -274px;
   }
   #componentsection_storage{
     position: absolute;
-    top: 209px;
-    left: 542px;
+    top: -15px;
+    left: -208px;
+
   }
   #componentsection_power{
     position: absolute;
-    top: 336px;
-    left: 542px;
+    top: -18px;
+    left: -208px;
   }
   #componentsection_audio{
     position: absolute;
-    top: 457px;
-    left: 476px;
+    top: -18px;
+    left: -274px;
   }
   
   #other-components-bg{
@@ -351,38 +352,37 @@
         
         <img src="/static/images/cube-with-lines.png">
         <div id="ac-cube-section-cpu" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
-          <span class="acbench-item-heading" style="display:block;">Processor</span>
+          <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-cpu" class="equip-clickable" />
+          <span class="acbench-item-heading equip-clickable" style="display:block;">Processor</span>
           <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-cpu-section" class="equip-clickable item-slot-section"></div>
         </div>
         
         <div id="ac-cube-section-gpu" data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
-          <span class="acbench-item-heading" style="display:block;">Graphics</span>
+          <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-gpu" class="equip-clickable"/>
+          <span class="acbench-item-heading equip-clickable" style="display:block;">Graphics</span>
           <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-gpu-section" class="equip-clickable item-slot-section"></div>
         </div>
         
         <div id="ac-cube-section-memory" data-equip-type="memory" data-equip-title="EQUIP MEMORY">
-          <span class="acbench-item-heading" style="display:block;">Memory</span>
+          <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-memory" class="equip-clickable" />
+          <span class="acbench-item-heading equip-clickable" style="display:block;">Memory</span>
           <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-memory-section" class="equip-clickable item-slot-section"></div>
         </div>
         
         <div id="ac-cube-section-display" data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
-          <span class="acbench-item-heading" style="display:block;">Display</span>
+          <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-display" class="equip-clickable"/>
+          <span class="acbench-item-heading equip-clickable" style="display:block;">Display</span>
           <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
         </div>
         
         <!-- CUBE DISPLAY -->
-        <!-- - - - - - - - -->
-        <!-- Default cube images go here! -->
         <img src="/static/cube-images/ac-cube-middle-default.png" id="ac-cubedisplay-middle" />
-        <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-gpu" />
-        <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-cpu" />
-        <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-memory" />
-        <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-display" />
         <!--// Cube DISPLAY -->
+        
         <br><br><br><br><br>
       </div>
     </div>   
@@ -401,29 +401,30 @@
       </div>
       <div class="row">
         <div class="col-sm-12" style="text-align: center;">
+        
           <img src="/static/images/component-bg.png">
-          <img src="/static/images/component-default.png" id="componentsection_motherboard">
-          <img src="/static/images/component-default.png" id="componentsection_storage">
-          <img src="/static/images/component-default.png" id="componentsection_power">
-          <img src="/static/images/component-default.png" id="componentsection_audio">
           
           <div id="ac-cube-section-motherboard" data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
-            <span class=acbench-item-heading style="display:block;">Motherboard</span>
+            <img src="/static/images/component-default.png" id="componentsection_motherboard" class="equip-clickable">
+            <span class="acbench-item-heading equip-clickable" style="display:block;">Motherboard</span>
             <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
             <div id="ac-motherboard-section" class="equip-clickable item-slot-section"></div>
           </div>
           <div id="ac-cube-section-storage" data-equip-type="display" data-equip-title="EQUIP STORAGE">
-            <span class="acbench-item-heading" style="display:block;">Storage</span>
+            <img src="/static/images/component-default.png" id="componentsection_storage" class="equip-clickable">
+            <span class="acbench-item-heading equip-clickable" style="display:block;">Storage</span>
             <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
             <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
           </div>
           <div id="ac-cube-section-power" data-equip-type="power" data-equip-title="EQUIP A POWER SUPPLY">
-            <span class="acbench-item-heading" style="display:block;">Power Supply</span>
+            <img src="/static/images/component-default.png" id="componentsection_power" class="equip-clickable">
+            <span class="acbench-item-heading equip-clickable" style="display:block;">Power Supply</span>
             <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
             <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
           </div>
           <div id="ac-cube-section-audio" data-equip-type="audio" data-equip-title="EQUIP AUDIO">
-            <span class="acbench-item-heading" style="display:block;">Audio</span>
+            <img src="/static/images/component-default.png" id="componentsection_audio" class="equip-clickable">
+            <span class="acbench-item-heading equip-clickable" style="display:block;">Audio</span>
             <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
             <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
           </div>
