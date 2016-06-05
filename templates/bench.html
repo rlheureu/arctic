@@ -315,6 +315,14 @@
     left: 750px;
     text-align: left;
   }
+  #other-component-note-span{
+    left: 750px;
+    display: inline-block;
+    position: absolute;
+  }
+  .other-component-note{
+    color: #3699f4;
+  }
   </style>
 {% endblock %}
 
@@ -405,31 +413,27 @@
           <img src="/static/images/component-bg.png">
           
           <div id="ac-cube-section-motherboard" data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
-            <img src="/static/images/component-default.png" id="componentsection_motherboard" class="equip-clickable">
-            <span class="acbench-item-heading equip-clickable" style="display:block;">Motherboard</span>
-            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
-            <div id="ac-motherboard-section" class="equip-clickable item-slot-section"></div>
+            <img src="/static/images/component-default.png" id="componentsection_motherboard" class="equip-clickable other-clickable">
+            <span class="acbench-item-heading equip-clickable other-clickable" style="display:block;">Motherboard <span class="other-component-note">*</span></span>
+            <div id="ac-motherboard-section" class="equip-clickable item-slot-section other-clickable"></div>
           </div>
           <div id="ac-cube-section-storage" data-equip-type="display" data-equip-title="EQUIP STORAGE">
-            <img src="/static/images/component-default.png" id="componentsection_storage" class="equip-clickable">
-            <span class="acbench-item-heading equip-clickable" style="display:block;">Storage</span>
-            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
-            <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
+            <img src="/static/images/component-default.png" id="componentsection_storage" class="equip-clickable other-clickable">
+            <span class="acbench-item-heading equip-clickable other-clickable" style="display:block;">Storage <span class="other-component-note">*</span></span>
+            <div id="ac-display-section" class="equip-clickable item-slot-section other-clickable"></div>
           </div>
           <div id="ac-cube-section-power" data-equip-type="power" data-equip-title="EQUIP A POWER SUPPLY">
-            <img src="/static/images/component-default.png" id="componentsection_power" class="equip-clickable">
-            <span class="acbench-item-heading equip-clickable" style="display:block;">Power Supply</span>
-            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
-            <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
+            <img src="/static/images/component-default.png" id="componentsection_power" class="equip-clickable other-clickable">
+            <span class="acbench-item-heading equip-clickable other-clickable" style="display:block;">Power Supply <span class="other-component-note">*</span></span>
+            <div id="ac-display-section" class="equip-clickable item-slot-section other-clickable"></div>
           </div>
           <div id="ac-cube-section-audio" data-equip-type="audio" data-equip-title="EQUIP AUDIO">
-            <img src="/static/images/component-default.png" id="componentsection_audio" class="equip-clickable">
-            <span class="acbench-item-heading equip-clickable" style="display:block;">Audio</span>
-            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
-            <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
+            <img src="/static/images/component-default.png" id="componentsection_audio" class="equip-clickable other-clickable">
+            <span class="acbench-item-heading equip-clickable other-clickable" style="display:block;">Audio <span class="other-component-note">*</span></span>
+            <div id="ac-display-section" class="equip-clickable item-slot-section other-clickable"></div>
           </div>
           
-          
+          <span id="other-component-note-span" class="other-component-note">* Equip core items to fill in secondary stats</span>
           <br><br><br><br><br>
         </div>
       </div>
@@ -631,6 +635,9 @@
 		$('.equip-clickable').click(renderPartPickerModal);
 		
 		function renderPartPickerModal() {
+			var eType = $(this).parent().data('equip-type');
+			equipType = eType;
+			
 			//
 			// clear out any previously selected parts
 			toEquip = null;
@@ -639,9 +646,6 @@
 			// set title
 			var equipTitle = $(this).parent().data('equip-title');
 			$('#equip-modal-title').html(equipTitle);
-			
-			var eType = $(this).parent().data('equip-type');
-			equipType = eType;
 			
 			var currentEquippedId = currentRig['parts'][eType + '_id'];
 	        
@@ -797,6 +801,11 @@
 				// enable save button and share button
 				$('#save-my-cube-button').prop('disabled', false);
 				$('#benchtab-share').removeClass('benchtab-disabled');
+				
+				// enable equiping secondary components
+				$('.other-clickable').addClass('equip-clickable');
+				$('.other-clickable').click(renderPartPickerModal);
+				$('.other-component-note').hide();
 			}
 			
 			// set rig name
@@ -828,7 +837,6 @@
 		function renderOtherComponent(compType, partDetail){
 			// modify core view
 			var view = $('#ac-' + compType + '-section');
-			view.prev().hide(); // hide equip button
 			view.empty();
 			
 			var displaySpan = $('<span></span>');
@@ -870,6 +878,13 @@
 			//
 			// show all equip buttons
 			$('.equipbutton').show();
+			
+			//
+			//
+			// Other components cannot be edited by default (assuming cube not filled)
+			$('.other-clickable').removeClass('equip-clickable');
+			$('.other-clickable').unbind();
+			$('.other-component-note').show();
 		}
 		
 		function constructDisplayName(part){
