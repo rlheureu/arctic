@@ -130,7 +130,7 @@ class User(Base, UserMixin):
     
     """ NOTE the below have been set to True, meaning the session
     will manage whether a user is logged in or not, this needs to be fixed """
-    def is_authenticated(self): return True
+    def is_authenticated(self): return False
     def is_active(self): return True
     def is_anonymous(self): return False
 
