@@ -12,16 +12,120 @@
 
     {% block styling %}
     <!-- Bootstrap -->
-    <link href="{{ url_for('static', filename='css/slate-bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/non-responsive.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <style type="text/css">
       .navbar {
         background: #e6e6e6;
         border-radius: 0px;
       }
       body{
-        background-color: #191919;
+        background-image: url("/static/images/bg-dark.jpg");
+        background-repeat: no-repeat;
         padding-top:0px;
+        font-family: 'Open Sans', sans-serif;
+        color:#6c6974;
+      }
+      h1, h2, h3{
+        font-family: 'Open Sans', sans-serif;
+        font-weight:700;
+        color:#ffffff;
+      }
+      .navbar-page-title{
+        font-weight: 300;
+        color:#19173f;
+        font-size:21px;
+      }
+      .wizard-steps-breadcrumbs ul{
+        list-style:none;
+        margin:0px;
+      }
+      .wizard-steps-breadcrumbs ul li{
+        border-bottom: #716b77 3px solid;
+        display: inline-block;
+        position: relative;
+        width:140px;
+        padding-bottom: 5px;
+        top: 6px;
+        margin-left: 1px;
+        margin-right: 1px;
+        color: #716b77;
+        font-weight:600;
+      }
+      .wizard-steps-breadcrumbs li.active{
+        border-bottom: #309cf4 4px solid;
+        color:#ffffff;
+      }
+      .wizard-sub-heading{
+        font-family: 'Open Sans', sans-serif;
+        color:#c2bad1;
+        font-weight: 300;
+        font-size: 20px;
+      }
+      .wizard-item-border{
+        border: 2px solid #54505e;
+        height:150px;
+        padding-top:30px;
+        cursor:pointer;
+      }
+      .wizard-item-border:hover{
+        background-color:#111;
+      }
+      .wizard-selection-title{
+        color: #fffeff;
+      }
+      .wizard-select-description{
+        border-left: solid 1px #555;
+        height: 80px;
+        padding-left: 35px;
+      }
+      .wizard-item-title{
+        border-left: solid 4px #555;
+        left: -20px;
+        display: block;
+        width: 370px;
+        position: relative;
+        padding-left: 25px;
+      }
+      input[type="text"].ac-input-large {
+        padding: 8px;
+        border: solid 2px #54505C;
+        font-size: 25px;
+        background: transparent;
+        font-weight: 700;
+        color: #ffffff;
+      }
+      input[type="text"].ac-input-large:focus,
+      input[type="text"].ac-input-large.focus {
+        padding: 8px;
+        border: solid 2px #54505C;
+        font-size: 25px;
+        background: transparent;
+        font-weight: 700;
+        color: #ffffff;
+      }
+      .ac-btn{
+        background-color: #000000;
+        padding-left:30px;
+        padding-right:30px;
+        border:solid 4px #14243d;
+        outline: 1px solid #2c91df;
+        color:#2c91df;
+        display:inline-block;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        text-decoration: none;
+      }
+      .ac-btn:hover{
+        background-color: #14243d;
+        text-decoration: none;
+        outline: 1px solid #2c91df;
+        color:#2c91df;
+      }
+      nav{
+        background-image: url("/static/images/Top-Nav-bg.png") !important;
+        background-repeat: no-repeat;
+        padding-top:0px;
+        height: 70px;
       }
       .align-text-right{
         text-align:right;
@@ -84,6 +188,8 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{{ url_for('static', filename='js/jquery-1.12.0.min.js') }}"></script>
     
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600' rel='stylesheet' type='text/css'>
+    
   </head>
   <body>
   
@@ -93,7 +199,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-3 align-text-right">
-            <a href="/"><img style="padding-bottom:9px;padding-top: 10px;" src="{{ url_for('static', filename='images/logo.png') }}"/></a>
+            <a href="/"><img style="padding-bottom:9px;padding-top: 10px;width:180px;" src="{{ url_for('static', filename='images/logo-small.png') }}"/></a>
           </div>
           <div class="col-md-6 align-text-center landing-nav-links">
             {% block navleft %}
@@ -111,7 +217,7 @@
               <a class="landing-nav-links" href="/logoutuser">Logout</a>
               {% elif show_get_started %}
               <a class="landing-nav-links" style="cursor: pointer;" id="navloginbutton">Login</a>
-              <a class="blue-link" href="presets">GET STARTED »</a>
+              <a class="blue-link" href="preset">GET STARTED »</a>
               {% else %}
               {% endif %}
             </ul>

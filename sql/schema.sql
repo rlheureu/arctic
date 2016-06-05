@@ -88,6 +88,7 @@ CREATE TABLE `arctic_rig` (
   `rig_preset` int(11) DEFAULT '0',
   `rig_preset_name` varchar(400) DEFAULT NULL,
   `rig_preset_sort_order` int(11) DEFAULT '0',
+  `rig_preset_description` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`arctic_rig_id`),
   KEY `cpu_component_id_idx` (`cpu_component_id`),
   KEY `user_idx` (`user_id`),
@@ -101,6 +102,7 @@ CREATE TABLE `arctic_rig` (
   CONSTRAINT `memory_component` FOREIGN KEY (`memory_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `motherboard_compoent` FOREIGN KEY (`motherboard_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `user` FOREIGN KEY (`user_id`) REFERENCES `arctic_user` (`arctic_user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
+
 
 

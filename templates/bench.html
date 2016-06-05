@@ -96,20 +96,24 @@
     background-color: #fede86;
   }
   .border-orange{
-    border-color: #fede86;
+    border-color: #fede86 !important;
   }
   .border-purple{
-    border-color: #fe4aea;
+    border-color: #fe4aea !important;
   }
   .border-blue{
-    border-color: #29a0de;
+    border-color: #29a0de !important;
   }
   .border-gray{
-    border-color: #333;
+    border-color: #333333 !important;
   }
   .border-black{
-    border-color: #000;
+    border-color: #000000 !important;
   }
+  .border-default{
+    border-color: #cccccc !important;
+  }
+  
   .fg-purple{
     color: #fe4aea;
   }
@@ -186,162 +190,145 @@
     top: 108px;
     left: 39px;
   }
+  
+  .acbench-item-heading{
+    font-family: 'Open Sans', sans-serif;
+    color:#c2bad1;
+    font-weight: 300;
+    font-size: 28px;
+  }
+  
+  
+  #ac-cube-section-gpu{
+    position: absolute;
+    top: 179px;
+    left: 35px;
+  }
+  #ac-cube-section-cpu{
+    position: absolute;
+    top: 20px;
+    left: 35px;
+  }
+  #ac-cube-section-memory{
+    position: absolute;
+    top: 348px;
+    left: 35px;
+  }
+  #ac-cube-section-display{
+    position: absolute;
+    top: 523px;
+    left: 35px;
+  }
+  
+  #ac-cubedisplay-middle{
+    position: absolute;
+    top: 144px;
+    left: 675px;
+  }
+  #ac-cubedisplay-gpu{
+    position: absolute;
+    top: 136px;
+    left: 585px;
+  }
+  #ac-cubedisplay-cpu{
+    position: absolute;
+    top: 135px;
+    left: 882px;
+  }
+  #ac-cubedisplay-memory{
+    position: absolute;
+    top: 396px;
+    left: 734px;
+  }
+  #ac-cubedisplay-display{
+    position: absolute;
+    top: 418px;
+    left: 886px;
+  }
+  
+  #bench-cube-title{
+    border-left: solid 4px #cccccc;
+    display: inline-block;
+    padding-left: 15px;
+  }
+  #bench-cube-subtitle{
+    font-size: 14px;
+    display: block;
+    top: -10px;
+    padding-left: 20px;
+    position: relative;
+  }
   </style>
 {% endblock %}
 
 {% block navleft %}
-<p class="navsteps">
-  Step 1: Configure&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
-  Step 2: Refine&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
-  <b>Step 3: Finalize</b>
-</p>
+<h3 class="navbar-page-title">
+  Finish building your Cube
+</h3>
 {% endblock %}
 
 
 {% block content %}
+  <div style="width:100%; border-bottom: 3px #2a263f solid; text-align: center;" class="wizard-steps-breadcrumbs">
+    <ul>
+      <li>CONFIGURE</li>
+      <li>NAME</li>
+      <li class="active">BUILD & FINISH</li>
+    </ul>
+  </div>
+  <br><br>
+
   <div class="container">
+  
     <div class="row">
-      <div class="col-md-2">
-        <img src="{{ url_for('static', filename='images/default-cube-avatar.png') }}" id="cube-avatar"/>
+      <div class="col-md-8">
+        <h1 id="bench-cube-title">Cube Title</h1>
+        <span id="bench-cube-subtitle">Performance subtitle</span>
       </div>
-      <div class="col-md-10">
-        <div class="row">
-          <div class="col-md-5">
-            <h2 id="rig_name_main">THE BEAST</h2>
-            <br>
-          </div>
-        </div>
-        <div class="row"  style="border-bottom: 1px solid #5a5a5a; position:relative;top:-40px;">
-          <div class="col-md-3">
-          </div>
-          <div class="col-md-7" style="text-align: right;margin-bottom:10px;font-size: 15px;">
-            <div class="benchtab benchtabactive" id="benchtab-cubesummary" data-tabname="bench-cube-view">Cube Summary</div>
-            <div class="benchtabsep">|</div>
-            <div class="benchtab" id="benchtab-components" data-tabname="bench-component-view">Components</div>
-            <div class="benchtabsep">|</div>
-            <div class="benchtab" id="benchtab-share">Share Your Cube</div>
-          </div>
-          <div class="col-md-2">
-          </div>
-        </div>
+      <div class="col-md-4">
+        <br>
+        <button class="ac-btn">Save Cube</button>
       </div>
-    </div>    
-    <div class="benchtabview" id="bench-cube-view">
-      <div class="row">
-        <div class="col-md-3">
-          <div><button class="pull-right btn btn-default" id="save-my-cube-button">Save my cube</button></div>
-          <div><button class="pull-right btn btn-default" id="reset-cube-button">Reset</button></div>
-          <div style="padding-top:120px; text-align: right;" data-equip-type="gpu_component" data-equip-title="EQUIP A GRAPHICS CARD">
-            <h3 class="equip-clickable">Graphics</h3>
-            <hr>
-            <div id="gpu-section" class="equip-clickable item-slot-section">
-            </div>
-            <button class="btn btn-primary btn-sm equipbutton">Equip a graphics card +</button>
-          </div>
-          
-        </div>
-        <div class="col-md-6" style="text-align:center;">
+    </div>
+    <div class="row">
+      <div class="col-md-12">
         
-          
-          <!-- CUBE DISPLAY -->
-          <!-- - - - - - - - -->
-          <!-- Default cube images go here! -->
-          <img src="{{ url_for('static', filename='cube-images/bg.png') }}" id="cubedisplay-bg" class=""/>
-          <img src="/static/cube-images/cube-middle-default.png" id="cubedisplay-middle" />
-          <img src="/static/cube-images/cube-display-default.png" id="cubedisplay-display" />
-          <img src="/static/cube-images/cube-memory-default.png" id="cubedisplay-memory" />
-          <img src="/static/cube-images/cube-cpu-default.png" id="cubedisplay-cpu" />
-          <img src="/static/cube-images/cube-gpu-default.png" id="cubedisplay-gpu" />
-          <!--// Cube DISPLAY -->
-          
-          
+        <img src="/static/images/cube-with-lines.png">
+        <div id="ac-cube-section-cpu" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
+          <span class="acbench-item-heading" style="display:block;">Processor</span>
+          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+          <div id="ac-cpu-section" class="equip-clickable item-slot-section"></div>
         </div>
-        <div class="col-md-3">
-          <div style="padding-top:20px; text-align: left;"  data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
-            <h3 class="equip-clickable">Display</h3>
-            <hr>
-            <div id="display-section" class="equip-clickable item-slot-section">
-            </div>
-            <button class="btn btn-primary btn-sm equipbutton">Equip a display +</button>
-            
-            
-          </div>
-          <div style="padding-top:200px; text-align: left;" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
-            <h3 class="equip-clickable">Processor</h3>
-            <hr>
-            <div id="cpu-section" class="equip-clickable item-slot-section">
-            </div>
-            <button class="btn btn-primary btn-sm equipbutton">Equip a processor +</button>
-          </div>
-          
+        
+        <div id="ac-cube-section-gpu" data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
+          <span class="acbench-item-heading" style="display:block;">Graphics</span>
+          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+          <div id="ac-gpu-section" class="equip-clickable item-slot-section"></div>
         </div>
+        
+        <div id="ac-cube-section-memory" data-equip-type="memory" data-equip-title="EQUIP MEMORY">
+          <span class="acbench-item-heading" style="display:block;">Memory</span>
+          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+          <div id="ac-memory-section" class="equip-clickable item-slot-section"></div>
+        </div>
+        
+        <div id="ac-cube-section-display" data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
+          <span class="acbench-item-heading" style="display:block;">Display</span>
+          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+          <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
+        </div>
+        
+        <!-- CUBE DISPLAY -->
+        <!-- - - - - - - - -->
+        <!-- Default cube images go here! -->
+        <img src="/static/cube-images/ac-cube-middle-default.png" id="ac-cubedisplay-middle" />
+        <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-gpu" />
+        <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-cpu" />
+        <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-memory" />
+        <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-display" />
+        <!--// Cube DISPLAY -->
       </div>
-      <div class="row">
-        <div class="col-md-5"></div>
-        <div class="col-md-3">
-          <br><br>
-          <div style="padding-top:20px; text-align: left;" data-equip-type="memory" data-equip-title="EQUIP MEMORY">
-            <h3 class="equip-clickable">Memory</h3>
-            <hr>
-            <div id="memory-section" class="equip-clickable item-slot-section">
-            </div>
-            <button class="btn btn-primary btn-sm equipbutton">Equip memory +</button>
-          </div>
-        </div>
-        <div class="col-md-4"></div>
-      </div>
-      
-    </div>
-    <div class="row benchtabview" id="bench-component-view">
-      <!--  - - - - - -  -->
-      <!--  - - - - - -  -->
-      <!-- COMPONENT TAB -->
-      <!--  - - - - - -  -->
-      <!--  - - - - - -  -->
-      <div class="col-md-2"></div>
-      <div class="col-md-5">
-        <h3>Core Stats</h3>
-        <div data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
-          <h4 class="equip-clickable">Display</h4>
-          <hr>
-          <div id="display-section-component-tab" class="equip-clickable item-slot-section">
-          </div>
-          <button class="btn btn-primary btn-sm equipbutton">Equip a display +</button>
-        </div>
-        <div data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
-          <h4 class="equip-clickable">Processor</h4>
-          <hr>
-          <div id="cpu-section-component-tab" class="equip-clickable item-slot-section">
-          </div>
-          <button class="btn btn-primary btn-sm equipbutton">Equip a processor +</button>
-        </div>
-        <div data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
-          <h4 class="equip-clickable">Graphics</h4>
-          <hr>
-          <div id="gpu-section-component-tab" class="equip-clickable item-slot-section">
-          </div>
-          <button class="btn btn-primary btn-sm equipbutton">Equip a graphics card +</button>
-        </div>
-        <div data-equip-type="memory" data-equip-title="EQUIP MEMORY">
-          <h4 class="equip-clickable">Memory</h4>
-          <hr>
-          <div id="memory-section-component-tab" class="equip-clickable item-slot-section">
-          </div>
-          <button class="btn btn-primary btn-sm equipbutton">Equip memory +</button>
-        </div>
-      </div>
-      <div class="col-md-5">
-        <h3>Secondary Stats</h3>
-        <div data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
-          <h4 class="equip-clickable">Motherboard</h4>
-          <hr>
-          <div id="motherboard-section-component-tab" class="equip-clickable item-slot-section">
-          </div>
-          <button class="btn btn-primary btn-sm equipbutton">Equip a motherboard +</button>
-        </div>
-      </div>
-      <div class="col-md-2"></div>
-    </div>
+    </div>   
     
   </div>
   
@@ -506,8 +493,6 @@
 		// initialize parts cache with part data by id
 		var partsCache = {};
 		
-		// hide component view by default
-		$('#bench-component-view').hide();
  		$('#pick-part-modal').hide();
  		
  		//
@@ -533,26 +518,6 @@
  		$('#modal-cancel-btn').click(function(){
  			$('#pick-part-modal').hide();
  		});
-		
- 		//
- 		// tabbing behavior on bench screen
- 		//
-		$('.benchtab').click(function(){
-			// show the correct view and hide the current view
-			
-			if (!$(this).hasClass('benchtab-disabled')) {
-    			// hide current views
-    			$('.benchtabview').hide();
-    			
-    			// show selected view
-    			var tabname = $(this).attr('data-tabname');
-    			$('#' + tabname).show();
-    			
-    			// make all tabs inactive, and mark this active
-    			$('.benchtab').removeClass('benchtabactive');
-    			$(this).addClass('benchtabactive');
-			}
-		});
 		
 		//
 		// equip buttons - show modal and load parts
@@ -619,8 +584,7 @@
         				borderDiv.addClass('border-' + component.perf_color); 										// border color
         				iconDiv.append('<img src="/static/images/part-item-'+component.perf_color+'.png" class="part-item-icon"/>') 	// color icon
         				titleSpan.addClass('fg-' + component.perf_color);											// style title span
-        				contentDiv.append('<span class="part-item-sub">4K RESOLUTION</span>') 						// append product additional information
-        				.append('<span class="part-item-sub">10 MS RESPONSE</span>');
+        				contentDiv.append('<span class="part-item-sub">' + constructPerformanceNote(component) + '</span>');
         				
         				// add any flags
             			// adding recommended to all for now
@@ -672,12 +636,17 @@
 			//
 			//
 			// RESET Cube positions
-			$('#cubedisplay-middle').attr('src','/static/cube-images/cube-middle-default.png');
-			$('#cubedisplay-display').attr('src','/static/cube-images/cube-display-default.png');
-			$('#cubedisplay-memory').attr('src','/static/cube-images/cube-memory-default.png');
-			$('#cubedisplay-cpu').attr('src','/static/cube-images/cube-cpu-default.png');
-			$('#cubedisplay-gpu').attr('src','/static/cube-images/cube-gpu-default.png');
+			$('#ac-cubedisplay-middle').attr('src','/static/cube-images/ac-cube-middle-default.png');
+			$('#ac-cubedisplay-gpu').attr('src','/static/cube-images/ac-cube-small-default.png');
+			$('#ac-cubedisplay-cpu').attr('src','/static/cube-images/ac-cube-small-default.png');
+			$('#ac-cubedisplay-memory').attr('src','/static/cube-images/ac-cube-small-default.png');
+			$('#ac-cubedisplay-display').attr('src','/static/cube-images/ac-cube-small-default.png');
 			$('#cube-avatar').attr('src', '/static/cube-images/cube-avatar-default.png');
+			
+			//
+			//
+			// show all equip buttons
+			$('.equipbutton').show();
 			
 			//
 			//
@@ -710,27 +679,21 @@
 				console.log('comp type: ' + compType);
 				
 				// modify view
-				var view = $('#' + compType + '-section');
-				var viewCompTab = $('#' + compType + '-section-component-tab');
+				var view = $('#ac-' + compType + '-section');
+				view.prev().hide();
 				view.empty();
-				viewCompTab.empty();
-				
-				var componentTabCubeImage = $('<img src="/static/cube-images/cube-display-tab-'+partDetail.perf_color+'.png" />');
-				componentTabCubeImage.addClass('component-tab-cube-image');
-				viewCompTab.append(componentTabCubeImage);
 				
 				var displaySpan = $('<span></span>');
 				displaySpan.append(constructDisplayName(partDetail));
 				displaySpan.addClass('fg-' + partDetail.perf_color);
 				displaySpan.addClass('part-item-title');
-				
-				
-				viewCompTab.append(displaySpan);
+
 				view.append(displaySpan.clone());
+				view.append('<br><span>' + constructPerformanceNote(partDetail) + '</span>')
 				
 				// modify colors
-				$('#cubedisplay-' + compType).attr('src',
-						'/static/cube-images/cube-' + compType + '-' + partDetail.perf_color + '.png');
+				$('#ac-cubedisplay-' + compType).attr('src',
+						'/static/cube-images/ac-cube-small-' + partDetail.perf_color + '.png');
 				
 				//
 				// incremenent component count
@@ -746,8 +709,9 @@
 			
 			if (coreComponentCount == 4) {
 				// set center cube and avatar cubes
-				$('#cubedisplay-middle').attr('src','/static/cube-images/cube-middle-' + worstComponentDetail.perf_color + '.png');
-				$('#cube-avatar').attr('src', '/static/cube-images/cube-avatar-' + worstComponentDetail.perf_color + '.png');
+				$('#ac-cubedisplay-middle').attr('src','/static/cube-images/ac-cube-middle-' + worstComponentDetail.perf_color + '.png');
+				//$('#cube-avatar').attr('src', '/static/cube-images/cube-avatar-' + worstComponentDetail.perf_color + '.png');
+				$('#bench-cube-title').addClass('border-' + worstComponentDetail.perf_color);
 				
 				// enable save button and share button
 				$('#save-my-cube-button').prop('disabled', false);
@@ -756,7 +720,7 @@
 			
 			// set rig name
 			if (currentRig.name !== undefined) {
-				$('#rig_name_main').html(currentRig.name);
+				$('#rig_name_main').html(currentRig['name']);
 			}		
 			
 		}
@@ -767,6 +731,14 @@
 			if (part.brand_name !== undefined && part.brand_name !== null) partName += part.brand_name + ' ';
 			if (part.model_number !== undefined && part.model_number !== null) partName += part.model_number;
 			return partName;
+		}
+		
+		function constructPerformanceNote(part){
+			var note = "";
+			if (part.max_performance !== undefined && part.max_performance !== null) note += part.max_performance + ' ';
+			if (part.resolution !== undefined && part.resolution !== null) note += part.resolution;
+			if (part.max_framerate !== undefined && part.max_framerate !== null) note += '<br>' + part.max_framerate + ' MS Response Time';
+			return note;
 		}
 		
 		function isCoreComponent(compType) {

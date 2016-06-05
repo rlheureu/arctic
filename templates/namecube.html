@@ -5,39 +5,50 @@
 {% endblock %}
 
 {% block navleft %}
-<p class="navsteps">
-  Step 1: Configure&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
-  <b>Step 2: Refine</b>&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
-  Step 3: Finalize
-</p>
+<h3 class="navbar-page-title">
+  Name your cube
+</h3>
 {% endblock %}
 
 
 {% block content %}
+
+  <div style="width:100%; border-bottom: 3px #2a263f solid; text-align: center;" class="wizard-steps-breadcrumbs">
+    <ul>
+      <li>CONFIGURE</li>
+      <li class="active">NAME</li>
+      <li>BUILD & FINISH</li>
+    </ul>
+  </div>
+  <br><br>
+
   <div class="container">
     <div class="row">
       <div class="col-md-2"></div>
-      <div class="col-md-8">
-        <h2 style="text-align:center;">Any good Cube starts with a name</h2>
-        <br/><br/><br/>
+      <div class="col-md-8" style="text-align:center;">
+        <span class="wizard-sub-heading">Every great customized product starts with a name</span>
+        <br/><br/>
     
-        <p>Name your cube below. You can change it later or even skip this step if you desire</p>
+      </div>
+      <div class="col-md-2">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-4" style="text-align: center;">
         <form method="get" action="bench">
-          <input type="text" name="name" placeholder="Name cube.." />
+          <input type="text" name="name" placeholder="CUBE NAME" class="ac-input-large" style="width:100%;"/>
           
           {% if preset %}
           <input type="text" name="preset" style="display:none;" value="{{preset}}"/>
           {% endif %}
-          
-          <hr>
-          <input type="submit" class="btn btn-primary" value="Name my Cube">
+          <br><br>
+          <input type="submit" class="ac-btn" value="Select Name">
+          &nbsp;&nbsp;&nbsp;
+          <a href="bench{% if preset %}?preset={{preset}}{% endif %}" class="ac-btn">Skip, Do This later</a>
         </form>
-        
-        <a href="bench{% if preset %}?preset={{preset}}{% endif %}" class="btn btn-primary">Skip this step</a>
-        
       </div>
-      <div class="col-md-2">
-      </div>
+      <div class="col-md-4"></div>
     </div>
   </div>
 {% endblock %}

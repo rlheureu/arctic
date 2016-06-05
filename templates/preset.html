@@ -5,35 +5,57 @@
 {% endblock %}
 
 {% block navleft %}
-<p class="navsteps">
-  Step 1: Configure&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
-  <b>Step 2: Refine</b>&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
-  Step 3: Finalize
-</p>
+<h3 class="navbar-page-title">
+  Please Select a Configuration
+</h3>
 {% endblock %}
 
 {% block content %}
+
+  <div style="width:100%; border-bottom: 3px #2a263f solid; text-align: center;" class="wizard-steps-breadcrumbs">
+    <ul>
+      <li class="active">CONFIGURE</li>
+      <li>NAME</li>
+      <li>BUILD & FINISH</li>
+    </ul>
+  </div>
+  <br><br>
+
+
   <div class="container">
-    <div class="row">
-      <div class="col-md-2"></div>
-      <div class="col-md-8">
-        <h2 style="text-align:center;">Build Your PC the Amdahl Cube Way</h2>
-      </div>
-      <div class="col-md-2"></div>
-    </div>
-    <div class="row">
-      <div class="col-md-2"></div>
-      <div class="col-md-8" style="border:1px solid #ccc">
-        <h3>Customize</h3>
-        <p><a class="btn btn-primary btn-lg" href="namecube">Go</a></p>
-      </div>
-      <div class="col-md-2"></div>
-    </div>
+    
+    
     
     <div class="row">
       <div class="col-md-2"></div>
-      <div class="col-md-8">
-        <h2 style="text-align:center;">Or... Select From Our Presets</h2>
+      <div class="col-md-8" style="text-align:center;">
+        <span class="wizard-sub-heading">Build Your PC the Amdahl Cube Way</span>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-10 wizard-item-border" data-href="/namecube">
+        <div class="row">
+          <div class="col-md-4">
+              <h2 class="wizard-item-title">CUSTOMIZE</h2>
+          </div>
+          <div class="col-md-8 wizard-select-description">
+            <br>
+            <p>Jump right in and start building your cube.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-1"></div>
+    </div>
+    
+    <br>
+    
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8" style="text-align:center;">
+        <span class="wizard-sub-heading">Or... Select From Our Presets</span>
       </div>
       <div class="col-md-2"></div>
     </div>
@@ -41,13 +63,29 @@
     {% for rig in rig_presets %}
     <br>
     <div class="row">
-      <div class="col-md-2"></div>
-      <div class="col-md-8" style="border:1px solid #ccc">
-        <h3>{{rig.rig_preset_name}}</h3>
-        <p><a class="btn btn-primary btn-lg" href="namecube?preset={{rig.id}}">Go</a></p>
+      <div class="col-md-1"></div>
+      <div class="col-md-10 wizard-item-border" data-href="/namecube?preset={{rig.id}}">
+        <div class="row">
+          <div class="col-md-4">
+              <h2 class="wizard-item-title">{{rig.rig_preset_name | upper}}</h2>
+          </div>
+          <div class="col-md-8 wizard-select-description">
+            <p>{{rig.rig_preset_description}}</p>
+          </div>
+        </div>
       </div>
-      <div class="col-md-2"></div>
+      <div class="col-md-1"></div>
     </div>
     {% endfor %}
   </div>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+	$(function(){
+		$('.wizard-item-border').click(function(){
+			window.location.href = $(this).data('href');
+		});
+	});
+</script>
 {% endblock %}

@@ -154,5 +154,6 @@ class Rig(Base):
     rig_preset = Column('rig_preset', Boolean)
     rig_preset_name = Column('rig_preset_name', String(400))
     rig_preset_sort_order = Column('rig_preset_sort_order', Integer)
+    rig_preset_description = Column('rig_preset_description', String(1000))
     
     
