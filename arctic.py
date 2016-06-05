@@ -251,9 +251,12 @@ def bench():
     If a RIG is being requested it will take precedence over other
     arguments which would have instead continued the wizard
     """
-    rig = request.args.get('rig', None)
-    if rig:
+    rig_id = request.args.get('rig', None)
+    if rig_id:
+        rig = dataaccess.get_rig(rig_id)
         context['rig'] = rig
+        context['cube_name'] = rig.name
+        context['my_rig'] = (current_user!= None and current_user.is_authenticated and current_user.id == rig.user.id)
         return render_template('bench.html', **context)
     
     
@@ -384,7 +387,7 @@ def save_cube():
     rig = dataaccess.save_rig(request.form, current_user.get_id())
     
     
-    return jsonify({'response' : rig.id})
+    return jsonify({'rig_id' : rig.id})
 
 @app.route("/getrig", methods=['GET'])
 @requires_auth

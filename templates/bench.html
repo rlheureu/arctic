@@ -323,17 +323,66 @@
   .other-component-note{
     color: #3699f4;
   }
+  
+  .showcase-links{
+    width:100%; border-bottom: 1px #2a263f solid;
+  }
+  .showcase-links ul{
+    list-style:none;
+    margin:0px;
+  }
+  .showcase-links ul li{
+    display: inline-block;
+    position: relative;
+    width: 123px;
+    padding-bottom: 16px;
+    top: 0px;
+    font-size:13px;
+    margin-left: 1px;
+    margin-right: 1px;
+    color: #716b77;
+    font-weight: 400;
+    text-align: center;
+  }
+  .showcase-links li.active{
+    border-bottom: #cccccc 2px solid;
+    color: #cccccc;
+    font-weight: 400;
+  }
+  .showcase-links li.separator{
+    border-bottom: none;
+    width:30px;
+  }
+  .showcase-links a{
+    text-decoration: none;
+    color:inherit;
+  }
+  .showcase-links a:hover{
+    text-decoration: none;
+    color:#309cf4;
+  }
   </style>
 {% endblock %}
 
 {% block navleft %}
+{% if not rig %}
 <h3 class="navbar-page-title">
-  Finish building your Cube
+  Finish building your Cube  
 </h3>
+{% else %}
+<div class="nav-items">
+  <ul>
+    <li class="active">RIG SHOWCASE</li>
+    <li><a href="/thebench">THE BENCH</a></li>
+    <li><a href="/faq">FAQ</a></li>
+  </ul>
+</div>
+{% endif %}
 {% endblock %}
 
 
 {% block content %}
+  {% if not rig %}
   <div style="width:100%; border-bottom: 3px #2a263f solid; text-align: center;" class="wizard-steps-breadcrumbs">
     <ul>
       <li>CONFIGURE</li>
@@ -341,6 +390,7 @@
       <li class="active">BUILD & FINISH</li>
     </ul>
   </div>
+  {% endif %}
   <br><br>
 
   <div class="container">
@@ -352,9 +402,29 @@
       </div>
       <div class="col-md-4">
         <br>
+        {% if my_rig or not rig %}
         <button class="ac-btn" id="save-cube-button">Save Cube</button>
+        {% endif %}
       </div>
     </div>
+  </div>
+  {% if rig and my_rig %}
+  <div class="showcase-links">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7"></div>
+        <div class="col-md-5">
+          <ul>
+            <li class="active">CUBE SUMMARY</li>
+            <li class="separator">|</li>
+            <li><a href="/share?rig={{rig.id}}">SHARE CUBE</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="container">
     <div class="row">
       <div class="col-sm-12" style="text-align:center;">
         
@@ -451,7 +521,7 @@
           <h4 class="modal-title">Edit Name</h4>
         </div>
         <div class="modal-body">
-          <p><input type="text" class="ac-input-light" style="width:100%;" id="change-name-input"></p>
+          <p><input type="text" class="ac-input-light large" style="width:100%;" id="change-name-input"></p>
         </div>
         <div class="modal-footer">
           <button type="button" class="ac-btn" id="save-name-change-button">Save</button>
@@ -549,7 +619,8 @@
 		return {
 			cubeName : {% if cube_name %}'{{cube_name}}'{% else %}null{% endif %},
 			preset : {% if preset %}'{{preset}}'{% else %}null{% endif %},
-			rig : {% if rig %}'{{rig.id}}'{% else %}null{% endif %}
+			rig : {% if rig %}'{{rig.id}}'{% else %}null{% endif %},
+			myRig : {% if my_rig %}true{% else %}false{% endif %}
 		};
 	}();
 
@@ -566,8 +637,21 @@
 		
 		// prepare preset values
 		if (AC_GLOBALS.preset !== null) {
-			// get preset config from server
-			$.getJSON( "getrig", {rig_id: AC_GLOBALS.preset}).success(function(data) {
+			populateRigById(AC_GLOBALS.preset);
+		} else if (AC_GLOBALS.rig !== null) {
+			populateRigById(AC_GLOBALS.rig);
+			currentRig['rig_id'] = AC_GLOBALS.rig; // set ID for subsequent saves to update
+		} else {
+			// initial render
+			refreshPartsCache(renderRig);
+		}
+		
+		
+		function populateRigById(rigId){
+			//
+			//
+			// GET RIG INFO, SET, AND RENDER
+			$.getJSON( "getrig", {rig_id: rigId}).success(function(data) {
 				var presetRig = JSON.parse(data.rig);
 				console.log(presetRig);
 				if (presetRig['motherboard_component_id'] !== undefined) currentRig['parts']['motherboard_id'] = presetRig['motherboard_component_id'];
@@ -575,13 +659,9 @@
                 if (presetRig['memory_component_id'] !== undefined) currentRig['parts']['memory_id'] = presetRig['memory_component_id'];
                 if (presetRig['display_component_id'] !== undefined) currentRig['parts']['display_id'] = presetRig['display_component_id'];
                 if (presetRig['cpu_component_id'] !== undefined) currentRig['parts']['cpu_id'] = presetRig['cpu_component_id'];
-                
                 refreshPartsCache(renderRig);
 			});
 		}
-		
-		// initial render
-		refreshPartsCache(renderRig);
 		
 		//
 		//
@@ -611,14 +691,14 @@
 		});
 		
 		function saveCube(){
-			alert('INIT SAVE!!');
 			
 			var postRig = currentRig['parts'];
 			postRig['name'] = currentRig['name'];
-			//postRig.rig_id = //TODO
+			if (currentRig.rig_id !== undefined) postRig['rig_id'] = currentRig.rig_id;
 			
 			$.post('/savecube', postRig).success(function(data){
-				alert('response ' + data)
+				alert('response ' + data);
+				window.location.href = '/bench?rig=' + data.rig_id;
 			});
 			
 		}
@@ -954,7 +1034,7 @@
 					ids += ',';
 				}
 			}
-			if (ids.length === 0) return;
+			if (ids.length === 0) renderFunc();
 			$.getJSON( "getparts", {ids:ids}).success(function(data) {
 				var partsList = JSON.parse(data.parts);
 	        	for (part in partsList) {

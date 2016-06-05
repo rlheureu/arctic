@@ -57,6 +57,34 @@
         border-bottom: #309cf4 4px solid;
         color:#ffffff;
       }
+      .nav-items a{
+        text-decoration: none;
+        color:inherit;
+      }
+      .nav-items a:hover{
+        text-decoration: none;
+        color:#309cf4;
+      }
+      .nav-items ul{
+        list-style:none;
+        margin:0px;
+      }
+      .nav-items ul li{
+        display: inline-block;
+        position: relative;
+        width: 140px;
+        padding-bottom: 24px;
+        top: 21px;
+        margin-left: 1px;
+        margin-right: 1px;
+        color: #716b77;
+        font-weight: 600;
+      }
+      .nav-items li.active{
+        border-bottom: #309cf4 4px solid;
+        color: #333333;
+        font-weight: 700;
+      }
       .wizard-sub-heading{
         font-family: 'Open Sans', sans-serif;
         color:#c2bad1;
@@ -88,39 +116,44 @@
         position: relative;
         padding-left: 25px;
       }
-      input[type="text"].ac-input-large {
-        padding: 8px;
-        border: solid 2px #54505C;
-        font-size: 25px;
+      input{
+        border-radius:0px !important;
+      }
+      input[type="text"],input[type="password"],input[type="email"].ac-input {
+        border: solid 1px #54505C;
+        background: transparent;
+        font-weight: 700;
+        color: #ffffff;:
+      }
+      input[type="text"].ac-input:focus,
+      input[type="text"].ac-input.focus {
+        border: solid 1px #54505C;
         background: transparent;
         font-weight: 700;
         color: #ffffff;
       }
-      input[type="text"].ac-input-large:focus,
-      input[type="text"].ac-input-large.focus {
-        padding: 8px;
-        border: solid 2px #54505C;
-        font-size: 25px;
+      input[type="text"],input[type="password"],input[type="email"].ac-input-light {
+        border: solid 1px #54505C;
         background: transparent;
-        font-weight: 700;
-        color: #ffffff;
-      }
-      input[type="text"].ac-input-light {
-        padding: 8px;
-        border: solid 2px #54505C;
-        font-size: 25px;
-        background: transparent;
-        font-weight: 700;
         color: #333333;
+        font-weight: 700;
       }
       input[type="text"].ac-input-light:focus,
       input[type="text"].ac-input-light.focus {
-        padding: 8px;
-        border: solid 2px #54505C;
-        font-size: 25px;
+        border: solid 1px #54505C;
         background: transparent;
         font-weight: 700;
         color: #333333;
+      }
+      input[type="text"].large,
+      input[type="text"].large:focus,
+      input[type="text"].large.focus {
+        border: solid 2px #54505C;
+        padding: 8px;
+        font-size: 25px;
+      }
+      label{
+        font-weight:300;
       }
       .ac-btn{
         background-color: transparent;
@@ -154,20 +187,6 @@
       }
       .align-text-center{
         text-align:center;
-      }
-      a {
-        text-shadow: none;
-      }
-      a.landing-nav-links, .landing-nav-links a{
-        color:#515151;
-        display: inline-block;
-        padding:17px;
-        text-decoration: none;
-        text-shadow: none;
-      }
-      a:hover.landing-nav-links, .landing-nav-links a:hover{
-        color:#000000;
-        text-decoration: none;
       }
       .blue-link{
         display: inline-block;
@@ -240,26 +259,35 @@
           <div class="col-md-3 align-text-right">
             <a href="/"><img style="padding-bottom:9px;padding-top: 10px;width:180px;" src="{{ url_for('static', filename='images/logo-small.png') }}"/></a>
           </div>
-          <div class="col-md-6 align-text-center landing-nav-links">
+          <div class="col-md-6 align-text-center">
             {% block navleft %}
-              <a href="#">Performance Tiers</a>
-              <a href="#">How it works</a>
-              <a href="#">Showcase your rig</a>
-            </ul>
+              <div class="nav-items">
+                <ul>
+                  <li><a href="#">Performance Tiers</a></li>
+                  <li><a href="#">How it works</a></li>
+                  <li><a href="#">Showcase your rig</a></li>
+                </ul>
+              </div>
             {% endblock %}
           </div>
           <div class="col-md-3 align-text-left ">
             {% block navright %}
               {% if current_user.is_authenticated %}
-              <a class="landing-nav-links" href="#">Account</a>
-              &nbsp;&nbsp;|&nbsp;&nbsp;
-              <a class="landing-nav-links" href="/logoutuser">Logout</a>
+              <div class="nav-items">
+                <ul>
+                  <li><a href="/account">Account [{{current_user.profile_name}}]</a></li>
+                  <li><a href="/logoutuser">Logout</a></li>
+                </ul>
+              </div>
               {% elif show_get_started %}
-              <a class="landing-nav-links" style="cursor: pointer;" id="navloginbutton">Login</a>
-              <a class="blue-link" href="preset">GET STARTED »</a>
+              <div class="nav-items">
+                <ul>
+                  <li><a style="cursor: pointer;" id="navloginbutton">Login</a></li>
+                  <li><a href="preset">GET STARTED »</a></li>
+                </ul>
+              </div>
               {% else %}
               {% endif %}
-            </ul>
             {% endblock %}
           </div>
         </div>
@@ -268,49 +296,82 @@
     
     <div id="content">{% block content %}{% endblock %}</div>
     
-    <!-- ----------- -->
-    <!-- LOGIN MODAL -->
-    <!-- ----------- -->
-    <div class="modal fade" tabindex="-1" role="dialog" id="login-modal">
-      <div class="modal-dialog modal-lg">
+    <!-- -------------- -->
+    <!-- -------------- -->
+    <!-- REGISTER MODAL -->
+    <!-- -------------- -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="register-modal">
+      <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h3 class="modal-title">Sign up or Login</h3>
+            <h3 class="modal-title">Register an Account</h3>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal">
+              <div class="form-group">
+                <label for="signup-username" class="col-sm-4 control-label">Username</label>
+                <div class="col-sm-8">
+                  <input type="text" placeholder="Profile name" name="username" class="form-control ac-input-light" id="signup-username" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="signup-email" class="col-sm-4 control-label">Email</label>
+                <div class="col-sm-8">
+                  <input type="email" placeholder="Email address" name="email" class="form-control ac-input-light" id="signup-email" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="signup-password" class="col-sm-4 control-label">Password</label>
+                <div class="col-sm-8">
+                  <input type="password" placeholder="Password" name="password" class="form-control ac-input-light" id="signup-password" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="signup-howheard" class="col-sm-4 control-label">Password</label>
+                <div class="col-sm-8">
+                  <input type="text" placeholder="How did you hear about us?" name="howheard" class="form-control ac-input-light" id="signup-howheard" />
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="ac-btn" id="signup-button">Register</button>
+            &nbsp;&nbsp;
+            <button type="button" class="ac-btn" data-dismiss="modal">Cancel</button>
+            <p style="color:#cccccc; font-size:12px;">Already registered? Click <a id="already-registered-login" href="#">here</a> to login.</p>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    
+    <!-- -------------- -->
+    <!-- -------------- -->
+    <!-- LOGIN MODAL--- -->
+    <!-- -------------- -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="login-modal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Sign in</h3>
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-md-6">
-                <h4>Sign up for an account</h4>
+              <div class="col-md-12">
                 <div class="form">
                   <div class="form-group">
-                    <input type="text" placeholder="Profile name" name="username" class="form-control" id="signup-username" />
+                    <input type="email" placeholder="Email address" name="email" class="form-control ac-input-light" id="signin-email"/>
                   </div>
                   <div class="form-group">
-                    <input type="email" placeholder="Email address" name="email" class="form-control" id="signup-email" />
+                    <input type="password" placeholder="Password" name="password" class="form-control ac-input-light" id="signin-password"/>
                   </div>
-                  <div class="form-group">
-                    <input type="password" placeholder="Password" name="password" class="form-control" id="signup-password" />
-                  </div>
-                  <div class="form-group">
-                    <input type="text" placeholder="How did you hear about us?" name="howheard" class="form-control" id="signup-howheard" />
-                  </div>
-                  <button class="btn btn-primary" id="signup-button">Sign up</button>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <h4>Login</h4>
-                <div class="form">
-                  <div class="form-group">
-                    <input type="email" placeholder="Email address" name="email" class="form-control" id="signin-email"/>
-                  </div>
-                  <div class="form-group">
-                    <input type="password" placeholder="Password" name="password" class="form-control" id="signin-password"/>
-                  </div>
-                  <button class="btn btn-primary" id="signin-button">Sign in</button>
                 </div>
               </div>
             </div>
+          </div>
+          <div class="modal-footer">
+            <button class="ac-btn" id="signin-button">Sign in</button>
+            &nbsp;&nbsp;
+            <button type="button" class="ac-btn" data-dismiss="modal">Cancel</button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -334,7 +395,7 @@
     	// Show login/signup modal
 		//
     	self.initLogin = function(loginCompleteCB){
-    		$('#login-modal').modal({show:true});
+    		$('#register-modal').modal({show:true});
     		self.loginCompleteCB = loginCompleteCB;
     	};
     	
@@ -384,6 +445,11 @@
     			// after the login we probably want to redirect to the bench
     			window.location = '/';
     		});
+    	});
+    	
+    	$('#already-registered-login').click(function(){
+    		$('#register-modal').modal('hide');
+    		$('#login-modal').modal({show:true});
     	});
     	
     });
