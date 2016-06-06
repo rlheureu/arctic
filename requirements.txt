@@ -3,7 +3,7 @@ cherrypy==3.7.0
 SQLAlchemy==0.9.9
 flask-sqlalchemy==2.0
 MySQL-python==1.2.5
-flask-login==6.1.1
+flask-login==0.3.2
 oauth2client==1.4.11
 google-api-python-client==1.4.1
 pytz==2015.7
