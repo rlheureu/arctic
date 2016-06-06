@@ -275,7 +275,7 @@
               {% if current_user.is_authenticated %}
               <div class="nav-items">
                 <ul>
-                  <li><a href="/account">Account [{{current_user.profile_name}}]</a></li>
+                  <li><a href="/account">Account ({{current_user.profile_name}})</a></li>
                   <li><a href="/logoutuser">Logout</a></li>
                 </ul>
               </div>
@@ -424,6 +424,20 @@
     }();
     
     $(function(){
+    	
+    	$('#signup-button').click(function(){
+    		var registerPost = {};
+    		registerPost.email = $('#signup-email').val();
+    		registerPost.password = $('#signup-password').val();
+    		registerPost.username = $('#signup-username').val();
+    		registerPost.howheard = $('#signup-howheard').val();
+    		
+    		$.post('/createuser', registerPost).success(function(resp){
+    			alert('Registration complete');
+    			// user is now logged in!
+    			ArcticBasics.loginComplete();
+    		});
+    	});
     	
     	$('#signin-button').click(function(){
     		var email = $('#signin-email').val();

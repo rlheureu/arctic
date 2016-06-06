@@ -697,7 +697,6 @@
 			if (currentRig.rig_id !== undefined) postRig['rig_id'] = currentRig.rig_id;
 			
 			$.post('/savecube', postRig).success(function(data){
-				alert('response ' + data);
 				window.location.href = '/bench?rig=' + data.rig_id;
 			});
 			

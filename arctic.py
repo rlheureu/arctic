@@ -160,10 +160,10 @@ def createuser():
             return jsonify({'success' : True})
         else:
             return jsonify({'success' : False,
-                            'reason' : 'Unable to create user.'})
+                            'reason' : 'Unable to create user.'}), 500
     except AttributeError as e:
         return jsonify({'success' : False,
-                        'reason' : e.message})
+                        'reason' : e.message}), 400
 
 @app.route("/isloggedin", methods=['GET'])
 @requires_auth
@@ -232,14 +232,6 @@ def custom():
     context = {}
 
     return render_template('custom.html', **context)
-
-@app.route("/register", methods=['GET'])
-@requires_auth
-def register():
-    
-    context = {}
-
-    return render_template('register.html', **context)
 
 @app.route("/bench", methods=['GET'])
 @requires_auth
