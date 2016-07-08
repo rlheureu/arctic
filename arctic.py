@@ -263,6 +263,19 @@ def bench():
 
     return render_template('bench.html', **context)
 
+@app.route("/showcase", methods=['GET'])
+@requires_auth
+def showcase():
+
+    rigs = dataaccess.get_rigs_by_user_id(current_user.id)
+
+    perf_utils.set_performance_color_for_rigs(rigs)
+
+    rigs.sort(key=lambda rig: rig.perf_color_coded, reverse=True)
+
+    context = {'rigs':rigs}
+    return render_template('showcase.html', **context)
+
 @app.route("/namecube", methods=['GET'])
 @requires_auth
 def namecube():

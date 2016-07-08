@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block styling %}
+  {{ super() }}
+  <style type="text/css">
+      #showcase-icon {
+      	width: 200px;
+      	margin-top: 50px;
+      }
+      #showcase-build-message {
+        font-size: 40px;
+      	font-weight: bold;
+      	color: white;
+      	transform:scale(1,1.5); /* W3C */
+		-webkit-transform:scale(1,1.5); /* Safari and Chrome */
+		-moz-transform:scale(1,1.5); /* Firefox */
+		-ms-transform:scale(1,1.5); /* IE 9 */
+		-o-transform:scale(1,1.5);
+		margin-bottom: 0px;
+      }
+      .build-message-line-left {
+      	height: 30px;
+      	width: 4px;
+      	position: relative;
+      	bottom: 3px;
+      	right: 335px;
+      }
+      .build-message-line-right {
+      	height: 30px;
+      	width: 4px;
+      	position: relative;
+      	bottom: 3px;
+      	left: 335px;
+      }
+      #showcase-build-message-small {
+      	color:white;
+      	font-weight:lighter;
+      	font-size: 18px;
+      	margin-bottom: 100px;
+      }
+      #select-rig-message {
+      	font-weight:lighter;
+      	font-size:24px;
+      	text-align:center;
+      }
+      .rig-box {
+        position: relative;
+      	text-align: center;
+      	display: inline-block;
+      	margin-right: 5px;
+      	margin-left: 5px;
+      	margin-bottom: 12px;
+      }
+      .rig-box-purple {
+      	color: #A98FEB;
+      }
+      .rig-box-orange {
+      	color: #ECCE60;
+      }
+      .rig-box-black {
+        color: gray;
+      }
+      .rig-box-blue {
+      	color: #60BBEC;
+      }
+      .rig-box-white {
+      	color: #D0D3D4;
+      }
+      .rig-box-gray {
+      	color: gray;
+      }
+      .rig-box-new {
+      	color: gray;
+      }
+      #rig-box-container {
+        text-align: center;
+      }
+      .showcase-tier-image {
+      	width: 300px;
+      	height: 300px;
+      }
+      .perf-text {
+      	position: absolute;
+      	top: 18px;
+      	left: 0px;
+      	right: 0px;
+      }
+      .rig-name-text{
+      	position: absolute;
+      	top: 245px;
+      	left: 0px;
+      	right: 0px;
+      	font-size: 24px;
+      	font-weight: 100;
+      }
+      .build-link {
+      	color: #60BBEC;
+      }
+      .showcase-banner {
+      	background: url("/static/images/showcase-bg.jpg");
+      	background-repeat: no-repeat;
+        background-size: cover;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        
+      }
+      .navbar {
+      	margin-bottom: 0px;
+      }
+      .showcase-bottom {
+      	height: 250px;
+      }
+      .rig-link:hover {
+      	color: transparent;
+      }
+  </style>
+{% endblock %}
+
+{% block navleft %}
+
+<div class="nav-items">
+  <ul>
+    <li class="active">RIG SHOWCASE</li>
+    <li><a href="/preset">THE BENCH</a></li>
+    <li><a href="/faq">FAQ</a></li>
+  </ul>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row showcase-banner">
+    <div style="text-align:center;">
+        <p>
+            <img id="showcase-icon" src="/static/images/showcase-icon.png">
+        </p>
+        <p id="showcase-build-message">
+            <img class="build-message-line-left" src="/static/images/showcase-vertical-line.jpg">
+            <a class="build-link" href="/preset">BUILD</a> YOUR GAMING CUBE
+            <img class="build-message-line-right" src="/static/images/showcase-vertical-line.jpg">
+            </p>
+        <p id="showcase-build-message-small">Start with our gaming rig presets.</p>
+    </div>
+</div>
+<div class="row">
+    <p id="select-rig-message">Select a rig below, or create a new cube.</p>
+    <div id="rig-box-container">
+        {% for rig in rigs %}
+        <a class="rig-link" href="/bench?rig={{rig.id}}">
+	        <div class="rig-box {% if rig.perf_color_coded == 5 %}rig-box-purple
+	                    {% elif rig.perf_color_coded == 4 %}rig-box-orange
+	                    {% elif rig.perf_color_coded == 3 %}rig-box-black
+	                    {% elif rig.perf_color_coded == 2 %}rig-box-blue
+	                    {% elif rig.perf_color_coded == 1 %}rig-box-white
+	                    {% elif rig.perf_color_coded == 0 %}rig-box-gray{% endif %}">
+	            <img class="showcase-tier-image" src="/static/images/showcase-tiers-{% if rig.perf_color_coded == 5 %}purple{% elif rig.perf_color_coded == 4 %}orange{% elif rig.perf_color_coded == 3 %}black{% elif rig.perf_color_coded == 2 %}blue{% elif rig.perf_color_coded == 1 %}white{% elif rig.perf_color_coded == 0 %}gray{% endif %}.jpg">
+	            <span class="perf-text" >{% if rig.max_performance %}{{rig.max_performance}}{% endif %}</span>
+	            <span class="rig-name-text">{% if rig.name %}{{rig.name}}{% endif %}</span>
+	        </div>
+        </a>
+        {% endfor %}
+        <a href="/preset">
+	        <div class="rig-box rig-box-new">
+	            <img class="showcase-tier-image" src="/static/images/showcase-tiers-add.jpg">
+	            <span class="perf-text" >Create a New Cube</span>
+	        </div>
+        </a>
+    </div>
+</div>
+<div class="row showcase-bottom">
+</div>
+
+{% endblock %}

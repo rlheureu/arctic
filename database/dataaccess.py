@@ -75,8 +75,8 @@ def get_compatible_parts(target=None,
         check processor and memory
         """
         return get_compatible_mobo_map(motherboard_id, gpu_id, memory_id, display_id, cpu_id)
-    
-    pass
+    else:
+        return []
 
 def get_compatible_mobo_map(motherboard_id = None, gpu_id = None, memory_id = None, display_id = None, cpu_id=None):
     """
@@ -216,6 +216,9 @@ def get_user_by_email(email):
 
 def get_user_by_id(userid):
     return db.session().query(models.User).filter(models.User.id == userid).first()
+
+def get_rigs_by_user_id(user_id):
+    return db.session().query(models.Rig).filter(models.Rig.user_id == user_id).all()
 
 def create_user(user):
     db.session().add(user)
