@@ -12,6 +12,15 @@ def get_all_cpus():
 def get_all_gpus():
     return db.session().query(models.GPUComponent).all()
 
+def get_all_chassis():
+    return db.session().query(models.ChassisComponent).all()
+
+def get_all_power():
+    return db.session().query(models.PowerComponent).all()
+
+def get_all_storage():
+    return db.session().query(models.StorageComponent).all()
+
 def get_all_mobos():
     return db.session().query(models.MotherboardComponent).all()
 
@@ -38,6 +47,9 @@ def save_rig(rig_dict, user_id):
     rig.memory_component = get_component(rig_dict.get('memory_id'))
     rig.motherboard_component = get_component(rig_dict.get('motherboard_id'))
     rig.gpu_component = get_component(rig_dict.get('gpu_id'))
+    rig.power_component = get_component(rig_dict.get('power_id'))
+    rig.storage_component = get_component(rig_dict.get('storage_id'))
+    rig.chassis_component = get_component(rig_dict.get('chassis_id'))
     rig.name = rig_dict.get('name')
     rig.user_id = user_id
     
@@ -75,6 +87,12 @@ def get_compatible_parts(target=None,
         check processor and memory
         """
         return get_compatible_mobo_map(motherboard_id, gpu_id, memory_id, display_id, cpu_id)
+    elif target == 'chassis':
+        return get_all_chassis()
+    elif target == 'power':
+        return get_all_power()
+    elif target == 'storage':
+        return get_all_storage()
     else:
         return []
 

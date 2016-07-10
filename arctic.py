@@ -328,7 +328,8 @@ def get_parts():
         ids = reqdict.get('ids')
         
         for cid in ids.split(','):
-            render_parts.append(dataaccess.get_component(cid))
+            comp = dataaccess.get_component(cid)
+            if comp: render_parts.append(comp)
         
     else:
     
@@ -342,16 +343,17 @@ def get_parts():
         get compatible parts
         """
         compat_parts = dataaccess.get_compatible_parts(**reqdict)
+        compat_parts = [] if not compat_parts else compat_parts # default to empty list
         
         """
         get all parts
         """
         all_parts = dataaccess.get_compatible_parts(target=reqdict.get('target'))
+        all_parts = [] if not all_parts else all_parts # default to empty list
         
         """
         join the lists (and remove duplicates)!
         """
-        
         added = set()
         for part in compat_parts:
             added.add(part.id)

@@ -23,6 +23,7 @@ class BaseComponent(Base):
     model_number = Column('model_number', String(500))
     max_performance = Column('max_performance', String(500))
     active = Column('active', Boolean)
+    display_name = Column('display_name', String(500))
     
     memory_spec = Column('memory_spec', String(500))
     memory_frequency = Column('memory_frequency', String(500))
@@ -64,6 +65,24 @@ class GPUComponent(BaseComponent):
     
     __mapper_args__ = {
         'polymorphic_identity' : 'GPU'
+    }
+
+class ChassisComponent(BaseComponent):
+    
+    __mapper_args__ = {
+        'polymorphic_identity' : 'CHASSIS'
+    }
+
+class StorageComponent(BaseComponent):
+    
+    __mapper_args__ = {
+        'polymorphic_identity' : 'STORAGE'
+    }
+
+class PowerComponent(BaseComponent):
+    
+    __mapper_args__ = {
+        'polymorphic_identity' : 'POWER'
     }
 
 class MemoryComponent(BaseComponent):
@@ -149,6 +168,12 @@ class Rig(Base):
     motherboard_component = relationship('MotherboardComponent', foreign_keys='Rig.motherboard_component_id')
     display_component_id = Column('display_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
     display_component = relationship('DisplayComponent', foreign_keys='Rig.display_component_id')
+    power_component_id = Column('power_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
+    power_component = relationship('PowerComponent', foreign_keys='Rig.power_component_id')
+    storage_component_id = Column('storage_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
+    storage_component = relationship('StorageComponent', foreign_keys='Rig.storage_component_id')
+    chassis_component_id = Column('chassis_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
+    chassis_component = relationship('ChassisComponent', foreign_keys='Rig.chassis_component_id')
     user_id = Column('user_id', Integer, ForeignKey('arctic_user.arctic_user_id'))
     user = relationship('User', foreign_keys='Rig.user_id')
     rig_preset = Column('rig_preset', Boolean)
