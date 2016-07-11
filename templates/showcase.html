@@ -63,6 +63,9 @@
       .rig-box-blue {
       	color: #60BBEC;
       }
+      .rig-box-green {
+        color: #1ed311;
+      }
       .rig-box-white {
       	color: #D0D3D4;
       }
@@ -149,13 +152,14 @@
     <div id="rig-box-container">
         {% for rig in rigs %}
         <a class="rig-link" href="/bench?rig={{rig.id}}">
-	        <div class="rig-box {% if rig.perf_color_coded == 5 %}rig-box-purple
-	                    {% elif rig.perf_color_coded == 4 %}rig-box-orange
-	                    {% elif rig.perf_color_coded == 3 %}rig-box-black
-	                    {% elif rig.perf_color_coded == 2 %}rig-box-blue
+	        <div class="rig-box {% if rig.perf_color_coded == 6 %}rig-box-purple
+	                    {% elif rig.perf_color_coded == 5 %}rig-box-orange
+	                    {% elif rig.perf_color_coded == 4 %}rig-box-black
+	                    {% elif rig.perf_color_coded == 3 %}rig-box-blue
+                        {% elif rig.perf_color_coded == 2 %}rig-box-green
 	                    {% elif rig.perf_color_coded == 1 %}rig-box-white
 	                    {% elif rig.perf_color_coded == 0 %}rig-box-gray{% endif %}">
-	            <img class="showcase-tier-image" src="/static/images/showcase-tiers-{% if rig.perf_color_coded == 5 %}purple{% elif rig.perf_color_coded == 4 %}orange{% elif rig.perf_color_coded == 3 %}black{% elif rig.perf_color_coded == 2 %}blue{% elif rig.perf_color_coded == 1 %}white{% elif rig.perf_color_coded == 0 %}gray{% endif %}.jpg">
+	            <img class="showcase-tier-image" src="/static/images/showcase-tiers-{% if rig.perf_color_coded == 6 %}purple{% elif rig.perf_color_coded == 5 %}orange{% elif rig.perf_color_coded == 4 %}black{% elif rig.perf_color_coded == 3 %}blue{% elif rig.perf_color_coded == 2 %}green{% elif rig.perf_color_coded == 1 %}white{% elif rig.perf_color_coded == 0 %}gray{% endif %}.jpg">
 	            <span class="perf-text" >{% if rig.max_performance %}{{rig.max_performance}}{% endif %}</span>
 	            <span class="rig-name-text">{% if rig.name %}{{rig.name}}{% endif %}</span>
 	        </div>
