@@ -422,7 +422,7 @@
       </div>
     </div>
   </div>
-  {% else %}
+  {% elif rig %}
   <div class="cube-belongs-to">
     <div class="container">
       <div class="row">
@@ -600,6 +600,9 @@
 		// set cube name
 		currentRig['name'] = (AC_GLOBALS.cubeName !== null) ? AC_GLOBALS.cubeName : 'Cube Name';
 		
+		// blank rig (new rig with no owner)
+		var blankRig = (AC_GLOBALS.rig === null);
+		
 		// prepare preset values
 		if (AC_GLOBALS.preset !== null) {
 			populateRigById(AC_GLOBALS.preset);
@@ -712,7 +715,7 @@
 		//
 		// equip buttons - show modal and load parts
 		//
-		if(AC_GLOBALS.myRig) {
+		if(AC_GLOBALS.myRig || blankRig) {
     		$('.equipbutton').click(renderPartPickerModal);
     		$('.equip-clickable').click(renderPartPickerModal);
 		} else {
@@ -890,12 +893,14 @@
 				$('#bench-cube-subtitle').html(constructPerformanceNote(worstComponentDetail));
 				
 				// enable save button and share button
-				$('#save-my-cube-button').prop('disabled', false);
+				if (AC_GLOBALS.myRig || blankRig) $('#save-cube-button').show();
 				$('#benchtab-share').removeClass('benchtab-disabled');
 				
 				// enable equiping secondary components
-				$('.other-clickable').addClass('pointer');
-				$('.other-clickable').click(renderPartPickerModal);
+				if (AC_GLOBALS.myRig || blankRig) {
+					$('.other-clickable').click(renderPartPickerModal);
+					$('.other-clickable').addClass('pointer');
+				}
 				$('.other-component-note').hide();
 			}
 			
@@ -976,6 +981,11 @@
 			$('.other-clickable').removeClass('pointer');
 			$('.other-clickable').unbind();
 			$('.other-component-note').show();
+			
+			//
+			//
+			// Do not show save cube button
+			$('#save-cube-button').hide();
 		}
 		
 		function constructDisplayName(part){
