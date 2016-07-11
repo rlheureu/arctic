@@ -13,13 +13,14 @@ def create_user(username, email, password, howheard):
     if not email: raise AttributeError('Email is a required parameter.')
     if not password: raise AttributeError('Password is a required parameter.')
     
-    userexist = dataaccess.get_user_by_email(email)
-    
-    if userexist:
-        raise AttributeError('This user already exists!')
-    
     if not auth_utils.is_valid_email(email):
         raise AttributeError('Invalid email address!')
+    
+    userexist = dataaccess.get_user_by_email(email)
+    if userexist: raise AttributeError('This email is already registered.')
+    
+    userexist = dataaccess.get_user_by_profilename(username)
+    if userexist: raise AttributeError('This profile name already exists.')
         
     user = User()
     user.email = email

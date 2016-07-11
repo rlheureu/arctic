@@ -185,10 +185,7 @@ def get_compatible_cpu_map(motherboard_id = None, gpu_id = None, memory_id = Non
         mem = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.id == memory_id).first()
         mobo = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.id == motherboard_id).first()
         
-        mem_compat_q = get_compat_cpu_for_memspec_queries(mem.memory_spec)
-        mobo_compat_q = db.session().query(models.CPUComponent).filter(models.CPUComponent.socket == mobo.socket)
-        
-        compat_q = mem_compat_q.intersect(mobo_compat_q)
+        compat_q = get_compat_cpu_for_memspec_queries(mem.memory_spec).filter(models.CPUComponent.socket == mobo.socket)
         
     elif motherboard_id:
         mobo = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.id == motherboard_id).first()
@@ -204,11 +201,10 @@ def get_compatible_cpu_map(motherboard_id = None, gpu_id = None, memory_id = Non
     """
     return map of compatible and incompatible components
     """
-    all_cpu = db.session().query(models.CPUComponent)
     if compat_q:
         return compat_q.all()
     else:
-        return all_cpu.all()
+        return db.session().query(models.CPUComponent).all()
 
 def get_compat_cpu_for_memspec_queries(memspec):
     """
@@ -216,21 +212,25 @@ def get_compat_cpu_for_memspec_queries(memspec):
     """
     compat = None
     if memspec == 'ddr4':
-        compat = db.session().query(models.CPUComponent).filter(models.CPUComponent.ddr4 != 'NO' and
-                                                                    models.CPUComponent.ddr4 != '' and
-                                                                    models.CPUComponent.ddr4 != None)
+        compat = db.session().query(models.CPUComponent).filter(models.CPUComponent.ddr4 != 'No') \
+        .filter(models.CPUComponent.ddr4 != '') \
+        .filter(models.CPUComponent.ddr4 != None)
+        
     elif memspec == 'ddr3':
-        compat = db.session().query(models.CPUComponent).filter(models.CPUComponent.ddr3 != 'NO' and
-                                                                    models.CPUComponent.ddr3 != '' and
-                                                                    models.CPUComponent.ddr3 != None)
+        compat = db.session().query(models.CPUComponent).filter(models.CPUComponent.ddr3 != 'No') \
+        .filter(models.CPUComponent.ddr3 != '') \
+        .filter(models.CPUComponent.ddr3 != None)
     elif memspec == 'ddr3l':
-        compat = db.session().query(models.CPUComponent).filter(models.CPUComponent.ddr3l != 'NO' and
-                                                                    models.CPUComponent.ddr3l != '' and
-                                                                    models.CPUComponent.ddr3l != None)
+        compat = db.session().query(models.CPUComponent).filter(models.CPUComponent.ddr3l != 'No') \
+        .filter(models.CPUComponent.ddr3l != '') \
+        .filter(models.CPUComponent.ddr3l != None)
     return compat
 
 def get_user_by_email(email):
     return db.session().query(models.User).filter(models.User.email == email).first()
+
+def get_user_by_profilename(pname):
+    return db.session().query(models.User).filter(models.User.profile_name == pname).first()
 
 def get_user_by_id(userid):
     return db.session().query(models.User).filter(models.User.id == userid).first()

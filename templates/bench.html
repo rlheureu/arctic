@@ -318,7 +318,9 @@
   .other-component-note{
     color: #3699f4;
   }
-  
+  .cube-belongs-to{
+    width:100%; border-top: 1px #2a263f solid;
+  }
   .showcase-links{
     width:100%; border-bottom: 1px #2a263f solid;
   }
@@ -399,6 +401,8 @@
         <br>
         {% if my_rig or not rig %}
         <button class="ac-btn" id="save-cube-button">Save Cube</button>
+        {% else %}
+        <a href="/preset" class="ac-btn">Create a Cube</a>
         {% endif %}
       </div>
     </div>
@@ -416,6 +420,27 @@
           </ul>
         </div>
       </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="cube-belongs-to">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-9" style="background-color: #5c5a67; padding: 10px;">
+          <span style="color: #a2a2a2;">This cube belongs to: </span> <span style="font-weight: bold; color: #dcdcdc;">{{rig.user.profile_name}}</span>
+          <span class="pull-right" style="color: #a2a2a2;">
+            View a different cube: &nbsp;&nbsp;&nbsp;
+            <select id="change-cube-select">
+              {% for urig in rig.user.rigs %}
+                <option class="nav-onclick" data-location="/bench?rig={{urig.id}}">{{urig.name}}</option>
+              {% endfor %}
+            </select>
+          </span>
+        </div>
+        <div class="col-md-2"></div>
+      </div>
+      <br>
     </div>
   </div>
   {% endif %}
@@ -687,8 +712,12 @@
 		//
 		// equip buttons - show modal and load parts
 		//
-		$('.equipbutton').click(renderPartPickerModal);
-		$('.equip-clickable').click(renderPartPickerModal);
+		if(AC_GLOBALS.myRig) {
+    		$('.equipbutton').click(renderPartPickerModal);
+    		$('.equip-clickable').click(renderPartPickerModal);
+		} else {
+			$('.equip-clickable').css('cursor', 'auto');
+		}
 		
 		//
 		// Rendering PART PICKER MODAL
@@ -757,10 +786,16 @@
             				itemDiv.addClass('recommended-item');
             			}
         				
+        				// make item clickable (equippable)
+        				itemDiv.addClass('equippable-item');
+        				
         			} else {        				
         				iconDiv.append('<img src="/static/images/modal-box-rarity-incompatible.png"/>') 	// append incompat icon
         				contentDiv.append('<span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>'); 			// incompatible text
         				titleSpan.addClass('fg-inc'); 															// title color
+        				
+        				// item cannot be equipped
+        				itemDiv.removeClass('equippable-item');
         			}
         			
         			itemListView.append(itemDiv);
@@ -781,7 +816,7 @@
 		// Change styling
 		//
 		function bindEquipListener(){
-			$('.equip-part-item').click(function(){
+			$('.equippable-item').click(function(){
 				// remove equip styling from all components
 				$('.equip-part-item').removeClass('equipped');
 				$(this).addClass('equipped');
@@ -990,6 +1025,9 @@
 			});
 		}
 		
+		$('#change-cube-select').change(function(){
+			window.location.href = $(this).find(":selected").data('location');
+		});
 		
 		
 	});

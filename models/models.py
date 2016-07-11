@@ -175,7 +175,7 @@ class Rig(Base):
     chassis_component_id = Column('chassis_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
     chassis_component = relationship('ChassisComponent', foreign_keys='Rig.chassis_component_id')
     user_id = Column('user_id', Integer, ForeignKey('arctic_user.arctic_user_id'))
-    user = relationship('User', foreign_keys='Rig.user_id')
+    user = relationship('User', foreign_keys='Rig.user_id', backref='rigs')
     rig_preset = Column('rig_preset', Boolean)
     rig_preset_name = Column('rig_preset_name', String(400))
     rig_preset_sort_order = Column('rig_preset_sort_order', Integer)
