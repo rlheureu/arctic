@@ -25,30 +25,38 @@
     border-top: 1px solid #ababab;
   }
   #pick-part-modal{
+    width: 1245px;
     position:fixed;
     top:50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #f2f2f2;
+    background-image:  url("/static/images/bg-white.jpg");
     text-shadow: none;
     color: #010101;
   }
   .equip-part-item{
-    border: solid 1px #d9d9d9;
     display: inline-block;
-    width: 445px;
+    width: 585px;
+    height: 127px;
     margin: 8px;
     text-align: left;
     cursor: pointer;
+    background-image: url("/static/images/border-normal.png");
+    background-repeat: no-repeat;
   }
-  .not-equipped:hover{
+  .equip-part-item:hover{
     background-color: #eee;
   }
   .equipped{
-    background-color:#2F2F2F;
+    background-image: url("/static/images/border-equip.png") !important;
+    background-repeat: no-repeat;
+  }
+  .recommended-item{
+    background-image: url("/static/images/border-recommended.png");
+    background-repeat: no-repeat;
   }
   .part-item-title{
-    font-size: 18px;
+    font-size: 20px;
   }
   .component-tab-cube-image{
     width:30px;
@@ -56,15 +64,14 @@
   .part-item-sub{
     color:#9f9f9f;
     display:block;
-    font-size: 11px;
+    font-size: 14px;
   }
   .part-item-border{
     border-left: solid 17px #f3f3f3;
   }
   .part-item-content {
-    padding:8px;
+    padding:22px;
     display:inline-block;
-    height:75px;
     vertical-align: top;
     padding-left:15px;
   }
@@ -74,23 +81,8 @@
     left: -25px;
     top: 8px;
   }
-  .part-item-flag{
-    display: inline-block;
-    background-color: #3e3e3e;
-    color: white;
-    padding: 3px;
-    width: 128px;
-    text-align: center;
-    position: relative;
-    right: -5px;
-    top: 9px;
-    font-size: 12px;
-    float:right;
-  }
   .part-icon-div{
     display:inline-block;
-    vertical-align: top;
-    width: 0px;
   }
   .bg-orange {
     background-color: #fede86;
@@ -152,10 +144,10 @@
   }
   #part-item-list{
     padding:10px;
-    background-color:#ffffff;
-    border-bottom: solid 1px #c1c1c1;
+    background-image: url("/static/images/modal-bg.png");
+    background-size: 100% 100%;
     overflow-y:auto;
-    height:300px;
+    height:450px;
   }
   .equip-clickable, .pointer{
     cursor: pointer;
@@ -536,77 +528,22 @@
   <!-- --------------- -->
   <!-- PART PICKER MODAL -->
   <!-- --------------- -->
-  <div class="container" id="pick-part-modal">
-    <div class="row">
-      <div class="col-md-12" style="padding:0px;">
+  <div id="pick-part-modal">
         <div style="text-align: center; padding:15px; border-bottom: solid 1px #c1c1c1;">
-          <b><span id="equip-modal-title"></span></b>
-          <button class="blue-link modal-button pull-right" id="modal-unequip-btn">UNEQUIP »</button>
-          <div class="clearfix"></div>
-        </div>
-        <div style="padding:10px; background-color:#d9d9d9; border-bottom: solid 1px #c1c1c1;">
-          <div class="pull-left">
-            <input type="text" placeholder="Search for part"/>&nbsp;&nbsp;&nbsp;
-            <input type="checkbox"/>&nbsp;&nbsp;&nbsp;<label for="">Show only compatible</label>
-          </div>
-          <div class="pull-right">
-            <span>Sort by:&nbsp;&nbsp;</span>
-            <select>
-              <option value="volvo">All manufacturers</option>
-            </select>
-            <select>
-              <option value="volvo">Amdahl Rank</option>
-            </select>
-          </div>
+          <h3 class="modal-title" id="equip-modal-title"></h3>
           <div class="clearfix"></div>
         </div>
         
         <!-- ITEM LIST -->
         <div id="part-item-list">
-          <div class="equip-part-item">
-            <div class="part-item-border border-orange">
-              <div class="part-icon-div">
-                <img src="/static/images/part-item-orange.png" class="part-item-icon"/>
-              </div>
-              <div class="part-item-content">
-                <span class="part-item-title fg-orange">Samsung 28" UHD Monitor</span>
-                <span class="part-item-sub">4K RESOLUTION</span>
-                <span class="part-item-sub">10 MS RESPONSE</span>
-              </div>
-              <div class="part-item-flag">
-                RECOMMENDED
-              </div>
-            </div>
-          </div>
-          <div class="equip-part-item">
-            <div class="part-item-border">
-              <div class="part-icon-div">
-                <img src="/static/images/part-item-inc.png" class="part-item-icon"/>
-              </div>
-              <div class="part-item-content">
-                <span class="part-item-title fg-inc">Samsung 28" UHD Monitor</span>
-                <span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>
-              </div>
-            </div>
-          </div>
-          <div class="equip-part-item">
-            <div class="part-item-border">
-              <div class="part-icon-div">
-                <img src="/static/images/part-item-inc.png" class="part-item-icon"/>
-              </div>
-              <div class="part-item-content">
-                <span class="part-item-title fg-inc">Samsung 28" UHD Monitor</span>
-                <span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>
-              </div>
-            </div>
-          </div>
+          
         </div>
-        <div style="padding:10px; border-bottom: solid 1px #c1c1c1; text-align: center;">
-          <button class="blue-link modal-button" id="modal-cancel-btn">CANCEL »</button>
-          <button class="blue-link modal-button" id="modal-save-btn">SAVE PART »</button>
+        <div style="padding:10px; border: solid 1px #545359; background-color: #1b1a22; text-align: center;">
+          <button class="ac-btn" id="modal-unequip-btn">UNEQUIP »</button>
+          <button class="ac-btn" id="modal-cancel-btn">CANCEL »</button>
+          <button class="ac-btn" id="modal-save-btn">SAVE PART »</button>
         </div>
-      </div>
-    </div>
+      
   </div>
 {% endblock %}
 
@@ -750,6 +687,9 @@
 		$('.equipbutton').click(renderPartPickerModal);
 		$('.equip-clickable').click(renderPartPickerModal);
 		
+		//
+		// Rendering PART PICKER MODAL
+		//
 		function renderPartPickerModal() {
 			var eType = $(this).parent().data('equip-type');
 			equipType = eType;
@@ -783,14 +723,12 @@
 	        		partsCache[component.id] = component;
 	        		
         			var itemDiv = $('<div class="equip-part-item"></div>')
-        			var borderDiv = $('<div class="part-item-border"></div>');
         			var contentDiv = $('<div class="part-item-content"></div>')
         			var iconDiv = $('<div class="part-icon-div"></div>')
         			var titleSpan = $('<span class="part-item-title">' + constructDisplayName(component) + '</span>');
         			
-        			itemDiv.append(borderDiv);
-        			borderDiv.append(iconDiv);
-        			borderDiv.append(contentDiv);
+        			itemDiv.append(iconDiv);
+        			itemDiv.append(contentDiv);
         			contentDiv.append(titleSpan);
         			
         			//
@@ -806,19 +744,18 @@
         			}
         			
         			if (component.compatible === true) {
-        				borderDiv.addClass('border-' + component.perf_color); 										// border color
-        				iconDiv.append('<img src="/static/images/part-item-'+component.perf_color+'.png" class="part-item-icon"/>') 	// color icon
+        				iconDiv.append('<img src="/static/images/modal-box-rarity-'+component.perf_color+'.png"/>') 	// color icon
         				titleSpan.addClass('fg-' + component.perf_color);											// style title span
         				contentDiv.append('<span class="part-item-sub">' + constructPerformanceNote(component) + '</span>');
         				
         				// add any flags
             			// adding recommended to all for now
             			if (component.recommended === true ) {
-            				borderDiv.append('<div class="part-item-flag">RECOMMENDED</div>');
+            				itemDiv.addClass('recommended-item');
             			}
         				
         			} else {        				
-        				iconDiv.append('<img src="/static/images/part-item-inc.png" class="part-item-icon"/>') 	// append incompat icon
+        				iconDiv.append('<img src="/static/images/modal-box-rarity-incompatible.png"/>') 	// append incompat icon
         				contentDiv.append('<span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>'); 			// incompatible text
         				titleSpan.addClass('fg-inc'); 															// title color
         			}
