@@ -1,16 +1,195 @@
 {% extends "base.html" %}
 {% block styling %}
   {{ super() }}
-  <style type="text/css"></style>
+  <style type="text/css">
+    .section1{
+      width:100%;
+      background-image: url("/static/images/section1-bg.jpg");
+      background-repeat:no-repeat;
+      position:relative;
+      top:-21px;
+    }
+    .section2{
+      width:100%;
+      background-image: url("/static/images/section2.png");
+      background-position: center top;
+      background-repeat:no-repeat; 
+      position:relative;
+      top:-190px;
+    }
+    .section3{
+      width:100%;
+      background-image: url("/static/images/section3bg-image.jpg");
+      background-position: center top;
+      background-repeat:no-repeat; 
+      position:relative;
+      top:-307px;
+      z-index: -500;
+    }
+    .section4{
+      width:100%;
+      background-image: url("/static/images/bg-social.png");
+      background-position: center top;
+      background-repeat:no-repeat; 
+      position:relative;
+      top:-100px;
+    }
+    .section5{
+      width:100%;
+      background-image: url("/static/images/section3bg-image.jpg");
+      background-position: center top;
+      background-repeat:no-repeat; 
+      position:relative;
+      top:-307px;
+      z-index: -500;
+    }
+    .landing-header{
+      width: 100%;
+      border-left: solid 3px #aaa;
+      border-right: solid 3px #aaa;
+      text-align: center;
+    }
+    .anchor{
+      display: block;
+      position: relative;
+      top: 191px;
+    }
+  </style>
+{% endblock %}
+{% block navleft %}
+<div class="nav-items">
+  <ul>
+    <li><a href="#whatisit">WHAT IS IT?</a></li>
+    <li><a href="#howitworks">HOW IT WORKS</a></li>
+    <li><a href="#shareyourcube">SHARE YOUR CUBE</a></li>
+  </ul>
+</div>
 {% endblock %}
 
-
 {% block content %}
-  <div class="container">
-    <div class="jumbotron">
-      <h1>Amdahl Cube</h1>
-      <p>The best way to build a PC.</p>
-      <p><a class="btn btn-primary btn-lg" href="preset">Get Started</a></p>
+  <div class="section1" id="top">
+  
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8" style="text-align: center;">
+          <br><br><br><br><br>
+          <img src="/static/images/Top-logo.png">
+          <br><br><br><br>
+        </div>
+        <div class="col-md-2"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;"><span  style="color: #339eee;">AMDAHL CUBE</span> | KNOW WHAT TO EXPECT</h1></div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2" style="text-align: center;">
+          <br>
+          <p style="color:#ccc;">Amdahl Cube is a place to learn about gaming PC components in order to design one you are proud of. It is a place to learn and gain confidence that you are spending wisely on each component.</p>
+          <br><br><br><br><br><br><br><br><br><br><br><br>
+          
+        </div>
+      </div>
+    </div>
+  
+  </div>
+  <div class="section2">
+    <a id="whatisit" class="anchor"></a>
+    <div class="container">
+      <div class="row">
+        <br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br>
+        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;color:#333;">PERFORMANCE SIMPLIFIED</h1></div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2" style="text-align: center;">
+          <br>
+          <p style="font-size: 30px; color: #777;">PC Gaming Gives You the Ability to Push the Limits</p>
+          <hr style="border: 0; border-top: 4px solid #998; width: 300px;">
+          <p style="color: #777;">One of the perks of PC gaming is the ability to push the limits of what's technologically possible and experience something wholly new.</p>
+        </div>
+      </div>
+      <div class="row" style="padding-top:940px;">
+        <div class="col-md-8">
+          <p style="font-size: 30px; color: #444;">Knowing What to Expect is Difficult</p>
+          <p style="color: #444;">Technology can change so fast. With so many possible components to choose from, even knowing where to start can be a challenge.</p>
+        </div>
+      </div>
+      <div class="row" style="padding-top:240px; padding-bottom:390px;">
+        <div class="col-md-6 col-md-offset-6">
+          <p style="font-size: 30px; color: #444;">With the Cube, We Simplify This</p>
+          <p style="color: #444;">Each part is presented based on the maximum experience it can deliver.</p>
+        </div>
+      </div>
+  
     </div>
   </div>
+  
+  <div class="section3">
+    <a id="howitworks" class="anchor"></a>
+    <div class="container">
+      <div class="row">
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;color:#eee;">DESIGN YOUR RIG</h1></div>
+        <br><br><br><br><br><br><br><br>
+      </div>
+      <div class="row">
+        <div class="col-sm-3" style="text-align: center;">
+          <img src="/static/images/icon_section3_1.png">
+          <p style="color:#eee">Designing a PC is as easy as equipping an item.</p>
+        </div>
+        <div class="col-sm-3" style="text-align: center;">
+          <img src="/static/images/icon_section3_2.png">
+          <p style="color:#eee">Components that directly influence performance have been ranked and color coded.</p>
+        </div>
+        <div class="col-sm-3" style="text-align: center;">
+          <img src="/static/images/icon_section3_3.png">
+          <p style="color:#eee">Match components of the same color to get a system at that performance tier.</p>
+        </div>
+        <div class="col-sm-3" style="text-align: center;">
+          <img src="/static/images/icon_section4_1.png">
+          <p style="color:#eee">Easily identify bottlenecks in your system and know which part to upgrade next.</p>
+        </div>
+      </div>
+  
+    </div>
+  </div>
+  
+  <div class="section4">
+    <a id="shareyourcube" class="anchor"></a>
+    <div class="container">
+      <div class="row" style="text-align: center;">
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;color:#eee;">TAKE IT WITH YOU</h1></div>
+        <br><br><br><br><br>
+        <hr style="border: 0; border-top: 4px solid #eee; width: 300px;">
+        <br><br>
+        <img src="/static/images/icons_section4_social.png">
+        <br><br><br>
+      </div>
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2" style="text-align: center; padding-bottom:240px;">
+          <p style="font-size: 30px; color:#eee;">A PC is a box at your feet and your ticket to new worlds and communities.</p>
+          <br>
+          <p style="color:#eee;">Take your cube with you to your favorite places. Share it with your PCMR friends. Post it for your Twitch followers. Take pride in your cube.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="section5">
+  
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2" style="text-align: center; padding-top:350px;">
+          <p style="font-size: 30px; color:#eee;">We'll Be Ready</p>
+          <br>
+          <hr style="border: 0; border-top: 4px solid #eee; width: 300px;">
+          <br>
+          <p style="color:#eee;">PC harware is always getting better. We'll keep you updated when new parts come out. Let us help you upgrade your rig or pick out the perfect rig for the friends that have your back in the arena.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 {% endblock %}

@@ -23,14 +23,19 @@
         background-image: url("/static/images/bg-dark.jpg");
         background-repeat: no-repeat;
         background-size: cover; 
-        padding-top:0px;
+        padding-top:90px;
         font-family: 'Open Sans', sans-serif;
         color:#6c6974;
       }
-      h1, h2, h3{
+      h2, h3{
         font-family: 'Open Sans', sans-serif;
         font-weight:700;
         color:#ffffff;
+      }
+      h1{
+        font-family: 'Fjalla One', sans-serif;
+        color:#ffffff;
+        font-size: 55px;
       }
       .navbar-page-title{
         font-weight: 300;
@@ -73,7 +78,7 @@
       .nav-items ul li{
         display: inline-block;
         position: relative;
-        width: 140px;
+        min-width: 140px;
         padding-bottom: 24px;
         top: 21px;
         margin-left: 1px;
@@ -190,9 +195,9 @@
       .align-text-center{
         text-align:center;
       }
-      .blue-link{
+      a.blue-link{
         display: inline-block;
-        color: black;
+        color: #eee;
         background-color: #1a9dfc;
         padding-left: 30px;
         padding-right: 30px;
@@ -202,9 +207,10 @@
         font-weight: bold;
         font-size: 13px;
         border: none;
+        text-decoration:none;
       }
-      a.blue-link {
-        text-decoration:none; 
+      a.blue-link:hover{
+        color: #fff;
       }
       .navsteps{
         color:#515151;
@@ -248,14 +254,27 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{{ url_for('static', filename='js/jquery-1.12.0.min.js') }}"></script>
     
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600|Fjalla+One' rel='stylesheet' type='text/css'>
+    
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    
+      ga('create', 'UA-80552589-1', 'auto');
+      ga('send', 'pageview');
+    
+    </script>
+    <!-- End Google Analytics -->
     
   </head>
   <body>
   
   
   
-    <nav class="navbar">
+    <nav class="navbar navbar-fixed-top">
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-3 align-text-right">
@@ -284,8 +303,7 @@
               {% elif show_get_started %}
               <div class="nav-items">
                 <ul>
-                  <li><a style="cursor: pointer;" id="navloginbutton">Login</a></li>
-                  <li><a href="preset">GET STARTED »</a></li>
+                  <li><a href="preset" class="blue-link" style="position:relative;top:-5px;">Create Your Cube</a></li>
                 </ul>
               </div>
               {% else %}

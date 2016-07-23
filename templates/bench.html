@@ -436,7 +436,7 @@
             View a different cube: &nbsp;&nbsp;&nbsp;
             <select id="change-cube-select">
               {% for urig in rig.user.rigs %}
-                <option class="nav-onclick" data-location="/bench?rig={{urig.id}}">{{urig.name}}</option>
+                <option class="nav-onclick" data-location="/bench?rig={{urig.id}}" {% if urig.id == rig.id %}selected{% endif %}>{{urig.name}}</option>
               {% endfor %}
             </select>
           </span>
