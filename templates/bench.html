@@ -993,6 +993,7 @@
 		
 		function constructDisplayName(part){
 			var partName = "";
+			if (part.display_name !== null && part.display_name !== undefined && part.display_name !== '') return part.display_name;
 			if (part.vendor !== undefined && part.vendor !== null) partName += part.vendor + ' ';
 			if (part.brand_name !== undefined && part.brand_name !== null) partName += part.brand_name + ' ';
 			if (part.model_number !== undefined && part.model_number !== null) partName += part.model_number;
