@@ -366,18 +366,12 @@
 {% endblock %}
 
 {% block navleft %}
-{% if not rig %}
+{% if current_user.is_authenticated %}
+{{ super() }}
+{% else %}
 <h3 class="navbar-page-title">
   Finish building your Cube  
 </h3>
-{% else %}
-<div class="nav-items">
-  <ul>
-    <li><a href="/showcase">RIG SHOWCASE</a></li>
-    <li class="active">THE BENCH</li>
-    <li><a href="/faq">FAQ</a></li>
-  </ul>
-</div>
 {% endif %}
 {% endblock %}
 

@@ -260,6 +260,8 @@ def bench():
     
     if cube_name: context['cube_name'] = cube_name
     if preset: context['preset'] = preset
+    
+    context['currpagenav'] = 'bench'
 
     return render_template('bench.html', **context)
 
@@ -273,7 +275,7 @@ def showcase():
 
     rigs.sort(key=lambda rig: rig.perf_color_coded, reverse=True)
 
-    context = {'rigs':rigs}
+    context = {'rigs':rigs, 'currpagenav' : 'showcase'}
     return render_template('showcase.html', **context)
 
 @app.route("/namecube", methods=['GET'])

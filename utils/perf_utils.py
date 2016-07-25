@@ -43,7 +43,7 @@ def get_performance_color(component):
         return 'purple'
     elif '1440p' in perf:
         return 'orange'
-    elif 'oculus' in perf:
+    elif 'vr' in perf:
         return 'black'
     elif '1080p@60' in perf:
         return 'blue'
@@ -68,7 +68,7 @@ def get_performance_color_coded(component):
         return 6
     elif '1440p' in perf:
         return 5
-    elif 'oculus' in perf:
+    elif 'vr' in perf:
         return 4
     elif '1080p@60' in perf:
         return 3

@@ -46,6 +46,7 @@
         list-style:none;
         margin:0px;
         margin-top:20px;
+        margin-bottom:2px;
       }
       .wizard-steps-breadcrumbs ul li{
         border-bottom: #716b77 3px solid;
@@ -283,6 +284,15 @@
           </div>
           <div class="col-md-5 align-text-center">
             {% block navleft %}
+              {% if current_user.is_authenticated %}
+              <div class="nav-items">
+                <ul>
+                  <li {% if currpagenav == 'showcase' %}class="active"{% endif %}><a href="/showcase">RIG SHOWCASE</a></li>
+                  <li {% if currpagenav == 'bench' %}class="active"{% endif %}><a href="/preset">THE BENCH</a></li>
+                  <li {% if currpagenav == 'faq' %}class="active"{% endif %}><a href="/faq">FAQ</a></li>
+                </ul>
+              </div>
+              {% else %}
               <div class="nav-items">
                 <ul>
                   <li><a href="#">Performance Tiers</a></li>
@@ -290,6 +300,7 @@
                   <li><a href="#">Showcase your rig</a></li>
                 </ul>
               </div>
+              {% endif %}
             {% endblock %}
           </div>
           <div class="col-md-4 align-text-left ">
@@ -305,6 +316,7 @@
               <div class="nav-items">
                 <ul>
                   <li><a href="preset" class="blue-link" style="position:relative;top:-5px;">Create Your Cube</a></li>
+                  <li><a href="#" class="blue-link" style="position:relative;top:-5px;" id="navloginbutton">Login</a></li>
                 </ul>
               </div>
               {% else %}
@@ -480,7 +492,7 @@
     		ArcticBasics.initLogin(function(){
     			// user is logging in from the home page
     			// after the login we probably want to redirect to the bench
-    			window.location = '/';
+    			location.reload();
     		});
     	});
     	
