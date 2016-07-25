@@ -238,6 +238,7 @@ def custom():
 def bench():
     
     context = {}
+    context['currpagenav'] = 'bench'
     
     """
     If a RIG is being requested it will take precedence over other
@@ -260,8 +261,6 @@ def bench():
     
     if cube_name: context['cube_name'] = cube_name
     if preset: context['preset'] = preset
-    
-    context['currpagenav'] = 'bench'
 
     return render_template('bench.html', **context)
 
