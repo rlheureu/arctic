@@ -233,6 +233,14 @@ def custom():
 
     return render_template('custom.html', **context)
 
+@app.route("/faq", methods=['GET'])
+@requires_auth
+def faq():
+    
+    context = {'currpagenav' : 'faq'}
+
+    return render_template('faq.html', **context)
+
 @app.route("/bench", methods=['GET'])
 @requires_auth
 def bench():
