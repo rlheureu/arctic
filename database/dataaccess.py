@@ -4,37 +4,55 @@ from database import db
 from models import models
 from models.models import AccountClaim
 from datetime import datetime
+from sqlalchemy.sql.expression import or_
 
 def get_rig_presets():
     return db.session().query(models.Rig).filter(models.Rig.rig_preset == True).order_by(models.Rig.rig_preset_sort_order.desc()).all()
 
 def get_all_cpus():
-    return db.session().query(models.CPUComponent).all()
+    return db.session().query(models.CPUComponent).filter(models.CPUComponent.active == True).all()
 
-def get_all_gpus():
-    return db.session().query(models.GPUComponent).all()
+def get_all_gpus(return_query=False):
+    if return_query:
+        return db.session().query(models.GPUComponent).filter(models.GPUComponent.active == True)
+    else:
+        return db.session().query(models.GPUComponent).filter(models.GPUComponent.active == True).all()
 
-def get_all_chassis():
-    return db.session().query(models.ChassisComponent).all()
+def get_all_chassis(return_query=False):
+    if return_query:
+        return db.session().query(models.ChassisComponent).filter(models.ChassisComponent.active == True)
+    else:
+        return db.session().query(models.ChassisComponent).filter(models.ChassisComponent.active == True).all()
 
-def get_all_power():
-    return db.session().query(models.PowerComponent).all()
+def get_all_power(return_query=False):
+    if return_query:
+        return db.session().query(models.PowerComponent).filter(models.PowerComponent.active == True)
+    else:
+        return db.session().query(models.PowerComponent).filter(models.PowerComponent.active == True).all()
 
-def get_all_storage():
-    return db.session().query(models.StorageComponent).all()
+def get_all_storage(return_query=False):
+    if return_query:
+        return db.session().query(models.StorageComponent).filter(models.StorageComponent.active == True)
+    else:
+        return db.session().query(models.StorageComponent).filter(models.StorageComponent.active == True).all()
 
 def get_all_mobos():
-    return db.session().query(models.MotherboardComponent).all()
 
-def get_all_displays():
-    return db.session().query(models.DisplayComponent).all()
+    return db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.active == True).all()
+
+def get_all_displays(return_query=False):
+    if return_query:
+        return db.session().query(models.DisplayComponent).filter(models.DisplayComponent.active == True)
+    else:
+        return db.session().query(models.DisplayComponent).filter(models.DisplayComponent.active == True).all()
 
 def get_all_memory():
-    return db.session().query(models.MemoryComponent).all()
+
+    return db.session().query(models.MemoryComponent).filter(models.MemoryComponent.active == True).all()
 
 def get_component(component_id):
     if component_id:
-        return db.session().query(models.BaseComponent).filter(models.BaseComponent.id == component_id).first()
+        return db.session().query(models.BaseComponent).filter(models.BaseComponent.id == component_id).filter(models.BaseComponent.active == True).first()
     else:
         return None
 
@@ -60,11 +78,143 @@ def save_rig(rig_dict, user_id):
     
     return rig
 
+def get_manufacturers(target):
+
+    if target == 'cpu':
+        query = db.session().query(models.CPUComponent.vendor.distinct().label("vendor"))
+        manufacturers = [row.vendor for row in query.all() if row.vendor]
+    elif target == 'display':
+        query = db.session().query(models.DisplayComponent.vendor.distinct().label("vendor"))
+        manufacturers = [row.vendor for row in query.all() if row.vendor]
+    elif target == 'memory':
+        query = db.session().query(models.MemoryComponent.vendor.distinct().label("vendor"))
+        manufacturers = [row.vendor for row in query.all() if row.vendor]
+    elif target == 'gpu':
+        query = db.session().query(models.GPUComponent.vendor.distinct().label("vendor"))
+        manufacturers = [row.vendor for row in query.all() if row.vendor]
+    elif target == 'motherboard':
+        query = db.session().query(models.MotherboardComponent.vendor.distinct().label("vendor"))
+        manufacturers = [row.vendor for row in query.all() if row.vendor]
+    elif target == 'chassis':
+        query = db.session().query(models.ChassisComponent.vendor.distinct().label("vendor"))
+        manufacturers = [row.vendor for row in query.all() if row.vendor]
+    elif target == 'power':
+        query = db.session().query(models.PowerComponent.vendor.distinct().label("vendor"))
+        manufacturers = [row.vendor for row in query.all() if row.vendor]
+    elif target == 'storage':
+        query = db.session().query(models.StorageComponent.vendor.distinct().label("vendor"))
+        manufacturers = [row.vendor for row in query.all() if row.vendor]
+    else:
+        manufacturers = []
+
+    manufacturers.sort()
+    return manufacturers
+
+def search_parts(search_string, target, motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, manufacturer=None):
+    print manufacturer
+    search_strings = search_string.split()
+
+    if target == 'cpu':
+        query = get_compatible_cpu_map(motherboard_id, gpu_id, memory_id, display_id, cpu_id, return_query=True)
+        if manufacturer:
+            query = query.filter(models.CPUComponent.vendor == manufacturer)
+        for search_string in search_strings:
+            query = query.filter(or_(models.CPUComponent.vendor.like('%' + search_string + '%'),
+                                     models.CPUComponent.brand_name.like('%' + search_string + '%'),
+                                     models.CPUComponent.model_number.like('%' + search_string + '%'),
+                                     models.CPUComponent.display_name.like('%' + search_string + '%'),
+                                     models.CPUComponent.int_gpu.like('%' + search_string + '%')))
+        return query.all()
+
+    elif target == 'display':
+        query = get_all_displays(return_query=True)
+        if manufacturer:
+            query = query.filter(models.DisplayComponent.vendor == manufacturer)
+        for search_string in search_strings:
+            query = query.filter(or_(models.DisplayComponent.vendor.like('%' + search_string + '%'),
+                                     models.DisplayComponent.brand_name.like('%' + search_string + '%'),
+                                     models.DisplayComponent.model_number.like('%' + search_string + '%'),
+                                     models.DisplayComponent.display_name.like('%' + search_string + '%')))
+        return query.all()
+
+    elif target == 'memory':
+        query = get_compatible_memory_map(motherboard_id, gpu_id, memory_id, display_id, cpu_id, return_query=True)
+        if manufacturer:
+            query = query.filter(models.MemoryComponent.vendor == manufacturer)
+        for search_string in search_strings:
+            query = query.filter(or_(models.MemoryComponent.vendor.like('%' + search_string + '%'),
+                                     models.MemoryComponent.brand_name.like('%' + search_string + '%'),
+                                     models.MemoryComponent.model_number.like('%' + search_string + '%'),
+                                     models.MemoryComponent.display_name.like('%' + search_string + '%')))
+        return query.all()
+
+    elif target == 'gpu':
+        query = get_all_gpus(return_query=True)
+        if manufacturer:
+            query = query.filter(models.GPUComponent.vendor == manufacturer)
+        for search_string in search_strings:
+            query = query.filter(or_(models.GPUComponent.vendor.like('%' + search_string + '%'),
+                                     models.GPUComponent.brand_name.like('%' + search_string + '%'),
+                                     models.GPUComponent.model_number.like('%' + search_string + '%'),
+                                     models.GPUComponent.display_name.like('%' + search_string + '%')))
+        return query.all()
+
+    elif target == 'motherboard':
+        query = get_compatible_mobo_map(motherboard_id, gpu_id, memory_id, display_id, cpu_id, return_query=True)
+        if manufacturer:
+            query = query.filter(models.MotherboardComponent.vendor == manufacturer)
+        for search_string in search_strings:
+            query = query.filter(or_(models.MotherboardComponent.vendor.like('%' + search_string + '%'),
+                                     models.MotherboardComponent.brand_name.like('%' + search_string + '%'),
+                                     models.MotherboardComponent.model_number.like('%' + search_string + '%'),
+                                     models.MotherboardComponent.display_name.like('%' + search_string + '%'),
+                                     models.MotherboardComponent.chipset_vendor.like('%' + search_string + '%'),
+                                     models.MotherboardComponent.chipset_name.like('%' + search_string + '%'),
+                                     models.MotherboardComponent.form_factor.like('%' + search_string + '%'),
+                                     models.MotherboardComponent.memory_type.like('%' + search_string + '%')))
+        return query.all()
+
+    elif target == 'chassis':
+        query = get_all_chassis(return_query=True)
+        if manufacturer:
+            query = query.filter(models.ChassisComponent.vendor == manufacturer)
+        for search_string in search_strings:
+            query = query.filter(or_(models.ChassisComponent.vendor.like('%' + search_string + '%'),
+                                     models.ChassisComponent.brand_name.like('%' + search_string + '%'),
+                                     models.ChassisComponent.model_number.like('%' + search_string + '%'),
+                                     models.ChassisComponent.display_name.like('%' + search_string + '%')))
+        return query.all()
+
+    elif target == 'power':
+        query = get_all_power(return_query=True)
+        if manufacturer:
+            query = query.filter(models.PowerComponent.vendor == manufacturer)
+        for search_string in search_strings:
+            query = query.filter(or_(models.PowerComponent.vendor.like('%' + search_string + '%'),
+                                     models.PowerComponent.brand_name.like('%' + search_string + '%'),
+                                     models.PowerComponent.model_number.like('%' + search_string + '%'),
+                                     models.PowerComponent.display_name.like('%' + search_string + '%')))
+        return query.all()
+
+    elif target == 'storage':
+        query = get_all_storage(return_query=True)
+        if manufacturer:
+            query = query.filter(models.StorageComponent.vendor == manufacturer)
+        for search_string in search_strings:
+            query = query.filter(or_(models.StorageComponent.vendor.like('%' + search_string + '%'),
+                                     models.StorageComponent.brand_name.like('%' + search_string + '%'),
+                                     models.StorageComponent.model_number.like('%' + search_string + '%'),
+                                     models.StorageComponent.display_name.like('%' + search_string + '%')))
+        return query.all()
+
+    else:
+        return []
+
 def get_compatible_parts(target=None,
-                         motherboard_id = None,
-                         gpu_id = None,
-                         memory_id = None,
-                         display_id = None,
+                         motherboard_id=None,
+                         gpu_id=None,
+                         memory_id=None,
+                         display_id=None,
                          cpu_id=None):
     
     if target == 'cpu':
@@ -98,7 +248,7 @@ def get_compatible_parts(target=None,
     else:
         return []
 
-def get_compatible_mobo_map(motherboard_id = None, gpu_id = None, memory_id = None, display_id = None, cpu_id=None):
+def get_compatible_mobo_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, return_query=False):
     """
     MOBO constraints:
     - CPU YES
@@ -109,16 +259,16 @@ def get_compatible_mobo_map(motherboard_id = None, gpu_id = None, memory_id = No
     
     if cpu_id:
         print 'cpu ID: {}'.format(cpu_id)
-        cpu = db.session().query(models.CPUComponent).filter(models.CPUComponent.id == cpu_id).first()
+        cpu = db.session().query(models.CPUComponent).filter(models.CPUComponent.id == cpu_id, models.CPUComponent.active == True).first()
         print 'cpu: {}'.format(cpu)
         """ socket compare """
-        compat_q = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.socket == cpu.socket)
+        compat_q = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.socket == cpu.socket, models.MotherboardComponent.active == True)
         
     elif memory_id:
-        mem = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.id == memory_id).first()
+        mem = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.id == memory_id, models.MemoryComponent.active == True).first()
         
         """ get compatible sockets from compatible cpus """
-        allcpus = db.session().query(models.CPUComponent).all()
+        allcpus = db.session().query(models.CPUComponent).filter(models.CPUComponent.active == True).all()
         compatsockets = set()
         for cpu in allcpus:
             if mem.memory_spec == 'ddr3' and cpu.ddr3 != None and cpu.ddr3 != '' and cpu.ddr3.lower() != 'no':
@@ -129,17 +279,23 @@ def get_compatible_mobo_map(motherboard_id = None, gpu_id = None, memory_id = No
                 compatsockets.add(cpu.socket)
         
         print 'compat sockets {}'.format(compatsockets)
-        compat_q = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.socket.in_(compatsockets))
+        compat_q = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.socket.in_(compatsockets), models.MotherboardComponent.active == True)
     
     """
     return map of compatible and incompatible components
     """
     if compat_q:
-        return compat_q.all()
+        if return_query:
+            return compat_q
+        else:
+            return compat_q.all()
     else:
-        return db.session().query(models.MotherboardComponent).all()
+        if return_query:
+            return db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.active == True)
+        else:
+            return db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.active == True).all()
     
-def get_compatible_memory_map(motherboard_id = None, gpu_id = None, memory_id = None, display_id = None, cpu_id=None):
+def get_compatible_memory_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, return_query=False):
     """
     Memory constraints:
     - CPU
@@ -151,7 +307,7 @@ def get_compatible_memory_map(motherboard_id = None, gpu_id = None, memory_id = 
         """
         which memory is supported for selected CPU?
         """
-        cpu = db.session().query(models.CPUComponent).filter(models.CPUComponent.id == cpu_id).first()
+        cpu = db.session().query(models.CPUComponent).filter(models.CPUComponent.id == cpu_id, models.CPUComponent.active == True).first()
         
         print 'cpu mem [{}]'.format(cpu.ddr3)
         print 'cpu mem [{}]'.format(cpu.ddr3l)
@@ -164,17 +320,23 @@ def get_compatible_memory_map(motherboard_id = None, gpu_id = None, memory_id = 
         
         print supported_mem
         
-        compat_q = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.memory_spec.in_(supported_mem))
+        compat_q = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.memory_spec.in_(supported_mem), models.MemoryComponent.active == True)
     
     """
     return map of compatible and incompatible components
     """
     if compat_q:
-        return compat_q.all()
+        if return_query:
+            return compat_q
+        else:
+            return compat_q.all()
     else:
-        return db.session().query(models.MemoryComponent).all()
+        if return_query:
+            return db.session().query(models.MemoryComponent).filter(models.MemoryComponent.active == True)
+        else:
+            return db.session().query(models.MemoryComponent).filter(models.MemoryComponent.active == True).all()
 
-def get_compatible_cpu_map(motherboard_id = None, gpu_id = None, memory_id = None, display_id = None, cpu_id=None):
+def get_compatible_cpu_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, return_query=False):
     """
     CPU constraints:
     - Motherboard
@@ -184,19 +346,19 @@ def get_compatible_cpu_map(motherboard_id = None, gpu_id = None, memory_id = Non
     compat_q = None
     
     if motherboard_id and memory_id:
-        mem = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.id == memory_id).first()
-        mobo = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.id == motherboard_id).first()
+        mem = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.id == memory_id, models.MemoryComponent.active == True).first()
+        mobo = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.id == motherboard_id, models.MotherboardComponent.active == True).first()
         
         compat_q = get_compat_cpu_for_memspec_queries(mem.memory_spec).filter(models.CPUComponent.socket == mobo.socket)
         
     elif motherboard_id:
-        mobo = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.id == motherboard_id).first()
-        compat_q = db.session().query(models.CPUComponent).filter(models.CPUComponent.socket == mobo.socket)
+        mobo = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.id == motherboard_id, models.MotherboardComponent.active == True).first()
+        compat_q = db.session().query(models.CPUComponent).filter(models.CPUComponent.socket == mobo.socket, models.CPUComponent.active == True)
     elif memory_id:
         """
         Limit motherboards by mem
         """
-        mem = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.id == memory_id).first()
+        mem = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.id == memory_id, models.MemoryComponent.active == True).first()
         compat_q = get_compat_cpu_for_memspec_queries(mem.memory_spec)
     
     
@@ -204,9 +366,15 @@ def get_compatible_cpu_map(motherboard_id = None, gpu_id = None, memory_id = Non
     return map of compatible and incompatible components
     """
     if compat_q:
-        return compat_q.all()
+        if return_query:
+            return compat_q
+        else:
+            return compat_q.all()
     else:
-        return db.session().query(models.CPUComponent).all()
+        if return_query:
+            return db.session().query(models.CPUComponent).filter(models.CPUComponent.active == True)
+        else:
+            return db.session().query(models.CPUComponent).filter(models.CPUComponent.active == True).all()
 
 def get_compat_cpu_for_memspec_queries(memspec):
     """
@@ -216,16 +384,19 @@ def get_compat_cpu_for_memspec_queries(memspec):
     if memspec == 'ddr4':
         compat = db.session().query(models.CPUComponent).filter(models.CPUComponent.ddr4 != 'No') \
         .filter(models.CPUComponent.ddr4 != '') \
-        .filter(models.CPUComponent.ddr4 != None)
+        .filter(models.CPUComponent.ddr4 != None) \
+        .filter(models.CPUComponent.active == True)
         
     elif memspec == 'ddr3':
         compat = db.session().query(models.CPUComponent).filter(models.CPUComponent.ddr3 != 'No') \
         .filter(models.CPUComponent.ddr3 != '') \
-        .filter(models.CPUComponent.ddr3 != None)
+        .filter(models.CPUComponent.ddr3 != None) \
+        .filter(models.CPUComponent.active == True)
     elif memspec == 'ddr3l':
         compat = db.session().query(models.CPUComponent).filter(models.CPUComponent.ddr3l != 'No') \
         .filter(models.CPUComponent.ddr3l != '') \
-        .filter(models.CPUComponent.ddr3l != None)
+        .filter(models.CPUComponent.ddr3l != None) \
+        .filter(models.CPUComponent.active == True)
     return compat
 
 def get_user_by_email(email):
@@ -243,4 +414,3 @@ def get_rigs_by_user_id(user_id):
 def create_user(user):
     db.session().add(user)
     db.session().commit()
-

@@ -559,6 +559,27 @@
           <h3 class="modal-title" id="equip-modal-title"></h3>
           <div class="clearfix"></div>
         </div>
+        <div style="padding:15px; border-bottom: solid 1px #c1c1c1;">
+           <div class="form-inline pull-left">
+             <input placeholder="Search" id="search-parts-input" class="form-control ac-input-light" type="text"/>
+             <input type="checkbox" id="search-show-only-compat-parts"/> Only show compatible parts
+           </div>
+           <div class="form-inline pull-right">
+             <select id="search-manufacturer-select" class="form-control">
+               <option value="">All Manufacturers</option>
+             </select>
+             <select id="search-rank-select" class="form-control">
+               <option value="">Amdahl Rank</option>
+               <option value="6">4K, 60 FPS</option>
+               <option value="5">1440P, 60 FPS</option>
+               <option value="4">2160P 90 FPS</option>
+               <option value="3">1080P, 60 FPS</option>
+               <option value="2">1080P, 30 FPS</option>
+               <option value="1">720P, 30 FPS</option>
+             </select>
+           </div>
+          <div class="clearfix"></div>
+        </div>
         
         <!-- ITEM LIST -->
         <div id="part-item-list">
@@ -639,11 +660,13 @@
 		//
 		//
 		
-		$('#bench-cube-title').css('cursor','pointer');
-		$('#bench-cube-title').click(function(){
-			$('#edit-name-modal').modal('show');
-			$('#change-name-input').val(currentRig.name);
-		});
+		if(AC_GLOBALS.myRig) {
+			$('#bench-cube-title').css('cursor','pointer');
+			$('#bench-cube-title').click(function(){
+				$('#edit-name-modal').modal('show');
+				$('#change-name-input').val(currentRig.name);
+			});
+		}
 		$('#save-name-change-button').click(function(){
 			$('#edit-name-modal').modal('hide');
 			currentRig.name = $('#change-name-input').val();
@@ -707,6 +730,10 @@
  		// dismiss modal (cancel)
  		//
  		$('#modal-cancel-btn').click(function(){
+ 			$('#search-manufacturer-select').html('<option value="">All Manufacturers</option>');
+ 			$('#search-rank-select').val('');
+ 			$('#search-parts-input').val('');
+ 			$('#search-show-only-compat-parts').prop('checked', false);
  			$('#pick-part-modal').hide();
  		});
 		
@@ -719,12 +746,45 @@
 		} else {
 			$('.equip-clickable').css('cursor', 'auto');
 		}
+
+		$('#search-parts-input').keydown(function(e){
+			if(e.keyCode === 13) {
+				searchPartsAndRenderResult(this);
+			}
+		});
+
+		function searchPartsAndRenderResult(el) {
+			var eType = $(el).attr('data-equip-type');
+			var searchPartsParams = {};
+			searchPartsParams.target = eType;
+			searchPartsParams.q = $(el).val();
+			searchPartsParams.rank = $('#search-rank-select').val();
+			searchPartsParams.manufacturer = $('#search-manufacturer-select').val();
+			$.extend(searchPartsParams, currentRig['parts']);
+
+			if($('#search-show-only-compat-parts').is(':checked')) {
+				searchPartsParams.compat = $('#search-show-only-compat-parts').is(':checked')
+			}
+
+			var currentEquippedId = currentRig['parts'][eType + '_id'];
+			
+			$.getJSON( "/parts/search", searchPartsParams).success(function(data) {
+	        	
+	        	renderFromPartsList(data, currentEquippedId);
+	        	
+	        	bindEquipListener();
+
+	        }).fail(function() {
+	            console.log( "error" );
+	        });
+		}
 		
 		//
 		// Rendering PART PICKER MODAL
 		//
 		function renderPartPickerModal() {
 			var eType = $(this).parent().data('equip-type');
+			$('#search-parts-input').attr('data-equip-type', eType);
 			equipType = eType;
 			
 			//
@@ -744,72 +804,88 @@
 	        $.extend(getPartsParams, currentRig['parts']);
 	        $.getJSON( "getparts", getPartsParams).success(function(data) {
 	        	
-	        	var itemListView = $('#part-item-list');
-	        	itemListView.empty();
-	        	
-				var partsList = JSON.parse(data.parts);
-	        	for (part in partsList) {	        		
-	        		var component = partsList[part];
-	        		
-	        		//
-	        		// add to parts cache (needed later)
-	        		partsCache[component.id] = component;
-	        		
-        			var itemDiv = $('<div class="equip-part-item"></div>')
-        			var contentDiv = $('<div class="part-item-content"></div>')
-        			var iconDiv = $('<div class="part-icon-div"></div>')
-        			var titleSpan = $('<span class="part-item-title">' + constructDisplayName(component) + '</span>');
-        			
-        			itemDiv.append(iconDiv);
-        			itemDiv.append(contentDiv);
-        			contentDiv.append(titleSpan);
-        			
-        			//
-        			// set component ID
-        			//
-        			itemDiv.data('component-id', component.id);
-        			
-        			// style current equipped if exists
-        			if (currentEquippedId === component.id) {
-        				itemDiv.addClass('equipped');
-        			} else {
-        				itemDiv.addClass("not-equipped");
-        			}
-        			
-        			if (component.compatible === true) {
-        				iconDiv.append('<img src="/static/images/modal-box-rarity-'+component.perf_color+'.png"/>') 	// color icon
-        				titleSpan.addClass('fg-' + component.perf_color);											// style title span
-        				contentDiv.append('<span class="part-item-sub">' + constructPerformanceNote(component) + '</span>');
-        				
-        				// add any flags
-            			// adding recommended to all for now
-            			if (component.recommended === true ) {
-            				itemDiv.addClass('recommended-item');
-            			}
-        				
-        				// make item clickable (equippable)
-        				itemDiv.addClass('equippable-item');
-        				
-        			} else {        				
-        				iconDiv.append('<img src="/static/images/modal-box-rarity-incompatible.png"/>') 	// append incompat icon
-        				contentDiv.append('<span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>'); 			// incompatible text
-        				titleSpan.addClass('fg-inc'); 															// title color
-        				
-        				// item cannot be equipped
-        				itemDiv.removeClass('equippable-item');
-        			}
-        			
-        			itemListView.append(itemDiv);
-        			
-	        	}
+	        	renderFromPartsList(data, currentEquippedId);
 	        	
 	        	bindEquipListener();
 
 	        }).fail(function() {
 	            console.log( "error" );
 	        });
+
+			$.getJSON( "/manufacturers/get", {target: eType}).success(function(data) {
+	        	
+	        	for(i=0;i<data.length;i++){
+	        		$('#search-manufacturer-select').append(
+	        			'<option value="' + data[i] + '">' + data[i] + '</option>'
+	        		);
+	        	}
+
+	        }).fail(function() {
+	            console.log( "error" );
+	        });
 			
 			$('#pick-part-modal').show();
+		}
+
+		function renderFromPartsList(data, currentEquippedId) {
+			var itemListView = $('#part-item-list');
+        	itemListView.empty();
+        	
+			var partsList = JSON.parse(data.parts);
+        	for (part in partsList) {	        		
+        		var component = partsList[part];
+        		
+        		//
+        		// add to parts cache (needed later)
+        		partsCache[component.id] = component;
+        		
+    			var itemDiv = $('<div class="equip-part-item"></div>')
+    			var contentDiv = $('<div class="part-item-content"></div>')
+    			var iconDiv = $('<div class="part-icon-div"></div>')
+    			var titleSpan = $('<span class="part-item-title">' + constructDisplayName(component) + '</span>');
+    			
+    			itemDiv.append(iconDiv);
+    			itemDiv.append(contentDiv);
+    			contentDiv.append(titleSpan);
+    			
+    			//
+    			// set component ID
+    			//
+    			itemDiv.data('component-id', component.id);
+    			
+    			// style current equipped if exists
+    			if (currentEquippedId === component.id) {
+    				itemDiv.addClass('equipped');
+    			} else {
+    				itemDiv.addClass("not-equipped");
+    			}
+    			
+    			if (component.compatible === true) {
+    				iconDiv.append('<img src="/static/images/modal-box-rarity-'+component.perf_color+'.png"/>') 	// color icon
+    				titleSpan.addClass('fg-' + component.perf_color);											// style title span
+    				contentDiv.append('<span class="part-item-sub">' + constructPerformanceNote(component) + '</span>');
+    				
+    				// add any flags
+        			// adding recommended to all for now
+        			if (component.recommended === true ) {
+        				itemDiv.addClass('recommended-item');
+        			}
+    				
+    				// make item clickable (equippable)
+    				itemDiv.addClass('equippable-item');
+    				
+    			} else {        				
+    				iconDiv.append('<img src="/static/images/modal-box-rarity-incompatible.png"/>') 	// append incompat icon
+    				contentDiv.append('<span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>'); 			// incompatible text
+    				titleSpan.addClass('fg-inc'); 															// title color
+    				
+    				// item cannot be equipped
+    				itemDiv.removeClass('equippable-item');
+    			}
+    			
+    			itemListView.append(itemDiv);
+    			
+        	}
 		}
 		
 		//

@@ -353,6 +353,61 @@ def cube():
     print context
     return render_template('cube.html', **context)
 
+@app.route("/manufacturers/get", methods=['GET'])
+@requires_auth
+def manufacturers_get():
+    target = request.args.get('target')
+    return json.dumps(dataaccess.get_manufacturers(target))
+
+@app.route("/parts/search", methods=['GET'])
+@requires_auth
+def parts_search():
+
+    render_parts = []
+    search_string = request.args.get('q')
+    target = request.args.get('target')
+    motherboard_id = request.args.get('motherboard_id')
+    gpu_id = request.args.get('gpu_id')
+    memory_id = request.args.get('memory_id')
+    display_id = request.args.get('display_id')
+    cpu_id = request.args.get('cpu_id')
+    compat_only = request.args.get('compat') == 'true'
+    rank = request.args.get('rank')
+    manufacturer = request.args.get('manufacturer')
+
+    compat_parts = dataaccess.search_parts(search_string, target, motherboard_id, gpu_id, memory_id, display_id, cpu_id, manufacturer)
+
+    added = set()
+    for part in compat_parts:
+        added.add(part.id)
+        part.compatible = True
+        render_parts.append(part)
+
+    if not compat_only:
+
+        all_parts = dataaccess.search_parts(search_string, target, manufacturer=manufacturer)
+    
+        for part in all_parts:
+            if part.id not in added:
+                part.compatible = False
+                render_parts.append(part)
+
+    """
+    set performance color for parts
+    """
+    perf_utils.set_performance_color_for_parts(render_parts)
+    if rank:
+        render_parts = [part for part in render_parts if part.perf_color_coded == int(rank)]
+    
+    """
+    sort by sort order
+    """
+    render_parts = sorted(render_parts, key=lambda part: part.sort_order, reverse=True)
+    
+    render_parts = json.dumps(render_parts, cls=jsonify_sql_alchemy_model(), check_circular=False)
+    
+    return jsonify({'parts':render_parts}) 
+
 @app.route("/getparts", methods=['GET'])
 @requires_auth
 def get_parts():
