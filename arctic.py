@@ -3,6 +3,8 @@ from functools import wraps
 import json
 import logging
 import os
+from werkzeug.exceptions import abort
+from werkzeug.utils import redirect
 
 from cherrypy._cpreqbody import Part
 from flask.app import Flask
@@ -16,17 +18,17 @@ from flask_mail import Mail
 from flask_security.core import Security
 from flask_security.datastore import SQLAlchemyUserDatastore
 
-from action import fbauth, arctic_auth, new_user
+from action import fbauth, arctic_auth, new_user, account_claims
 from database import dataaccess
 from database.database import db
 from models.models import User, Rig
 from utils import perf_utils
+from utils.exception import ClaimInvalidException
 from utils.gen_utils import jsonify_sql_alchemy_model
-from werkzeug.utils import redirect
 
 
 app = Flask(__name__)
-app.logger_name = 'arctic'
+app.logger_name = 'app'
 app.logger.setLevel(logging.INFO)
 
 
@@ -56,6 +58,9 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 mail = Mail(app)
+
+
+LOG = logging.getLogger('app')
 
 # This callback is used to reload the user object from the user id stored in the session.
 @login_manager.user_loader
@@ -241,6 +246,32 @@ def faq():
 
     return render_template('faq.html', **context)
 
+@app.route("/account", methods=['GET'])
+@requires_auth
+def account():
+    
+    context = {'currpagenav' : 'account'}
+
+    return render_template('account.html', **context)
+
+@app.route("/forgotpwd", methods=['GET'])
+@requires_auth
+def forgotpwd():
+    
+    context = {}
+
+    return render_template('forgotpwd.html', **context)
+
+@app.route("/resetpassword", methods=['POST'])
+@requires_auth
+def resetpassword():
+    
+    email = request.form.get('email')
+    
+    account_claims.initiate_password_reset(email)
+
+    return jsonify({'success' : True})
+
 @app.route("/bench", methods=['GET'])
 @requires_auth
 def bench():
@@ -412,6 +443,67 @@ def get_rig():
     print rig.id
     return jsonify({'rig':json.dumps(rig, cls=jsonify_sql_alchemy_model(), check_circular=False)})
 
+
+@app.route("/claimserv/claim", methods=['GET'])
+def claimget():
+    context = {}
+
+    claimtoken = request.args.get('c', None)
+
+    if account_claims.is_valid_token(claimtoken):
+        """ claim exists """
+        context['init'] = True
+        context['token'] = claimtoken
+        context['claim'] = account_claims.retrieve_claim(claimtoken)
+
+    return render_template('claimacct.html', **context)
+
+@app.route("/claimserv/claim", methods=['POST'])
+def claimpost():
+    context = {}
+
+    password = request.form.get('password', None)
+    repeatpass = request.form.get('repeat_password', None)
+    claimtoken = request.form.get('token', None)
+
+    if not claimtoken:
+        LOG.warn('Account claim attempt failed. No token provided.')
+        abort(404)
+
+    if account_claims.is_valid_token(claimtoken):
+        """ claim exists """
+        context['token'] = claimtoken
+        context['claim'] = account_claims.retrieve_claim(claimtoken)
+    else:
+        """ Invalid! """
+        return render_template('claimacct.html', **context)
+
+    valid_request = True
+    if not password or not repeatpass:
+        context['init'] = True
+        context['token'] = claimtoken
+        context['errormsg'] = 'All fields are required!'
+        valid_request = False
+
+    if password != repeatpass:
+        context['init'] = True
+        context['token'] = claimtoken
+        context['errormsg'] = 'Passwords do not match!'
+        valid_request = False
+
+    if len(password) < 4:
+        context['init'] = True
+        context['token'] = claimtoken
+        context['errormsg'] = 'Password must be at least 4 characters.'
+        valid_request = False
+
+    if valid_request:
+        try:
+            account_claims.reset_password(claimtoken, password)
+            context['success'] = True
+        except ClaimInvalidException: pass
+
+    return render_template('claimacct.html', **context)
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):

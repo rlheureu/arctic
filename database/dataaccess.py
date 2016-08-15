@@ -2,6 +2,8 @@
 
 from database import db
 from models import models
+from models.models import AccountClaim
+from datetime import datetime
 
 def get_rig_presets():
     return db.session().query(models.Rig).filter(models.Rig.rig_preset == True).order_by(models.Rig.rig_preset_sort_order.desc()).all()
@@ -241,3 +243,4 @@ def get_rigs_by_user_id(user_id):
 def create_user(user):
     db.session().add(user)
     db.session().commit()
+

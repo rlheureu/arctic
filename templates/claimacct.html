@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block styling %}
+  {{ super() }}
+  <style type="text/css"></style>
+{% endblock %}
+
+
+{% block navleft %}
+
+{% endblock %}
+
+
+{% block content %}
+
+
+
+    
+    
+    
+    {% if errormsg %}
+    
+    <br>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <div class="alert">
+              {{errormsg}}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    
+    {% if init %}
+    
+    <br><br><br><br>
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          {% if claim.account_claim_type == 'FORGOT_PASSWORD' %}
+          <h2>Password Reset</h2>
+          {% else %}
+          <h2>Set Password</h2>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+        
+    <div style="width:100%; border-bottom:1px solid #333;"></div>
+    <br><br><br>
+    
+    
+    <form action="/claimserv/claim" method="post">
+      <div class="container">
+        
+        <div class="row">
+          <div class="col-md-2 col-md-offset-2">
+            <span class="h3-light">New password</span>
+          </div>
+          <div class="col-md-6">
+            <input type="password" class="form-control ac-input" required="" placeholder="New password" name="password"/>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-2 col-md-offset-2">
+            <span class="h3-light">Repeat new password</span>
+          </div>
+          <div class="col-md-6">
+            <input type="password" class="form-control ac-input" required="" placeholder="Repeat new password" name="repeat_password"/>
+          </div>
+        </div>
+        
+        <input type="text" value="{{token}}" style="display:none;" name="token" />
+        
+        
+      </div>
+      <br><br><br>
+      <div style="width:100%; border-bottom:1px solid #333;"></div>
+      <br>
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3 col-md-offset-7">
+            <button class="ac-btn pull-right" type="submit">Reset Password</button>
+          </div>
+        </div>
+      </div>
+    </form>
+    
+
+    {% elif success %}
+    
+    <br>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <div class="success">
+              <p><b>Success!</b> Your password has been successfully set. Return to <a href="/">login</a> screen.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    {% else %}
+    <br>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <div class="alert">
+              <p><b>Request expired. </b> This link has expired. Please initiate the password reset/sign up again. Return to main <a href="/">login</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+			
+{% endblock %}

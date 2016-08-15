@@ -115,5 +115,16 @@ CREATE TABLE `arctic_rig` (
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
 
 
-
+CREATE TABLE `arctic_account_claim` (
+  `arctic_account_claim_id` int(11) NOT NULL AUTO_INCREMENT,
+  `token` varchar(100) DEFAULT NULL,
+  `account_claim_type` varchar(45) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  `expiration` datetime DEFAULT NULL,
+  `claimed` int(11) DEFAULT NULL,
+  PRIMARY KEY (`arctic_account_claim_id`),
+  KEY `user_idx` (`user_id`),
+  CONSTRAINT `acctclaimuser` FOREIGN KEY (`user_id`) REFERENCES `arctic_user` (`arctic_user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

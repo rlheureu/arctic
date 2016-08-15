@@ -19,6 +19,16 @@
         background: #e6e6e6;
         border-radius: 0px;
       }
+      .alert{
+        background-color: #ff0000;
+        padding:13px;
+        color:#ffffff;
+      }
+      .success{
+        background-color: #38b538;
+        color: #ffffff;
+        padding: 13px;
+      }
       body{
         background-image: url("/static/images/bg-dark.jpg");
         background-repeat: no-repeat;
@@ -80,7 +90,8 @@
       .nav-items ul li{
         display: inline-block;
         position: relative;
-        min-width: 140px;
+        padding-left:20px;
+        padding-right:20px;
         padding-bottom: 24px;
         top: 21px;
         margin-left: 1px;
@@ -92,6 +103,30 @@
         border-bottom: #309cf4 4px solid;
         color: #333333;
         font-weight: 700;
+      }
+      .nav-btns ul{
+        list-style:none;
+        margin:0px;
+      }
+      .nav-btns ul li{
+        display: inline-block;
+        position: relative;
+        padding-bottom: 24px;
+        top: 21px;
+        margin-left: 1px;
+        margin-right: 1px;
+      }
+      .h2-light{
+        font-family: 'Open Sans', sans-serif;
+        color:#c2bad1;
+        font-weight: 300;
+        font-size: 20px;
+      }
+      .h3-light{
+        font-family: 'Open Sans', sans-serif;
+        color:#c2bad1;
+        font-weight: 300;
+        font-size: 15px;
       }
       .wizard-sub-heading{
         font-family: 'Open Sans', sans-serif;
@@ -308,12 +343,12 @@
               {% if current_user.is_authenticated %}
               <div class="nav-items">
                 <ul>
-                  <li><a href="/account">Account ({{current_user.profile_name}})</a></li>
+                  <li {% if currpagenav == 'account' %}class="active"{% endif %}><a href="/account">Account</a></li>
                   <li><a href="/logoutuser">Logout</a></li>
                 </ul>
               </div>
               {% elif show_get_started %}
-              <div class="nav-items">
+              <div class="nav-btns">
                 <ul>
                   <li><a href="preset" class="blue-link" style="position:relative;top:-5px;">Create Your Cube</a></li>
                   <li><a href="#" class="blue-link" style="position:relative;top:-5px;" id="navloginbutton">Login</a></li>
@@ -400,6 +435,7 @@
                 </div>
               </div>
             </div>
+            <div class="row"><div class="col-md-12"><a class="pull-right" href="/forgotpwd">Forgot password?</a></div></div>
           </div>
           <div class="modal-footer">
             <button class="ac-btn" id="signin-button">Sign in</button>
@@ -479,7 +515,6 @@
     		var password = $('#signin-password').val();
     		$.post('loginuser', {email:email,password:password}).success(function(data){
     			if (data.authenticated === true){
-    				alert('Logged in');	
     				ArcticBasics.loginComplete();
     			} else{
     				alert('Unable to log in: ' + data.reason);
@@ -491,8 +526,8 @@
     	$('#navloginbutton').click(function(){
     		ArcticBasics.initLogin(function(){
     			// user is logging in from the home page
-    			// after the login we probably want to redirect to the bench
-    			location.reload();
+    			// after logging in we redirect to the showcase
+    			window.location.href = '/showcase';
     		});
     	});
     	

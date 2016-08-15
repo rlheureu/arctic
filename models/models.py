@@ -180,5 +180,16 @@ class Rig(Base):
     rig_preset_name = Column('rig_preset_name', String(400))
     rig_preset_sort_order = Column('rig_preset_sort_order', Integer)
     rig_preset_description = Column('rig_preset_description', String(1000))
-    
+
+class AccountClaim(Base):
+    __tablename__ = 'arctic_account_claim'
+
+    id = Column('arctic_account_claim_id', Integer, primary_key=True)
+    token = Column('token', String(100))
+    user_id = Column('user_id', Integer, ForeignKey('arctic_user.arctic_user_id'))
+    user = relationship('User', foreign_keys='AccountClaim.user_id')
+    created = Column('created', DateTime)
+    expiration = Column('expiration', DateTime)
+    claimed = Column('claimed', Boolean)
+    account_claim_type = Column('account_claim_type', String(45))
     

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block styling %}
+  {{ super() }}
+  <style type="text/css">
+  #faq-title-header{
+    border-left: solid 4px #339eee;
+    display: inline-block;
+    padding-left: 15px;
+    left: 34px;
+    position: relative;
+  }    
+  .anchor{padding-top:100px;}
+  p{
+  color:#999;}
+  hr{
+    border: solid 1px #333;
+  }
+  </style>
+{% endblock %}
+
+
+{% block content %}
+  <br><br>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h1 id="faq-title-header">ACCOUNT</h1>
+      </div>
+    </div>
+  </div>
+  
+  <div style="width:100%; border-bottom:1px solid #333;"></div>
+  <br><br><br>
+  <div class="container">
+    <div class="col-md-8">
+      <h2>Account Details</h2>
+      
+      <p><b>Username</b> {{current_user.profile_name}}</p>
+      
+      <br><br><br><br><br><br>
+      
+      
+    </div>
+    <div class="col-md-4">
+      <h2>Mission Statement</h2>
+      <p>This is our mission statement</p>
+    </div>
+    
+  </div>
+  
+  
+{% endblock %}
