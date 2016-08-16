@@ -43,6 +43,9 @@ ENV DB_PASSWORD test
 ENV DB arctic
 ENV SESSION_SECRET_KEY secret
 ENV LOG_FILE_PATH /docs/logs/
+ENV FULL_APP_URL amdahlcube.com
+ENV APP_EMAILER_ADDRESS shanrandhawa@gmail.com
+ENV APP_EMAILER_PASSWORD asdf
 
 # Set the default command to execute
 # when creating a new container
