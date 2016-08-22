@@ -226,17 +226,10 @@ def fbregisternew():
 @requires_auth
 def preset():
     rig_presets = dataaccess.get_rig_presets()
-    context = {'rig_presets' : rig_presets}
+    context = {'rig_presets' : rig_presets, 
+               'currpagenav':'bench'}
 
     return render_template('preset.html', **context)
-
-@app.route("/custom", methods=['GET'])
-@requires_auth
-def custom():
-    
-    context = {}
-
-    return render_template('custom.html', **context)
 
 @app.route("/faq", methods=['GET'])
 @requires_auth
@@ -248,6 +241,7 @@ def faq():
 
 @app.route("/account", methods=['GET'])
 @requires_auth
+@login_required
 def account():
     
     context = {'currpagenav' : 'account'}
@@ -305,6 +299,7 @@ def bench():
 
 @app.route("/showcase", methods=['GET'])
 @requires_auth
+@login_required
 def showcase():
 
     rigs = dataaccess.get_rigs_by_user_id(current_user.id)
@@ -320,7 +315,7 @@ def showcase():
 @requires_auth
 def namecube():
     
-    context = {}
+    context = {'currpagenav':'bench'}
     
     preset = request.args.get('preset', None)
     
@@ -328,30 +323,6 @@ def namecube():
     
 
     return render_template('namecube.html', **context)
-
-@app.route("/cubetemp", methods=['GET'])
-@requires_auth
-def cubetemp():
-    
-    cpus = dataaccess.get_all_cpus()
-    for cpu in cpus:
-        print 'cpus: ' + str(cpu.id)
-    
-    context = {'cpus' : cpus}
-    print context
-    return render_template('cube-temp.html', **context)
-
-@app.route("/cube", methods=['GET'])
-@requires_auth
-def cube():
-    
-    cpus = dataaccess.get_all_cpus()
-    for cpu in cpus:
-        print 'cpus: ' + str(cpu.id)
-    
-    context = {'cpus' : cpus}
-    print context
-    return render_template('cube.html', **context)
 
 @app.route("/manufacturers/get", methods=['GET'])
 @requires_auth
@@ -478,6 +449,7 @@ def get_parts():
 
 @app.route("/savecube", methods=['POST'])
 @requires_auth
+@login_required
 def save_cube():
     """
     
@@ -493,6 +465,7 @@ def save_cube():
 
 @app.route("/deletecube", methods=['POST'])
 @requires_auth
+@login_required
 def delete_cube():
     """
     get the data from the form

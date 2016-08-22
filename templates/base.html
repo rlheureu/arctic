@@ -16,7 +16,6 @@
     
     <style type="text/css">
       .navbar {
-        background: #e6e6e6;
         border-radius: 0px;
       }
       .alert{
@@ -92,7 +91,7 @@
         position: relative;
         padding-left:20px;
         padding-right:20px;
-        padding-bottom: 24px;
+        padding-bottom: 18px;
         top: 21px;
         margin-left: 1px;
         margin-right: 1px;
@@ -315,7 +314,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-3 align-text-right">
-            <a href="/"><img style="padding-bottom:9px;padding-top: 10px;width:180px;" src="{{ url_for('static', filename='images/logo-small.png') }}"/></a>
+            <a href="{% if current_user.is_authenticated %}/showcase{% else %}/{% endif %}"><img style="padding-top: 8px;width:175px;" src="{{ url_for('static', filename='images/logo-small.png') }}"/></a>
           </div>
           <div class="col-md-5 align-text-center">
             {% block navleft %}
