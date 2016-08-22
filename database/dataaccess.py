@@ -395,6 +395,8 @@ def get_compat_cpu_for_memspec_queries(memspec):
     """
     Returns queries for compatible and incompatible
     """
+    memspec = memspec.lower()
+    
     compat = None
     if memspec == 'ddr4':
         compat = db.session().query(models.CPUComponent).filter(models.CPUComponent.ddr4 != 'No') \
