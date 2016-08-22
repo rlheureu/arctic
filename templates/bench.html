@@ -555,41 +555,41 @@
   <!-- PART PICKER MODAL -->
   <!-- --------------- -->
   <div id="pick-part-modal">
-        <div style="text-align: center; padding:15px; border-bottom: solid 1px #c1c1c1;">
-          <h3 class="modal-title" id="equip-modal-title"></h3>
-          <div class="clearfix"></div>
-        </div>
-        <div style="padding:15px; border-bottom: solid 1px #c1c1c1;">
-           <div class="form-inline pull-left">
-             <input placeholder="Search" id="search-parts-input" class="form-control ac-input-light" type="text"/>
-             <input type="checkbox" id="search-show-only-compat-parts"/> Only show compatible parts
-           </div>
-           <div class="form-inline pull-right">
-             <select id="search-manufacturer-select" class="form-control">
-               <option value="">All Manufacturers</option>
-             </select>
-             <select id="search-rank-select" class="form-control">
-               <option value="">Amdahl Rank</option>
-               <option value="6">4K, 60 FPS</option>
-               <option value="5">1440P, 60 FPS</option>
-               <option value="4">2160P 90 FPS</option>
-               <option value="3">1080P, 60 FPS</option>
-               <option value="2">1080P, 30 FPS</option>
-               <option value="1">720P, 30 FPS</option>
-             </select>
-           </div>
-          <div class="clearfix"></div>
-        </div>
+      <div style="text-align: center; padding:15px; border-bottom: solid 1px #c1c1c1;">
+        <h3 class="modal-title" id="equip-modal-title"></h3>
+        <div class="clearfix"></div>
+      </div>
+      <div style="padding:15px; border-bottom: solid 1px #c1c1c1;">
+         <div class="form-inline pull-left">
+           <input placeholder="Search" id="search-parts-input" class="form-control ac-input-light" type="text"/>
+           <input type="checkbox" id="search-show-only-compat-parts"/> Only show compatible parts
+         </div>
+         <div class="form-inline pull-right">
+           <select id="search-manufacturer-select" class="form-control">
+             <option value="">All Manufacturers</option>
+           </select>
+           <select id="search-rank-select" class="form-control">
+             <option value="">Amdahl Rank</option>
+             <option value="6">4K, 60 FPS</option>
+             <option value="5">1440P, 60 FPS</option>
+             <option value="4">2160P 90 FPS</option>
+             <option value="3">1080P, 60 FPS</option>
+             <option value="2">1080P, 30 FPS</option>
+             <option value="1">720P, 30 FPS</option>
+           </select>
+         </div>
+        <div class="clearfix"></div>
+      </div>
+      
+      <!-- ITEM LIST -->
+      <div id="part-item-list">
         
-        <!-- ITEM LIST -->
-        <div id="part-item-list">
-          
-        </div>
-        <div style="padding:10px; border: solid 1px #545359; background-color: #1b1a22; text-align: center;">
-          <button class="ac-btn" id="modal-unequip-btn">UNEQUIP »</button>
-          <button class="ac-btn" id="modal-cancel-btn">CANCEL »</button>
-          <button class="ac-btn" id="modal-save-btn">SAVE PART »</button>
-        </div>
+      </div>
+      <div style="padding:10px; border: solid 1px #545359; background-color: #1b1a22; text-align: center;">
+        <button class="ac-btn" id="modal-unequip-btn">UNEQUIP »</button>
+        <button class="ac-btn" id="modal-cancel-btn">CANCEL »</button>
+        <button class="ac-btn" id="modal-save-btn">SAVE PART »</button>
+      </div>
       
   </div>
 {% endblock %}
@@ -660,7 +660,10 @@
 		//
 		//
 		
-		if(AC_GLOBALS.myRig) {
+		//
+		// Enable editing the name if you own this rig, or if it's a new rig
+		//
+		if((AC_GLOBALS.myRig && AC_GLOBALS.rig) || !AC_GLOBALS.rig) {
 			$('#bench-cube-title').css('cursor','pointer');
 			$('#bench-cube-title').click(function(){
 				$('#edit-name-modal').modal('show');
@@ -730,10 +733,6 @@
  		// dismiss modal (cancel)
  		//
  		$('#modal-cancel-btn').click(function(){
- 			$('#search-manufacturer-select').html('<option value="">All Manufacturers</option>');
- 			$('#search-rank-select').val('');
- 			$('#search-parts-input').val('');
- 			$('#search-show-only-compat-parts').prop('checked', false);
  			$('#pick-part-modal').hide();
  		});
 		
@@ -747,17 +746,18 @@
 			$('.equip-clickable').css('cursor', 'auto');
 		}
 
-		$('#search-parts-input').keydown(function(e){
-			if(e.keyCode === 13) {
-				searchPartsAndRenderResult(this);
-			}
-		});
+		//
+		// Search when any serach input changes, hook up event listeners
+		//
+		$('#search-parts-input').keyup(function(){ searchPartsAndRenderResult(); });
+		$('#search-show-only-compat-parts').change(function(){ searchPartsAndRenderResult(); });
+		$('#search-rank-select').change(function(){ searchPartsAndRenderResult(); });
+		$('#search-manufacturer-select').change(function(){ searchPartsAndRenderResult(); });
 
-		function searchPartsAndRenderResult(el) {
-			var eType = $(el).attr('data-equip-type');
+		function searchPartsAndRenderResult() {
 			var searchPartsParams = {};
-			searchPartsParams.target = eType;
-			searchPartsParams.q = $(el).val();
+			searchPartsParams.target = equipType;
+			searchPartsParams.q = $('#search-parts-input').val();
 			searchPartsParams.rank = $('#search-rank-select').val();
 			searchPartsParams.manufacturer = $('#search-manufacturer-select').val();
 			$.extend(searchPartsParams, currentRig['parts']);
@@ -766,7 +766,7 @@
 				searchPartsParams.compat = $('#search-show-only-compat-parts').is(':checked')
 			}
 
-			var currentEquippedId = currentRig['parts'][eType + '_id'];
+			var currentEquippedId = currentRig['parts'][equipType + '_id'];
 			
 			$.getJSON( "/parts/search", searchPartsParams).success(function(data) {
 	        	
@@ -784,9 +784,15 @@
 		//
 		function renderPartPickerModal() {
 			var eType = $(this).parent().data('equip-type');
-			$('#search-parts-input').attr('data-equip-type', eType);
 			equipType = eType;
 			
+			//
+			// clear out search options
+			$('#search-manufacturer-select').html('<option value="">All Manufacturers</option>');
+ 			$('#search-rank-select').val('');
+ 			$('#search-parts-input').val('');
+ 			$('#search-show-only-compat-parts').prop('checked', false);
+ 			
 			//
 			// clear out any previously selected parts
 			toEquip = null;
