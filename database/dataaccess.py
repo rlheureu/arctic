@@ -5,6 +5,8 @@ from models import models
 from models.models import AccountClaim
 from datetime import datetime
 from sqlalchemy.sql.expression import or_
+from utils.exception import InvalidInput
+from flask_login import current_user
 
 def get_rig_presets():
     return db.session().query(models.Rig).filter(models.Rig.rig_preset == True).order_by(models.Rig.rig_preset_sort_order.desc()).all()
@@ -77,6 +79,19 @@ def save_rig(rig_dict, user_id):
     db.session().flush()
     
     return rig
+
+def delete_rig(rig_id):
+    
+    rig = get_rig(rig_id)
+    if not rig:
+        raise InvalidInput('This rig does not exists cannot delete')
+    
+    if current_user.id != rig.user.id:
+        raise InvalidInput('You can only delete your own rig!')
+    
+    db.session().delete(rig)
+    db.session().flush()
+    
 
 def get_manufacturers(target):
 

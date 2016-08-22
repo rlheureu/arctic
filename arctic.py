@@ -491,6 +491,22 @@ def save_cube():
     
     return jsonify({'rig_id' : rig.id})
 
+@app.route("/deletecube", methods=['POST'])
+@requires_auth
+def delete_cube():
+    """
+    get the data from the form
+    """
+    
+    rig_id = request.form.get('cube_id')
+    
+    print 'delete cube requests for ID {}'.format(rig_id) 
+    
+    dataaccess.delete_rig(rig_id)
+    
+    
+    return jsonify({'status': 'success'})
+
 @app.route("/getrig", methods=['GET'])
 @requires_auth
 def get_rig():

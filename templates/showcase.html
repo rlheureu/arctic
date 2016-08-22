@@ -50,6 +50,7 @@
       	margin-right: 5px;
       	margin-left: 5px;
       	margin-bottom: 12px;
+        cursor: pointer;
       }
       .rig-box-purple {
       	color: #A98FEB;
@@ -117,6 +118,18 @@
       .rig-link:hover {
       	color: transparent;
       }
+      .delete-rig-btn{
+        position: absolute;
+        top: 18px;
+        left: 234px;
+        color: #7374a0;
+        background-color: #232282;
+        border: none;
+      }
+      .delete-rig-btn:hover{
+        color: #8c0707;
+        background-color: #060b25;
+      }
   </style>
 {% endblock %}
 
@@ -139,19 +152,19 @@
     <p id="select-rig-message">Select a rig below, or create a new cube.</p>
     <div id="rig-box-container">
         {% for rig in rigs %}
-        <a class="rig-link" href="/bench?rig={{rig.id}}">
-	        <div class="rig-box {% if rig.perf_color_coded == 6 %}rig-box-purple
-	                    {% elif rig.perf_color_coded == 5 %}rig-box-orange
-	                    {% elif rig.perf_color_coded == 4 %}rig-box-black
-	                    {% elif rig.perf_color_coded == 3 %}rig-box-blue
-                        {% elif rig.perf_color_coded == 2 %}rig-box-green
-	                    {% elif rig.perf_color_coded == 1 %}rig-box-white
-	                    {% elif rig.perf_color_coded == 0 %}rig-box-gray{% endif %}">
-	            <img class="showcase-tier-image" src="/static/images/showcase-tiers-{% if rig.perf_color_coded == 6 %}purple{% elif rig.perf_color_coded == 5 %}orange{% elif rig.perf_color_coded == 4 %}black{% elif rig.perf_color_coded == 3 %}blue{% elif rig.perf_color_coded == 2 %}green{% elif rig.perf_color_coded == 1 %}white{% elif rig.perf_color_coded == 0 %}gray{% endif %}.jpg">
-	            <span class="perf-text" >{% if rig.max_performance %}{{rig.max_performance}}{% endif %}</span>
-	            <span class="rig-name-text">{% if rig.name %}{{rig.name}}{% endif %}</span>
-	        </div>
-        </a>
+        <div data-href="/bench?rig={{rig.id}}" class="rig-box {% if rig.perf_color_coded == 6 %}rig-box-purple
+                    {% elif rig.perf_color_coded == 5 %}rig-box-orange
+                    {% elif rig.perf_color_coded == 4 %}rig-box-black
+                    {% elif rig.perf_color_coded == 3 %}rig-box-blue
+                    {% elif rig.perf_color_coded == 2 %}rig-box-green
+                    {% elif rig.perf_color_coded == 1 %}rig-box-white
+                    {% elif rig.perf_color_coded == 0 %}rig-box-gray{% endif %}">
+            <img class="showcase-tier-image" src="/static/images/showcase-tiers-{% if rig.perf_color_coded == 6 %}purple{% elif rig.perf_color_coded == 5 %}orange{% elif rig.perf_color_coded == 4 %}black{% elif rig.perf_color_coded == 3 %}blue{% elif rig.perf_color_coded == 2 %}green{% elif rig.perf_color_coded == 1 %}white{% elif rig.perf_color_coded == 0 %}gray{% endif %}.jpg">
+            <span class="perf-text" >{% if rig.max_performance %}{{rig.max_performance}}{% endif %}</span>
+            <span class="rig-name-text">{% if rig.name %}{{rig.name}}{% endif %}</span>
+            <button data-cube-id="{{rig.id}}" data-cube-name="{% if rig.name %}{{rig.name}}{% endif %}" class="delete-rig-btn" hidden="hidden">Delete</button>
+        </div>
+        
         {% endfor %}
         <a href="/preset">
 	        <div class="rig-box rig-box-new">
@@ -163,5 +176,66 @@
 </div>
 <div class="row showcase-bottom">
 </div>
+
+
+
+  <!-- --------------- -->
+  <!-- --------------- -->
+  <!-- CONFIRM DELETE MODAL -->
+  <!-- --------------- -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="confirm-delete-modal">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Confirm Delete</h4>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete <strong id="confirm-delete-cube-name"></strong>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="ac-btn" id="yes-delete-cube-btn">Yes</button>
+          &nbsp;&nbsp;
+          <button type="button" class="ac-btn" data-dismiss="modal">Cancel</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+{% endblock %}
+
+{% block javascript %}
+
+<script type="text/javascript">
+	$(function(){
+		
+		$('.rig-box').click(function(){
+			window.location = $(this).data('href');
+		})
+		
+		$('.delete-rig-btn').click(function(e){
+			e.stopPropagation();
+			$('#confirm-delete-cube-name').empty().append($(this).data('cube-name'));
+			$('#confirm-delete-modal').modal('show');
+			$('#yes-delete-cube-btn').data('cube-id', $(this).data('cube-id'));
+		})
+		
+		$('#yes-delete-cube-btn').click(function(){
+			// delete the cube
+			var id = $(this).data('cube-id');
+			
+			$.post('/deletecube', {cube_id:id}, function(){
+				location.reload();
+			})
+			
+		})
+		
+		$('.rig-box').hover(function(){
+			$(this).find('.delete-rig-btn').show();
+		}, function(){
+			$(this).find('.delete-rig-btn').hide();
+		});
+		
+	});
+</script>
 
 {% endblock %}
