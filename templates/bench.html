@@ -2,6 +2,13 @@
 {% block styling %}
   {{ super() }}
   <style type="text/css">
+  .share-btn {
+    margin-right: 2px;
+    margin-left: 2px;
+  }
+  .clickable {
+    cursor: pointer;
+  }
   .benchtab{
     display: inline-block;
     position: relative;
@@ -185,6 +192,13 @@
   .acbench-item-heading{
     font-family: 'Open Sans', sans-serif;
     color:#c2bad1;
+    font-weight: 300;
+    font-size: 28px;
+  }
+
+  .acbench-share-heading{
+    font-family: 'Open Sans', sans-serif;
+    color:#6c6974;
     font-weight: 300;
     font-size: 28px;
   }
@@ -404,9 +418,9 @@
         <div class="col-md-7"></div>
         <div class="col-md-5">
           <ul>
-            <li class="active">CUBE SUMMARY</li>
+            <li class="active" id="show-cube-summary">CUBE SUMMARY</li>
             <li class="separator">|</li>
-            <li><a href="/share?rig={{rig.id}}">SHARE CUBE</a></li>
+            <li id="show-share-cube" class="clickable">SHARE CUBE</li>
           </ul>
         </div>
       </div>
@@ -434,7 +448,45 @@
     </div>
   </div>
   {% endif %}
-  <div class="container">
+
+  <div class="container" id="share-cube-div" style="display:none;">
+    <div class="row">
+      <div class="col-sm-12" style="text-align:center;">
+        <div class="row">
+          <div class="col-sm-6 col-sm-offset-3" style="text-align:left;">
+            <br><br><br><br>
+	        <span class="acbench-share-heading">1. Select a Method of Sharing</span>
+	      </div>
+	    </div>
+	    <div class="row">
+	      <div class="col-sm-8 col-sm-offset-2">
+	        <hr style="border-color: #6c6974;">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 col-sm-offset-3" style="text-align:center;">
+            <a id="twitter-share-btn" onclick="window.open(this.href, 'newwindow', 'width=500, height=500'); $('#share-link-div').hide(); return false;" class="ac-btn share-btn">Twitter</a>
+            <a id="facebook-share-btn" onclick="window.open(this.href, 'newwindow', 'width=500, height=500'); $('#share-link-div').hide(); return false;" class="ac-btn share-btn">Facebook</a>
+            <a id="reddit-share-btn" onclick="window.open(this.href, 'newwindow', 'width=500, height=500'); $('#share-link-div').hide(); return false;" class="ac-btn share-btn">Reddit</a>
+            <button id="get-share-link-btn" class="ac-btn share-btn">Get Link</button>
+	      </div>
+	    </div>
+	    <br>
+	    <div id="share-link-div" style="display:none;" class="row">
+	      <div class="col-sm-12">
+	        <div class="input-group">
+		      <input id="share-link-input" readonly style="width: 30%;">
+		      <span style="margin-left: -4px;">
+		        <button id="copy-share-link-btn" type="button" style="height: 26px; vertical-align: top;">Copy</button>
+		      </span>
+		    </div>
+	      </div>
+	    </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="build-cube-div">
     <div class="row">
       <div class="col-sm-12" style="text-align:center;">
         
@@ -1115,8 +1167,43 @@
 		$('#change-cube-select').change(function(){
 			window.location.href = $(this).find(":selected").data('location');
 		});
-		
-		
+
+		$('#show-cube-summary').click(function(){
+			$(this).addClass('active');
+			$(this).removeClass('clickable');
+			$('#show-share-cube').removeClass('active');
+			$('#show-share-cube').addClass('clickable');
+			$('#build-cube-div').show();
+			$('#other-components-bg').show();
+			$('#share-cube-div').hide();
+		});
+
+		$('#show-share-cube').click(function(){
+			$(this).addClass('active');
+			$(this).removeClass('clickable');
+			$('#show-cube-summary').removeClass('active');
+			$('#show-cube-summary').addClass('clickable');
+			$('#share-cube-div').show();
+			$('#build-cube-div').hide();
+			$('#other-components-bg').hide();
+		});
+
+		$('#twitter-share-btn').attr('href', 'https://twitter.com/share?url=' + window.location.href);
+
+		$('#facebook-share-btn').attr('href', 'https://www.facebook.com/sharer.php?u=' + window.location.href);
+
+		$('#reddit-share-btn').attr('href', 'http://www.reddit.com/submit?url=' + window.location.href);
+
+		$('#get-share-link-btn').click(function(){
+			$('#share-link-input').val(window.location.href);
+			$('#share-link-div').show();
+		});
+
+		$('#copy-share-link-btn').click(function(){
+			$('#share-link-input').val($('#share-link-input').val()).select();
+			document.execCommand("copy");
+		});
+
 	});
 
 	
