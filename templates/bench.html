@@ -401,12 +401,17 @@
         <h1 id="bench-cube-title">Cube Name</h1>
         <span id="bench-cube-subtitle"></span>
       </div>
-      <div class="col-md-4">
-        <br>
+      <div class="col-md-3" style="padding-top:40px;">
+        <div class="pull-right" style="display: inline-block; padding-left:25px; text-align: center;">
+          <img src="/static/images/legend-icon.png" class="clickable" id="legendIconButton">
+          <br>
+          <strong>LEGEND</strong>
+        </div>
+        
         {% if my_rig or not rig %}
-        <button class="ac-btn" id="save-cube-button">Save Cube</button>
+        <button class="ac-btn pull-right" id="save-cube-button" style="margin-top:13px;">Save Cube</button>
         {% else %}
-        <a href="/preset" class="ac-btn">Create a Cube</a>
+        <a href="/preset" class="ac-btn pull-right" style="margin-top:13px;">Create a Cube</a>
         {% endif %}
       </div>
     </div>
@@ -579,6 +584,57 @@
           <button type="button" class="ac-btn" id="save-name-change-button">Save</button>
           &nbsp;&nbsp;
           <button type="button" class="ac-btn" data-dismiss="modal">Cancel</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- --------------- -->
+  <!-- --------------- -->
+  <!-- LEGEND MODAL -->
+  <!-- --------------- -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="legend-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Legend</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h2 style="color:#333;">4k@60</h2><h4>3840x2160 @ 60 fps</h4></div>
+            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-purple.png"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h2 style="color:#333;">VR</h2><h4>2160x1200 @ 90 fps</h4></div>
+            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-black.png"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h2 style="color:#333;">1440p@60</h2><h4>2560x1440 @ 60 fps</h4></div>
+            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-orange.png"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h2 style="color:#333;">1080p@60</h2><h4>1920x1080 @ 60 fps</h4></div>
+            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-blue.png"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h2 style="color:#333;">1080p@30</h2><h4>1920x1080 @ 30 fps</h4></div>
+            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-green.png"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h2 style="color:#333;">720p@60</h2><h4>1280x720 @ 60 fps</h4></div>
+            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-gray.png"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h2 style="color:#333;">900p@30</h2><h4>1600x900 @ 30 fps</h4></div>
+            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-white.png"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h2 style="color:#333;">720p@30</h2><h4>1280x720 @ 30 fps</h4></div>
+            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-gray.png"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="ac-btn" data-dismiss="modal">Close</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -1192,6 +1248,12 @@
 		$('#copy-share-link-btn').click(function(){
 			$('#share-link-input').val($('#share-link-input').val()).select();
 			document.execCommand("copy");
+		});
+		
+		$('#legendIconButton').click(function(){
+			// open legend modal
+			$('#legend-modal').modal('show');
+			
 		});
 
 	});
