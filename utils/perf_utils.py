@@ -41,16 +41,16 @@ def get_performance_color(component):
     
     if '4k' in perf:
         return 'purple'
-    elif '1440p' in perf:
-        return 'orange'
     elif 'vr' in perf:
         return 'black'
+    elif '1440p' in perf:
+        return 'orange'
     elif '1080p@60' in perf:
         return 'blue'
     elif '1080p@30' in perf:
         return 'green'
     elif '720p' in perf:
-        return 'white'
+        return 'gray'
     else:
         return 'gray'
     
@@ -66,9 +66,9 @@ def get_performance_color_coded(component):
     
     if '4k' in perf:
         return 6
-    elif '1440p' in perf:
-        return 5
     elif 'vr' in perf:
+        return 5
+    elif '1440p' in perf:
         return 4
     elif '1080p@60' in perf:
         return 3

@@ -152,14 +152,8 @@
     <p id="select-rig-message">Select a rig below, or create a new cube.</p>
     <div id="rig-box-container">
         {% for rig in rigs %}
-        <div data-href="/bench?rig={{rig.id}}" class="rig-box {% if rig.perf_color_coded == 6 %}rig-box-purple
-                    {% elif rig.perf_color_coded == 5 %}rig-box-orange
-                    {% elif rig.perf_color_coded == 4 %}rig-box-black
-                    {% elif rig.perf_color_coded == 3 %}rig-box-blue
-                    {% elif rig.perf_color_coded == 2 %}rig-box-green
-                    {% elif rig.perf_color_coded == 1 %}rig-box-white
-                    {% elif rig.perf_color_coded == 0 %}rig-box-gray{% endif %}">
-            <img class="showcase-tier-image" src="/static/images/showcase-tiers-{% if rig.perf_color_coded == 6 %}purple{% elif rig.perf_color_coded == 5 %}orange{% elif rig.perf_color_coded == 4 %}black{% elif rig.perf_color_coded == 3 %}blue{% elif rig.perf_color_coded == 2 %}green{% elif rig.perf_color_coded == 1 %}white{% elif rig.perf_color_coded == 0 %}gray{% endif %}.jpg">
+        <div data-href="/bench?rig={{rig.id}}" class="rig-box rig-box-{{ rig.perf_color }}">
+            <img class="showcase-tier-image" src="/static/images/showcase-tiers-{{ rig.perf_color }}.jpg">
             <span class="perf-text" >{% if rig.max_performance %}{{rig.max_performance}}{% endif %}</span>
             <span class="rig-name-text">{% if rig.name %}{{rig.name}}{% endif %}</span>
             <button data-cube-id="{{rig.id}}" data-cube-name="{% if rig.name %}{{rig.name}}{% endif %}" class="delete-rig-btn" hidden="hidden">Delete</button>
