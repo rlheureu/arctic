@@ -97,6 +97,12 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
 
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect('/')
+
+
 @app.route("/", methods=['GET'])
 @requires_auth
 def home():
