@@ -19,6 +19,10 @@ def create_user(username, email, password, howheard):
     if not auth_utils.is_valid_email(email):
         raise AttributeError('Invalid email address!')
     
+        
+    if len(password) < 4:
+        raise AttributeError('Invalid email address!')
+    
     userexist = dataaccess.get_user_by_email(email)
     if userexist: raise AttributeError('This email is already registered.')
     

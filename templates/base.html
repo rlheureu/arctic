@@ -418,6 +418,12 @@
             <h3 class="modal-title">Register an Account</h3>
           </div>
           <div class="modal-body">
+            <div class="row" id="registration-alert" style="display:none;">
+              <div class="col-md-10 col-md-offset-1">
+                <div class="alert"></div>
+                <br><br>
+              </div>
+            </div>
             <form class="form-horizontal">
               <div class="form-group">
                 <label for="signup-username" class="col-sm-4 control-label">Username</label>
@@ -546,11 +552,10 @@
     		registerPost.howheard = $('#signup-howheard').val();
     		
     		$.post('/createuser', registerPost).success(function(resp){
-    			alert('Registration complete');
     			// user is now logged in!
     			ArcticBasics.loginComplete();
     		}).fail(function(resp){
-    			alert('Failed to register: ' + resp.responseJSON.reason);
+    			$('#registration-alert').show().find('.alert').empty().text('Failed to register: ' + resp.responseJSON.reason);
   			});
     	});
     	
