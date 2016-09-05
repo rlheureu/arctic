@@ -132,6 +132,7 @@ class User(Base, UserMixin):
     email = Column('email', String(255), unique=True)
     password = Column('password', String(255))
     active = Column('active', Boolean())
+    created_at = Column('created_at', DateTime())
     confirmed_at = Column('confirmed_at', DateTime())
     fb_id = Column('fb_id', String(100))
     profile_name = Column('profile_name', String(100))

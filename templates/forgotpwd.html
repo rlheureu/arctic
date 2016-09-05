@@ -51,7 +51,7 @@
       </div>
     </div>
   </div>
-  <br><br><br>
+  <br><br><br><br><br><br><br><br><br><br><br><br>
   
   
 {% endblock %}
@@ -64,10 +64,19 @@ $(function(){
 	$('#reset-password-button').click(function(){
 		var email = $('#reset-password-email-input').val();
 		
+	    var btn = $(this);
+	    btn.empty();
+	    btn.text('Sending Email...')
+	    btn.prop( "disabled", true );
+		
 		$.post('/resetpassword', {email:email}).success(function(){
 			$('#password-reset-request-success').show();
-		})
-	})
+		    btn.empty().text('Email Sent')
+		}).fail(function(){
+			btn.empty().text('Failed, Try Again')
+			btn.prop( "disabled", false );
+		});
+	});
 });
     
 </script>

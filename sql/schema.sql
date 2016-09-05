@@ -55,6 +55,7 @@ CREATE TABLE `arctic_user` (
   `password` varchar(255) DEFAULT NULL,
   `active` int(11) DEFAULT NULL,
   `confirmed_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`arctic_user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 

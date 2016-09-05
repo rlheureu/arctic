@@ -3,9 +3,12 @@ Created on May 15, 2016
 
 @author: shanrandhawa
 '''
-from models.models import User
+import datetime
+
 from database import dataaccess
+from models.models import User
 from utils import auth_utils
+
 
 def create_user(username, email, password, howheard):
     
@@ -27,6 +30,7 @@ def create_user(username, email, password, howheard):
     user.password = auth_utils.to_hash(password)
     user.how_hear = howheard
     user.profile_name = username
+    user.created_at = datetime.datetime.now()
     
     dataaccess.create_user(user)
     return user
