@@ -1,10 +1,9 @@
 import logging
-from logging.handlers import RotatingFileHandler
-import os
 
 import cherrypy
 from arctic import app
 from paste.translogger import TransLogger #@UnresolvedImport
+from logging import StreamHandler
 
 if __name__ == '__main__':
 
@@ -12,9 +11,8 @@ if __name__ == '__main__':
     app.debug = False
     
     # set logger etc - log to file
-    file_handler = RotatingFileHandler(os.environ.get('LOG_FILE_PATH') + 'arctic.log', maxBytes=2*1024*1024, backupCount=10)
-    file_handler.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
+    logging_handler = StreamHandler()
+    app.logger.addHandler(logging_handler)
     app.logger.setLevel(logging.INFO)
     app = TransLogger(app, logger=app.logger,setup_console_handler=False)
 
