@@ -71,31 +71,12 @@ def load_user(user_id):
     return arctic_auth.load_user_by_id(user_id)
 
 
-def check_auth(username, password):
-    """This function is called to check if a username /
-    password combination is valid.
-    """
-    
-    uname = os.environ.get('ARCTIC_DEV_UNAME')
-    pwd = os.environ.get('ARCTIC_DEV_PWD')
-    
-    return username == uname and password == pwd
-
 def authenticate():
     """Sends a 401 response that enables basic auth"""
     return Response(
     'Could not verify your access level for that URL.\n'
     'You have to login with proper credentials', 401,
     {'WWW-Authenticate': 'Basic realm="Login Required"'})
-
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
 
 
 @login_manager.unauthorized_handler
@@ -104,7 +85,6 @@ def unauthorized():
 
 
 @app.route("/", methods=['GET'])
-@requires_auth
 def home():
     
     context = {}
@@ -114,14 +94,12 @@ def home():
 
 
 @app.route("/sharecube", methods=['GET'])
-@requires_auth
 @login_required
 def sharecube():
     context = {}
     return render_template('sharecube.html', **context)
 
 @app.route("/loginuser", methods=['POST'])
-@requires_auth
 def loginuser():
     
     """
@@ -145,13 +123,11 @@ def loginuser():
                         'reason' : e.message})
 
 @app.route("/logoutuser", methods=['GET'])
-@requires_auth
 def logoutuser():
     logout_user()
     return redirect('/')
 
 @app.route("/createuser", methods=['POST'])
-@requires_auth
 def createuser():
     
     """
@@ -177,7 +153,6 @@ def createuser():
                         'reason' : e.message}), 400
 
 @app.route("/isloggedin", methods=['GET'])
-@requires_auth
 def isloggedin():
     
     loggedin = current_user.is_authenticated
@@ -186,7 +161,6 @@ def isloggedin():
     
 
 @app.route("/loginfbuser", methods=['POST'])
-@requires_auth
 def loginfbuser():
     
     fbtoken = request.form.get('token')
@@ -201,7 +175,6 @@ def valid_next_url(next):
     return True
 
 @app.route("/fbregister", methods=['GET'])
-@requires_auth
 def isfbregistered():
     
     fb_userid = request.args.get('fbid')
@@ -210,7 +183,6 @@ def isfbregistered():
     return jsonify({'registered' : reg})
 
 @app.route("/fbregister", methods=['POST'])
-@requires_auth
 def fbregisternew():
     fb_userid = request.form.get('fbid')
     fbtoken = request.form.get('fbtoken')
@@ -229,7 +201,6 @@ def fbregisternew():
                     'error' : errormsg})
 
 @app.route("/preset", methods=['GET'])
-@requires_auth
 def preset():
     rig_presets = dataaccess.get_rig_presets()
     context = {'rig_presets' : rig_presets, 
@@ -238,7 +209,6 @@ def preset():
     return render_template('preset.html', **context)
 
 @app.route("/faq", methods=['GET'])
-@requires_auth
 def faq():
     
     context = {'currpagenav' : 'faq'}
@@ -246,7 +216,6 @@ def faq():
     return render_template('faq.html', **context)
 
 @app.route("/account", methods=['GET'])
-@requires_auth
 @login_required
 def account():
     
@@ -255,7 +224,6 @@ def account():
     return render_template('account.html', **context)
 
 @app.route("/forgotpwd", methods=['GET'])
-@requires_auth
 def forgotpwd():
     
     context = {}
@@ -263,7 +231,6 @@ def forgotpwd():
     return render_template('forgotpwd.html', **context)
 
 @app.route("/resetpassword", methods=['POST'])
-@requires_auth
 def resetpassword():
     
     email = request.form.get('email')
@@ -273,7 +240,6 @@ def resetpassword():
     return jsonify({'success' : True})
 
 @app.route("/bench", methods=['GET'])
-@requires_auth
 def bench():
     
     context = {}
@@ -304,7 +270,6 @@ def bench():
     return render_template('bench.html', **context)
 
 @app.route("/showcase", methods=['GET'])
-@requires_auth
 @login_required
 def showcase():
 
@@ -318,7 +283,6 @@ def showcase():
     return render_template('showcase.html', **context)
 
 @app.route("/namecube", methods=['GET'])
-@requires_auth
 def namecube():
     
     context = {'currpagenav':'bench'}
@@ -331,13 +295,11 @@ def namecube():
     return render_template('namecube.html', **context)
 
 @app.route("/manufacturers/get", methods=['GET'])
-@requires_auth
 def manufacturers_get():
     target = request.args.get('target')
     return json.dumps(dataaccess.get_manufacturers(target))
 
 @app.route("/parts/search", methods=['GET'])
-@requires_auth
 def parts_search():
 
     render_parts = []
@@ -386,7 +348,6 @@ def parts_search():
     return jsonify({'parts':render_parts}) 
 
 @app.route("/getparts", methods=['GET'])
-@requires_auth
 def get_parts():
     
     render_parts = []
@@ -454,7 +415,6 @@ def get_parts():
         
 
 @app.route("/savecube", methods=['POST'])
-@requires_auth
 @login_required
 def save_cube():
     """
@@ -470,7 +430,6 @@ def save_cube():
     return jsonify({'rig_id' : rig.id})
 
 @app.route("/deletecube", methods=['POST'])
-@requires_auth
 @login_required
 def delete_cube():
     """
@@ -487,7 +446,6 @@ def delete_cube():
     return jsonify({'status': 'success'})
 
 @app.route("/getrig", methods=['GET'])
-@requires_auth
 def get_rig():
     rig = dataaccess.get_rig(request.args.get('rig_id', None))
     print rig.id
