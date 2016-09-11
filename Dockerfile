@@ -1,14 +1,13 @@
 # Set the base image to Ubuntu
-FROM ubuntu
+FROM ubuntu:14.04
 
 # File Author / Maintainer
 MAINTAINER Maintainer Shan Randhawa
 
 # Add the application resources URL
-RUN echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -sc) main universe" >> /etc/apt/sources.list
 
 # Update the sources list
-RUN apt-get update
+RUN apt-get update -y
 
 # Install basic applications
 RUN apt-get install -y tar git curl nano wget dialog net-tools build-essential libmysqlclient-dev
@@ -16,11 +15,7 @@ RUN apt-get install -y tar git curl nano wget dialog net-tools build-essential l
 # Install Python and Basic Python Tools
 RUN apt-get install -y python=2.7.5-5ubuntu3 python-dev python-distribute python-pip
 
-RUN apt-get update
-
 RUN apt-get install -y python-lxml=3.3.3-1ubuntu0.1
-
-RUN apt-get update
 
 # Copy the application folder inside the container
 ADD /arctic /arctic

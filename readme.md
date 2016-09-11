@@ -14,3 +14,5 @@ docker build -t arctic .
 docker run command:
 docker run -d -p 80:80 --net=host --name arctic -v /root/arctic/docs:/docs arctic
 
+Bundle for deployment:
+git archive --format=zip HEAD > arctic.zip
