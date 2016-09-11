@@ -18,7 +18,7 @@ RUN apt-get install -y python=2.7.5-5ubuntu3 python-dev python-distribute python
 RUN apt-get install -y python-lxml=3.3.3-1ubuntu0.1
 
 # Copy the application folder inside the container
-ADD /arctic /arctic
+ADD . /arctic
 
 # Get pip to download and install requirements:
 RUN pip install -r /arctic/requirements.txt
