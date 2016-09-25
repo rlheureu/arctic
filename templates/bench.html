@@ -375,9 +375,14 @@
 {% if current_user.is_authenticated %}
 {{ super() }}
 {% else %}
-<h3 class="navbar-page-title">
-  Finish building your Cube  
-</h3>
+
+  {% if my_rig or not rig %}
+  <h3 class="navbar-page-title">
+    Finish building your Cube  
+  </h3>
+  {% else %}
+  {% endif %}
+
 {% endif %}
 {% endblock %}
 
@@ -1177,7 +1182,7 @@
 			var note = "";
 			if (part.max_performance !== undefined && part.max_performance !== null) note += part.max_performance + ' ';
 			if (part.resolution !== undefined && part.resolution !== null) note += part.resolution;
-			if (part.max_framerate !== undefined && part.max_framerate !== null) note += '<br>' + part.max_framerate + ' MS Response Time';
+			if (part.max_framerate !== undefined && part.max_framerate !== null) note += '<br>' + part.max_framerate + ' Hz Refresh Rate';
 			return note;
 		}
 		
