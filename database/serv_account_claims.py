@@ -19,6 +19,7 @@ LOG = logging.getLogger('app')
 
 class AccountClaimTypes:
     FORGOT_PASSWORD = 'FORGOT_PASSWORD'
+    EMAIL_VERIFICATION = 'EMAIL_VERIFICATION'
 
 class AccountClaimService():
 

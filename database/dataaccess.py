@@ -431,3 +431,7 @@ def get_rigs_by_user_id(user_id):
 def create_user(user):
     db.session().add(user)
     db.session().commit()
+
+def save_user(user):
+    db.session().add(user)
+    db.session().commit()

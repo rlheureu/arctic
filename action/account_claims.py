@@ -3,6 +3,7 @@ Created on Aug 14, 2016
 
 @author: shanrandhawa
 '''
+import datetime
 import logging
 
 import appconfig
@@ -88,10 +89,48 @@ def is_valid_token(token):
     reset and request and is not expired.
     """
     acctclaimserv = AccountClaimService()
-    return acctclaimserv.is_claim_valid(acctclaimserv.retrieve_claim(token))
+    claim = acctclaimserv.retrieve_claim(token)
+    if not claim: return False
+    return acctclaimserv.is_claim_valid(claim)
 
 def retrieve_claim(token):
     return AccountClaimService().retrieve_claim(token)
 
 def retrieve_claim_by_user_id_claim_type(user_id, claim_type):
     return AccountClaimService().retrieve_claim_by_user_id_claim_type(user_id, claim_type)
+
+def verify_email(token):
+    """
+    this method will verify that an email is valid (part of sign up process)
+    """
+    
+    if is_valid_token(token):
+        claim = retrieve_claim(token)
+        
+        # TODO: this should happen inside a transaction
+        
+        user = claim.user
+        user.confirmed_at = datetime.datetime.utcnow()
+        dataaccess.save_user(user)
+        
+        AccountClaimService().mark_claimed(claim)
+
+def initiate_email_verification(user):
+    """
+    initiates email verification
+    """
+    claim = AccountClaimService().create_claim_for_user(user, AccountClaimTypes.EMAIL_VERIFICATION, 24*30)
+    
+    
+    """
+    TODO: send email
+    """
+    
+    return claim
+    
+
+
+
+    
+    
+    

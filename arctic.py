@@ -452,6 +452,18 @@ def get_rig():
     return jsonify({'rig':json.dumps(rig, cls=jsonify_sql_alchemy_model(), check_circular=False)})
 
 
+@app.route("/verifyemail", methods=['GET'])
+def email_verification_claimget():
+    context = {}
+
+    claimtoken = request.args.get('c', None)
+
+    if account_claims.is_valid_token(claimtoken):
+        account_claims.verify_email(claimtoken)
+        
+    context['email_verified'] = True
+    return render_template('claimacct.html', **context)
+
 @app.route("/claimserv/claim", methods=['GET'])
 def claimget():
     context = {}

@@ -8,6 +8,7 @@ import datetime
 from database import dataaccess
 from models.models import User
 from utils import auth_utils
+from action import account_claims
 
 
 def create_user(username, email, password, howheard):
@@ -37,4 +38,7 @@ def create_user(username, email, password, howheard):
     user.created_at = datetime.datetime.now()
     
     dataaccess.create_user(user)
+    
+    account_claims.initiate_email_verification(user)
+    
     return user
