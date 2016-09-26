@@ -110,7 +110,7 @@ def verify_email(token):
         # TODO: this should happen inside a transaction
         
         user = claim.user
-        user.confirmed_at = datetime.datetime.utcnow()
+        user.confirmed_at = datetime.datetime.now()
         dataaccess.save_user(user)
         
         AccountClaimService().mark_claimed(claim)
