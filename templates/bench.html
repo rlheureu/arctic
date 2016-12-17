@@ -330,7 +330,7 @@
     text-align: left;
   }
   #other-component-note-span{
-    left: 750px;
+    left: 840px;
     display: inline-block;
     position: absolute;
   }
@@ -532,26 +532,26 @@
         
         <div id="ac-cube-section-motherboard" data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
           <span class="acbench-item-heading other-clickable" style="display:block;">Motherboard <span class="other-component-note">*</span></span>
-          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+          <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-motherboard-section" class="item-slot-section other-clickable"></div>
         </div>
         <div id="ac-cube-section-storage" data-equip-type="storage" data-equip-title="EQUIP STORAGE">
           <span class="acbench-item-heading other-clickable" style="display:block;">Storage <span class="other-component-note">*</span></span>
-          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+          <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-storage-section" class="item-slot-section other-clickable"></div>
         </div>
         <div id="ac-cube-section-power" data-equip-type="power" data-equip-title="EQUIP A POWER SUPPLY">
           <span class="acbench-item-heading other-clickable" style="display:block;">Power Supply <span class="other-component-note">*</span></span>
-          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+          <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-power-section" class="item-slot-section other-clickable"></div>
         </div>
         <div id="ac-cube-section-chassis" data-equip-type="chassis" data-equip-title="EQUIP CHASSIS">
           <span class="acbench-item-heading other-clickable" style="display:block;">Chassis <span class="other-component-note">*</span></span>
-          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+          <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-chassis-section" class="item-slot-section other-clickable"></div>
         </div>
         
-        <br><br><br>
+        <br><br><br><br><br>
         <span id="other-component-note-span" class="other-component-note">* Equip core items to fill in secondary stats</span>
         <br><br><br><br><br>
       </div>
@@ -1085,6 +1085,8 @@
 					$('.other-clickable').addClass('pointer');
 				}
 				$('.other-component-note').hide();
+			} else {
+				$('.other-clickable-btn').hide();
 			}
 			
 			// set rig name
@@ -1161,14 +1163,6 @@
 			
 			//
 			//
-			// Reset component cubes
-			$('#componentsection_motherboard').attr('src','/static/images/component-default.png');
-			$('#componentsection_storage').attr('src','/static/images/component-default.png');
-			$('#componentsection_power').attr('src','/static/images/component-default.png');
-			$('#componentsection_chassis').attr('src','/static/images/component-default.png');
-			
-			//
-			//
 			// Remove display titles
 			$('.item-slot-section').empty();
 			
@@ -1176,6 +1170,7 @@
 			//
 			// show all equip buttons
 			$('.equipbutton').show();
+			$('.other-clickable-btn').show();
 			
 			//
 			//
