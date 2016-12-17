@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block styling %}
+  {{ super() }}
+  <style type="text/css"></style>
+{% endblock %}
+
+{% block navleft %}
+<p class="navsteps">
+  Step 1: Configure&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
+  Step 2: Refine&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
+  <b>Step 3: Finalize</b>
+</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <h2 style="text-align: center;">Sign in to Amdahl Cube to continue.</h2>
+      <br /> <br /> <br />
+      
+      <div id="login-with-fb-section">
+        <h3>Login with facebook!</h3>
+        <fb:login-button scope="public_profile,email" onlogin="continueRegistrationIfNew();">
+        </fb:login-button>
+      </div>
+      
+      <div id="registration-form" style="display:none;">
+        <form>
+          <div class="form-group">
+            <input class="form-control" type="text" placeholder="Pick a Profile Name" id="profile-name">
+          </div>
+          <div class="form-group">
+            <input class="form-control" type="text" placeholder="How did you hear about us?" id="how-heard">
+          </div>
+          <div class="form-group clearfix">
+            <button class="btn btn-small btn-primary pull-right" id="submit-registration-form">Complete Registration</button>
+          </div>
+        </form>
+      </div>
+      
+      <div id="status">
+      </div>
+
+
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+
+<script type="text/javascript">
+var continueRegistrationIfNew = function(){
+    FB.getLoginStatus(function(response) {
+    	console.log('User log in via facebook');
+        console.log(response);
+        
+        if (response.status === 'connected') {
+        	
+        	// user logged in to facebook and AC
+        	console.log('User logged in.')
+        	
+        	var fbtoken = response.authResponse.accessToken;
+        	var fbId = response.authResponse.userID;
+        	
+        	
+        	$.get("/fbregister",{fbid:fbId}).success(function(data){
+        		// is user registered? if not show registration form
+        		console.log(data);
+        		if (data.registered) {
+        			// move on to next page
+        			window.location = '/sharecube';
+        		} else {
+        			console.log('user not registered!');
+        			$('#registration-form').show();
+        			$('#login-with-fb-section').hide();
+        			
+        			// new registration
+        			$('#submit-registration-form').click(function(){
+        				var params = {};
+        				params.fbid = fbId;
+        				params.fbtoken = fbtoken;
+        				params.profilename = $('#profile-name').val();
+        				params.howhearabout = $('#how-heard').val();
+        				
+        				$.post('/fbregister', params)
+        				.success(function(){
+        					// registration succeeded
+        				});
+        				
+        			});
+        			
+        		}
+        	});
+        	
+        } else if (response.status === 'not_authorized') {
+        	// The person is logged into Facebook, but not your app.
+        	console.log('User is logged into FB but not AC.');
+        } else {
+        	console.log('User not logged into facebook.')
+        }
+	});
+}
+
+</script>
+
+{% endblock %}

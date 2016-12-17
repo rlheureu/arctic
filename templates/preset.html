@@ -42,12 +42,12 @@
     <br>
     <div class="row">
       <div class="col-md-1"></div>
-      <div class="col-md-10 wizard-item-border" data-href="/namecube">
+      <div class="col-md-10 wizard-item-border" data-href="/namecube{%if use%}?use={{use}}{%endif%}">
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-5">
               <h2 class="wizard-item-title">CUSTOMIZE</h2>
           </div>
-          <div class="col-md-8 wizard-select-description">
+          <div class="col-md-7 wizard-select-description">
             <br>
             <p>Jump right in and start building your cube.</p>
           </div>
@@ -70,12 +70,12 @@
     <br>
     <div class="row">
       <div class="col-md-1"></div>
-      <div class="col-md-10 wizard-item-border" data-href="/namecube?preset={{rig.id}}">
+      <div class="col-md-10 wizard-item-border" data-href="/namecube?preset={{rig.id}}{%if use%}&use={{use}}{%endif%}">
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-5">
               <h2 class="wizard-item-title">{{rig.rig_preset_name | upper}}</h2>
           </div>
-          <div class="col-md-8 wizard-select-description">
+          <div class="col-md-7 wizard-select-description">
             <p>{{rig.rig_preset_description}}</p>
           </div>
         </div>

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block styling %}
+  {{ super() }}
+  <style type="text/css"></style>
+{% endblock %}
+
+{% block navleft %}
+<p class="navsteps">
+  Step 1: Configure&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
+  Step 2: Refine&nbsp;&nbsp;&nbsp;>&nbsp;&nbsp;&nbsp;
+  <b>Step 3: Finalize</b>
+</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      
+      <div>
+        <h3>Share Cube!</h3>
+        <h5>Share methods below:</h5>
+      </div>
+
+
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}

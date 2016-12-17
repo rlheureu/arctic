@@ -72,7 +72,9 @@ def save_rig(rig_dict, user_id):
     rig.power_component = get_component(rig_dict.get('power_id'))
     rig.storage_component = get_component(rig_dict.get('storage_id'))
     rig.chassis_component = get_component(rig_dict.get('chassis_id'))
+    rig.upgrade_from_id = rig_dict.get('upgrading')
     rig.name = rig_dict.get('name')
+    rig.use = rig_dict.get('use') if rig_dict.get('use') and rig_dict.get('use') in ['owned', 'other'] else None
     rig.user_id = user_id
     
     db.session().add(rig)

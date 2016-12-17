@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block styling %}
+  {{ super() }}
+  <style type="text/css">
+      #showcase-icon {
+        width: 200px;
+        margin-top: 50px;
+      }
+      #showcase-build-message {
+        font-size: 40px;
+        font-weight: bold;
+        color: white;
+        transform:scale(1,1.5); /* W3C */
+    -webkit-transform:scale(1,1.5); /* Safari and Chrome */
+    -moz-transform:scale(1,1.5); /* Firefox */
+    -ms-transform:scale(1,1.5); /* IE 9 */
+    -o-transform:scale(1,1.5);
+    margin-bottom: 0px;
+      }
+      .build-message-line-left {
+        height: 30px;
+        width: 4px;
+        position: relative;
+        bottom: 3px;
+        right: 335px;
+      }
+      .build-message-line-right {
+        height: 30px;
+        width: 4px;
+        position: relative;
+        bottom: 3px;
+        left: 335px;
+      }
+      #showcase-build-message-small {
+        color:white;
+        font-weight:lighter;
+        font-size: 18px;
+        margin-bottom: 100px;
+      }
+      #select-rig-message {
+        font-weight:lighter;
+        font-size:24px;
+        text-align:center;
+      }
+      .rig-box {
+        position: relative;
+        text-align: center;
+        display: inline-block;
+        margin-right: 5px;
+        margin-left: 5px;
+        margin-bottom: 12px;
+        cursor: pointer;
+      }
+      .rig-box-purple {
+        color: #A98FEB;
+      }
+      .rig-box-orange {
+        color: #ECCE60;
+      }
+      .rig-box-black {
+        color: gray;
+      }
+      .rig-box-blue {
+        color: #60BBEC;
+      }
+      .rig-box-green {
+        color: #1ed311;
+      }
+      .rig-box-white {
+        color: #D0D3D4;
+      }
+      .rig-box-gray {
+        color: gray;
+      }
+      .rig-box-new {
+        color: gray;
+      }
+      #rig-box-container {
+        text-align: center;
+      }
+      .showcase-tier-image {
+        width: 300px;
+        height: 300px;
+      }
+      .perf-text {
+        position: absolute;
+        top: 18px;
+        left: 0px;
+        right: 0px;
+      }
+      .rig-name-text{
+        position: absolute;
+        top: 245px;
+        left: 0px;
+        right: 0px;
+        font-size: 24px;
+        font-weight: 100;
+      }
+      .build-link {
+        color: #60BBEC;
+      }
+      .showcase-banner {
+        background: url("/static/images/showcase-bg.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        
+      }
+      .navbar {
+        margin-bottom: 0px;
+      }
+      .showcase-bottom {
+        height: 250px;
+      }
+      .rig-link:hover {
+        color: transparent;
+      }
+      .delete-rig-btn{
+        position: absolute;
+        top: 18px;
+        left: 234px;
+        color: #7374a0;
+        background-color: #232282;
+        border: none;
+      }
+      .delete-rig-btn:hover{
+        color: #8c0707;
+        background-color: #060b25;
+      }
+  </style>
+{% endblock %}
+
+
+{% block navleft %}
+{% if current_user.is_authenticated %}
+{{ super() }}
+{% else %}
+<h3 class="navbar-page-title">
+  Please Select a Configuration
+</h3>
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+<div style="width:100%; border-bottom: 3px #2a263f solid; text-align: center;" class="wizard-steps-breadcrumbs">
+  <ul>
+    <li class="active">CONFIGURE</li>
+    <li>NAME</li>
+    <li>BUILD & FINISH</li>
+  </ul>
+</div>
+<br><br>
+
+<div class="container">
+<div class="row">
+    <p id="select-rig-message">Select a rig to upgrade</p>
+    <div id="rig-box-container">
+        {% for rig in rigs %}
+        <div data-href="/namecube?upgrade={{rig.id}}&use=upgrade" class="rig-box rig-box-{{ rig.perf_color }}">
+            <img class="showcase-tier-image" src="/static/images/showcase-tiers-{{ rig.perf_color }}.jpg">
+            <span class="perf-text" >{% if rig.max_performance %}{{rig.max_performance}}{% endif %}</span>
+            <span class="rig-name-text">{% if rig.name %}{{rig.name}}{% endif %}</span>
+            <button data-cube-id="{{rig.id}}" data-cube-name="{% if rig.name %}{{rig.name}}{% endif %}" class="delete-rig-btn" hidden="hidden">Delete</button>
+        </div>
+        
+        {% endfor %}
+    </div>
+</div>
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+
+<script type="text/javascript">
+  $(function(){
+    
+    $('.rig-box').click(function(){
+      window.location = $(this).data('href');
+    });
+  });
+</script>
+
+{% endblock %}

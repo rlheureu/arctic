@@ -159,6 +159,7 @@ class Rig(Base):
 
     id = Column('arctic_rig_id', Integer, primary_key=True)
     name = Column('name', String(400))
+    use = Column('use', String(128))
     cpu_component_id = Column('cpu_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
     cpu_component = relationship('CPUComponent', foreign_keys='Rig.cpu_component_id')
     gpu_component_id = Column('gpu_component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
@@ -181,6 +182,8 @@ class Rig(Base):
     rig_preset_name = Column('rig_preset_name', String(400))
     rig_preset_sort_order = Column('rig_preset_sort_order', Integer)
     rig_preset_description = Column('rig_preset_description', String(1000))
+    upgrade_from_id = Column('upgrade_from_id', Integer, ForeignKey('arctic_rig.arctic_rig_id'))
+    upgrade_from = relationship('Rig', remote_side=[id])
 
 class AccountClaim(Base):
     __tablename__ = 'arctic_account_claim'

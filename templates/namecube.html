@@ -44,12 +44,21 @@
           <input type="text" name="name" placeholder="CUBE NAME" class="ac-input large" style="width:100%;"/>
           
           {% if preset %}
-          <input type="text" name="preset" style="display:none;" value="{{preset}}"/>
+          <input type="text" name="preset" style="display:none;" value="{{preset}}" class="wizparams"/>
           {% endif %}
+          
+          {% if use %}
+          <input type="text" name="use" style="display:none;" value="{{use}}" class="wizparams"/>
+          {% endif %}
+          
+          {% if upgrade %}
+          <input type="text" name="upgrade" style="display:none;" value="{{upgrade}}" class="wizparams"/>
+          {% endif %}
+          
           <br><br>
           <input type="submit" class="ac-btn" value="Select Name">
           &nbsp;&nbsp;&nbsp;
-          <a href="bench{% if preset %}?preset={{preset}}{% endif %}" class="ac-btn">Skip, Do This later</a>
+          <a href="bench" class="ac-btn" id="skipthislink">Skip, Do This later</a>
         </form>
       </div>
       <div class="col-md-4"></div>
@@ -58,4 +67,26 @@
   
   <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
   
+{% endblock %}
+
+{% block javascript %}
+
+<script type="text/javascript">
+	$(function(){
+		
+		var params = {};
+		
+		$('.wizparams').each(function(){
+			// get the params into a URL format
+			var name = $(this).attr('name');
+			var value = $(this).val();
+			params[name]=value;
+		});
+		
+		$('#skipthislink').attr('href', '/bench?' + $.param(params));
+	});
+
+</script>
+
+
 {% endblock %}

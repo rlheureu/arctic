@@ -200,13 +200,37 @@ def fbregisternew():
     return jsonify({'registered' : errormsg != None,
                     'error' : errormsg})
 
+@app.route("/selectrig", methods=['GET'])
+def selectrig():
+    
+    rigs = dataaccess.get_rigs_by_user_id(current_user.id)
+
+    perf_utils.set_performance_color_for_rigs(rigs)
+
+    rigs.sort(key=lambda rig: rig.perf_color_coded, reverse=True)
+
+    context = {'rigs':rigs, 'currpagenav' : 'bench'}
+
+    return render_template('selectrig.html', **context)
+
 @app.route("/preset", methods=['GET'])
 def preset():
+    
     rig_presets = dataaccess.get_rig_presets()
+    
     context = {'rig_presets' : rig_presets, 
                'currpagenav':'bench'}
-
+    
+    if request.args.get('use', None): context['use'] = request.args.get('use')
+    
     return render_template('preset.html', **context)
+
+@app.route("/use", methods=['GET'])
+def use():
+    context = {'currpagenav':'bench',
+               'logged_in' : True if current_user.is_authenticated else False}
+
+    return render_template('use.html', **context)
 
 @app.route("/faq", methods=['GET'])
 def faq():
@@ -255,17 +279,24 @@ def bench():
         context['rig'] = rig
         context['cube_name'] = rig.name
         context['my_rig'] = (current_user!= None and current_user.is_authenticated and current_user.id == rig.user.id)
+        if rig.upgrade_from_id:
+            context['upgrade'] = rig.upgrade_from_id
+            context['upgrade_name'] = rig.upgrade_from.name
         return render_template('bench.html', **context)
     
     
     """
     Rig not being requested, this must be the wizard then:
     """
-    cube_name = request.args.get('name', None)
-    preset = request.args.get('preset', None)
     
-    if cube_name: context['cube_name'] = cube_name
-    if preset: context['preset'] = preset
+    if request.args.get('name', None): context['cube_name'] = request.args.get('name')
+    if request.args.get('preset', None): context['preset'] = request.args.get('preset')
+    if request.args.get('use', None): context['use'] = request.args.get('use')
+    upgrade = request.args.get('upgrade', None)
+    if upgrade:
+        context['upgrade'] = upgrade
+        upgradeobj = dataaccess.get_rig(upgrade)
+        if upgradeobj: context['upgrade_name'] = upgradeobj.name
 
     return render_template('bench.html', **context)
 
@@ -282,15 +313,27 @@ def showcase():
     context = {'rigs':rigs, 'currpagenav' : 'showcase'}
     return render_template('showcase.html', **context)
 
+@app.route("/showcasenew", methods=['GET'])
+@login_required
+def showcasenew():
+
+    rigs = dataaccess.get_rigs_by_user_id(current_user.id)
+
+    perf_utils.set_performance_color_for_rigs(rigs)
+
+    rigs.sort(key=lambda rig: rig.perf_color_coded, reverse=True)
+
+    context = {'rigs':rigs, 'currpagenav' : 'showcase'}
+    return render_template('showcase.html', **context)
+
 @app.route("/namecube", methods=['GET'])
 def namecube():
     
     context = {'currpagenav':'bench'}
     
-    preset = request.args.get('preset', None)
-    
-    if preset: context['preset'] = preset
-    
+    if request.args.get('preset', None): context['preset'] = request.args.get('preset')
+    if request.args.get('use', None): context['use'] = request.args.get('use')
+    if request.args.get('upgrade', None): context['upgrade'] = request.args.get('upgrade')
 
     return render_template('namecube.html', **context)
 
