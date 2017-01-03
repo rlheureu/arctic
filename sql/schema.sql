@@ -94,6 +94,8 @@ CREATE TABLE `arctic_rig` (
   `rig_preset_name` varchar(400) DEFAULT NULL,
   `rig_preset_sort_order` int(11) DEFAULT '0',
   `rig_preset_description` varchar(1000) DEFAULT NULL,
+  `upgrade_from_id` int(11) DEFAULT NULL,
+  `use` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`arctic_rig_id`),
   KEY `cpu_component_id_idx` (`cpu_component_id`),
   KEY `user_idx` (`user_id`),
@@ -104,16 +106,18 @@ CREATE TABLE `arctic_rig` (
   KEY `storage_component_idx` (`storage_component_id`),
   KEY `chassis_component_idx` (`chassis_component_id`),
   KEY `power_compnent_idx` (`power_component_id`),
+  KEY `fk_upgrade_rig` (`upgrade_from_id`),
   CONSTRAINT `chassis_component` FOREIGN KEY (`chassis_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `cpu_component` FOREIGN KEY (`cpu_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `display_component` FOREIGN KEY (`display_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_upgrade_rig` FOREIGN KEY (`upgrade_from_id`) REFERENCES `arctic_rig` (`arctic_rig_id`),
   CONSTRAINT `gpu_component` FOREIGN KEY (`gpu_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `memory_component` FOREIGN KEY (`memory_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `motherboard_compoent` FOREIGN KEY (`motherboard_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `power_compnent` FOREIGN KEY (`power_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `storage_component` FOREIGN KEY (`storage_component_id`) REFERENCES `arctic_component` (`arctic_component_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `user` FOREIGN KEY (`user_id`) REFERENCES `arctic_user` (`arctic_user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=latin1;
 
 
 CREATE TABLE `arctic_account_claim` (
