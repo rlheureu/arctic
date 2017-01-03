@@ -118,9 +118,13 @@ def save_rig(rig_dict, user_id):
                 op.user_id = user_id
                 db.session().add(op)
                 
-        db.session().flush()
+    else:
+        """ if there are in owned parts, unequip them """
+        for part in rig.owned_parts:
+            part.rig_id = None
+            db.session().add(part)
     
-    
+    db.session().flush()
     
     return rig
 

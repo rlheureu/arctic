@@ -409,7 +409,7 @@
             <img src="/static/images/star_checked.png" id="owned_check"     style="width:18px;{% if rig.use != "owned" %}display:none;{% endif %}">
             <img src="/static/images/star_unchecked.png" id="owned_uncheck" style="width:18px;{% if rig.use == "owned" %}display:none;{% endif %}">
             &nbsp;&nbsp;I Own This Rig</button>
-          <button class="ac-btn " id="share-button" style="margin-top:13px;">
+          <button class="ac-btn " id="show-share-cube" style="margin-top:13px;">
             <img style="width:13px;" src="/static/images/share-icon.png">
             &nbsp;&nbsp;Share</button>
           {% endif %}
@@ -463,14 +463,14 @@
 	    <br>
 	    <div id="share-link-div" style="display:none;" class="row">
 	      <div class="col-sm-12">
-	        <div class="input-group">
-		      <input id="share-link-input" readonly style="width: 30%;">
-		      <span style="margin-left: -4px;">
-		        <button id="copy-share-link-btn" type="button" style="height: 26px; vertical-align: top;">Copy</button>
-		      </span>
-		    </div>
+    	      <input id="share-link-input" readonly style="width: 30%;width: 30%;padding: 10px;margin: 10px;background-color: transparent;border: 1px solid #2c91df;color: #cccccc;font-size: 14px;">
+    	      <span>
+    	        <button id="copy-share-link-btn" type="button" class="ac-btn">Copy Link</button>
+    	      </span>
 	      </div>
 	    </div>
+        <br>
+        <button id="back-to-cube-btn" class="ac-btn">Back to your cube </button>
       </div>
     </div>
   </div>
@@ -550,10 +550,10 @@
   </div>
   
   {% if my_rig and rig.use == "owned" %}
-  <div class="container">
+  <div class="container" id="owned-parts-div">
     <div class="row">
       <div class="col-md-12">
-        <h3>Owned parts for this rig</h3>
+        <span class="wizard-sub-heading">Owned Parts for <strong>{{rig.name}}</strong> ({{rig.owned_parts|length}})</span>
         <hr>
         {% for part in rig.owned_parts %}
           <div class="owned-parts-list-item-container">
@@ -1391,23 +1391,21 @@
 		});
 
 		$('#show-cube-summary').click(function(){
-			$(this).addClass('active');
-			$(this).removeClass('clickable');
-			$('#show-share-cube').removeClass('active');
-			$('#show-share-cube').addClass('clickable');
 			$('#build-cube-div').show();
 			$('#other-components-bg').show();
 			$('#share-cube-div').hide();
 		});
 
 		$('#show-share-cube').click(function(){
-			$(this).addClass('active');
-			$(this).removeClass('clickable');
-			$('#show-cube-summary').removeClass('active');
-			$('#show-cube-summary').addClass('clickable');
 			$('#share-cube-div').show();
 			$('#build-cube-div').hide();
-			$('#other-components-bg').hide();
+			$('#owned-parts-div').hide();
+		});
+		
+		$('#back-to-cube-btn').click(function(){
+			$('#share-cube-div').hide();
+			$('#build-cube-div').show();
+			$('#owned-parts-div').show();
 		});
 
 		$('#twitter-share-btn').attr('href', 'https://twitter.com/share?url=' + window.location.href);

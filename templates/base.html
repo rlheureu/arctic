@@ -37,6 +37,9 @@
     <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
     
     <style type="text/css">
+      hr{
+        border-color: #555555;
+      }
       .clickable {
         cursor: pointer;
       }
@@ -426,7 +429,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-3">
-            <a href="{% if current_user.is_authenticated %}/showcase{% else %}/{% endif %}"><img style="padding-top: 8px;width:150px;" src="{{ url_for('static', filename='images/logo-small.png') }}"/></a>
+            <a href="{% if current_user.is_authenticated %}/showcase{% else %}/{% endif %}"><img style="padding-top: 8px;width:175px;" src="{{ url_for('static', filename='images/logo-small.png') }}"/></a>
           </div>
           <div class="col-md-6 align-text-center">
             {% block navleft %}
