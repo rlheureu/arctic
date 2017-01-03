@@ -6,9 +6,6 @@
     margin-right: 2px;
     margin-left: 2px;
   }
-  .clickable {
-    cursor: pointer;
-  }
   .modal-color-icon{
     height:90px;
   }
@@ -91,56 +88,6 @@
   .bg-orange {
     background-color: #fede86;
   }
-  .border-orange{
-    border-color: #fede86 !important;
-  }
-  .border-purple{
-    border-color: #fe4aea !important;
-  }
-  .border-blue{
-    border-color: #29a0de !important;
-  }
-  .border-gray{
-    border-color: #333333 !important;
-  }
-  .border-black{
-    border-color: #000000 !important;
-  }
-  .border-default{
-    border-color: #cccccc !important;
-  }
-  
-  .fg-purple{
-    color: #fe4aea;
-  }
-  .fg-orange{
-    color: #e6d55e;
-  }
-  .fg-gray{
-    color: #777;
-  }
-  .fg-gray{
-    color: #777;
-  }
-  .fg-white{
-    color: #888;
-  }
-  .fg-blue{
-    color: #29a0de;
-  }
-  .fg-black{
-    color: #ffffff;
-  }
-  .fg-green{
-    color: #1ed311;
-  }
-  .fg-inc{
-    color: #b9b9b9;
-  }
-  .fg-inc-red{
-    color: #f4101a;
-    font-weight: bold;
-  }
   .blue-button{
     background-color:#1A9DFC;
   }
@@ -191,6 +138,13 @@
     position: absolute;
     top: 108px;
     left: 39px;
+  }
+  
+  .label-edited{
+    background-color: #ff6e19;
+    position: relative;
+    top: -5px;
+    left: 5px;
   }
   
   .acbench-item-heading{
@@ -377,6 +331,38 @@
     text-decoration: none;
     color:#309cf4;
   }
+  .added-owned-part{
+    padding: 15px;
+    color: #2c91df;
+    border: 1px solid #2c91df;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  .selected-rig-type{
+    background-color: #676767;
+    width: 200px;
+    padding: 11px;
+  }
+  .select-rig-type{
+    background-color: #d5d5d5;
+    width: 200px;
+    padding: 11px;
+  }
+  .rig-type-selector{
+    display:inline-block;
+    margin: 7px;
+    border: #444444 solid 1px;
+  }
+  .select-rig-type-footer{
+    background-color:#555555;
+    padding: 10px;
+    color: #cccccc;
+  }
+  .selected-rig-type-footer{
+    background-color:#333333;
+    padding: 10px;
+    color: #cccccc;
+  }
   </style>
 {% endblock %}
 
@@ -415,15 +401,13 @@
       <div class="col-md-6">
         <h1 id="bench-cube-title">Cube Name</h1>
         <span id="bench-cube-subtitle"></span>
-        <span id="bench-upgrade-subtitle">Upgrading from: </span>
-        <span id="bench-rig-use-subtitle">Rig use: </span>
       </div>
       <div class="col-md-6 align-text-right" style="padding-top:40px;">
         <div class="pull-right" style="display:inline-block;">
           {% if my_rig %}
           <button class="ac-btn " id="own-this-button" style="margin-top:13px;">
-            <img style="width:18px;" src="/static/images/star_checked.png" id="owned_check">
-            <img style="width:18px;" src="/static/images/star_unchecked.png" id="owned_uncheck">
+            <img src="/static/images/star_checked.png" id="owned_check"     style="width:18px;{% if rig.use != "owned" %}display:none;{% endif %}">
+            <img src="/static/images/star_unchecked.png" id="owned_uncheck" style="width:18px;{% if rig.use == "owned" %}display:none;{% endif %}">
             &nbsp;&nbsp;I Own This Rig</button>
           <button class="ac-btn " id="share-button" style="margin-top:13px;">
             <img style="width:13px;" src="/static/images/share-icon.png">
@@ -498,28 +482,32 @@
         <img src="/static/images/centered-cube-with-lines.png">
         <div id="ac-cube-section-cpu" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
           <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-cpu" class="equip-clickable small-cube-icon" />
-          <span class="acbench-item-heading equip-clickable" style="display:block;">Processor</span>
+          <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Processor</span>
+          <span class="label label-edited">EDITED</span>
           <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-cpu-section" class="equip-clickable item-slot-section"></div>
         </div>
         
         <div id="ac-cube-section-gpu" data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
           <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-gpu" class="equip-clickable small-cube-icon"/>
-          <span class="acbench-item-heading equip-clickable" style="display:block;">Graphics</span>
+          <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Graphics</span>
+          <span class="label label-edited">EDITED</span>
           <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-gpu-section" class="equip-clickable item-slot-section"></div>
         </div>
         
         <div id="ac-cube-section-memory" data-equip-type="memory" data-equip-title="EQUIP MEMORY">
           <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-memory" class="equip-clickable small-cube-icon" />
-          <span class="acbench-item-heading equip-clickable" style="display:block;">Memory</span>
+          <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Memory</span>
+          <span class="label label-edited">EDITED</span>
           <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-memory-section" class="equip-clickable item-slot-section"></div>
         </div>
         
         <div id="ac-cube-section-display" data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
           <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-display" class="equip-clickable small-cube-icon"/>
-          <span class="acbench-item-heading equip-clickable" style="display:block;">Display</span>
+          <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Display</span>
+          <span class="label label-edited">EDITED</span>
           <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
         </div>
@@ -529,22 +517,26 @@
         <!--// Cube DISPLAY -->
         
         <div id="ac-cube-section-motherboard" data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
-          <span class="acbench-item-heading other-clickable" style="display:block;">Motherboard <span class="other-component-note">*</span></span>
+          <span class="acbench-item-heading other-clickable" style="display:inline-block;">Motherboard <span class="other-component-note">*</span></span>
+          <span class="label label-edited">EDITED</span>
           <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-motherboard-section" class="item-slot-section other-clickable"></div>
         </div>
         <div id="ac-cube-section-storage" data-equip-type="storage" data-equip-title="EQUIP STORAGE">
-          <span class="acbench-item-heading other-clickable" style="display:block;">Storage <span class="other-component-note">*</span></span>
+          <span class="acbench-item-heading other-clickable" style="display:inline-block;">Storage <span class="other-component-note">*</span></span>
+          <span class="label label-edited">EDITED</span>
           <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-storage-section" class="item-slot-section other-clickable"></div>
         </div>
         <div id="ac-cube-section-power" data-equip-type="power" data-equip-title="EQUIP A POWER SUPPLY">
-          <span class="acbench-item-heading other-clickable" style="display:block;">Power Supply <span class="other-component-note">*</span></span>
+          <span class="acbench-item-heading other-clickable" style="display:inline-block;">Power Supply <span class="other-component-note">*</span></span>
+          <span class="label label-edited">EDITED</span>
           <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-power-section" class="item-slot-section other-clickable"></div>
         </div>
         <div id="ac-cube-section-chassis" data-equip-type="chassis" data-equip-title="EQUIP CHASSIS">
-          <span class="acbench-item-heading other-clickable" style="display:block;">Chassis <span class="other-component-note">*</span></span>
+          <span class="acbench-item-heading other-clickable" style="display:inline-block;">Chassis <span class="other-component-note">*</span></span>
+          <span class="label label-edited">EDITED</span>
           <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
           <div id="ac-chassis-section" class="item-slot-section other-clickable"></div>
         </div>
@@ -556,6 +548,26 @@
     </div>   
     
   </div>
+  
+  {% if my_rig and rig.use == "owned" %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h3>Owned parts for this rig</h3>
+        <hr>
+        {% for part in rig.owned_parts %}
+          <div class="owned-parts-list-item-container">
+            <span class="owned-parts-list-item-header">{{part.component.get_type_str()}}</span><br>
+            <span class="owned-parts-list-item-title fg-{{part.component.get_performance_color()}} clickable"
+                  data-color="{{part.component.get_performance_color()}}"
+                  data-part-id="{{part.id}}"
+                  data-equipped-str="equipped on {{rig.name}}">{{part.component.adjusted_display_name()}}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
   <!-- --------------- -->
   <!-- --------------- -->
@@ -572,6 +584,71 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="ac-btn" id="save-name-change-button">Save</button>
+          &nbsp;&nbsp;
+          <button type="button" class="ac-btn" data-dismiss="modal">Cancel</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- --------------- -->
+  <!-- --------------- -->
+  <!-- SELECT RIG TYPE MODAL -->
+  <!-- --------------- -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="rig-type-modal">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Save Your Rig</h4>
+        </div>
+        <div class="modal-body">
+          <h5>Before we save your rig, we would like to know more about it.</h5>
+          <div style="text-align: center;">
+            <div class="rig-type-selector" data-deselect-img="/static/images/own_rig_select.png"
+              data-selected-img="/static/images/own_rig_selected.png"
+              data-type="owned">
+              <div class="select-rig-type clickable">
+                <img src="/static/images/own_rig_select.png">
+              </div>
+              <div class="select-rig-type-footer">Owned</div>
+            </div>
+            <div class="rig-type-selector" data-deselect-img="/static/images/exp_rig_select.png"
+              data-selected-img="/static/images/exp_rig_selected.png"
+              data-type="experimental">
+              <div class="select-rig-type clickable">
+                <img src="/static/images/exp_rig_select.png">
+              </div>
+              <div class="select-rig-type-footer">Experimental</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="ac-btn continue-save-btn">Save</button>
+          &nbsp;&nbsp;
+          <button type="button" class="ac-btn" data-dismiss="modal">Cancel</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- --------------- -->
+  <!-- --------------- -->
+  <!-- ADD OWNED PARTS MODAL -->
+  <!-- --------------- -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="add-owned-parts-modal">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Owned Parts Updated</h4>
+        </div>
+        <div class="modal-body">
+          <h5>You are about to modify a rig that you own. Select which parts you would like to add to your owned parts inventory:</h5>
+          <br>
+          <div id="owned-parts-list">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="ac-btn continue-save-btn">Save</button>
           &nbsp;&nbsp;
           <button type="button" class="ac-btn" data-dismiss="modal">Cancel</button>
         </div>
@@ -732,6 +809,11 @@
 			currentRig['use'] = AC_GLOBALS.use;
 		}
 		
+		// initialize edited functionality
+		// hide all "edited" labels
+		$('.label-edited').hide();
+		currentRig['edited'] = {};
+		
 		function populateRigById(rigId){
 			//
 			//
@@ -771,30 +853,78 @@
 		$('#save-name-change-button').click(function(){
 			$('#edit-name-modal').modal('hide');
 			currentRig.name = $('#change-name-input').val();
+			currentRig['miscEdited'] = true;
 			renderRig();
 		});
 		
 		$('#save-cube-button').click(function(){
 			// if the user is logged in this link will click off save
 			// else the user will need to register before they can save
-			ArcticBasics.isLoggedIn(saveCube, function(){
+			ArcticBasics.isLoggedIn(saveCubePrompt, function(){
 				// not logged in
-				ArcticBasics.initLogin(saveCube);
+				ArcticBasics.initLogin(saveCubePrompt);
 			});
 		});
 		
-		function saveCube(){
+		$('#own-this-button').click(function(){
 			
+			// unchecked will be visible if user intends to mark as owned
+			var toggleOwned = $('#owned_uncheck').is(":visible");
+			var useStr = toggleOwned ? 'owned' : 'other';
+			
+			if (useStr === 'owned') {
+				currentRig['owned'] = true;
+				$('#owned_check').show();
+				$('#owned_uncheck').hide();
+			} else {
+				currentRig['owned'] = false;
+				$('#owned_check').hide();
+				$('#owned_uncheck').show();
+			}
+			
+			currentRig['miscEdited'] = true;
+			renderRig();
+			
+			
+		});
+		
+		function saveCubePrompt(){
+			
+			
+			if (currentRig.rig_id !== undefined && Object.keys(currentRig['edited']).length === 0) {
+				continueSave();
+			}
+			
+			//
+			// show the user which part is changing
+			if (currentRig.rig_id !== undefined) {
+				// determine the edited parts
+				$('#owned-parts-list').empty();
+				for (comp in currentRig['edited']) {
+					var text = $('#ac-' + comp + '-section').find('.part-item-title').text();
+					$('#owned-parts-list').append('<div class="added-owned-part">' + text + '</div>');
+				}
+				$('#add-owned-parts-modal').modal('show');
+			} else {
+				//
+				// otherwise prompt user with question about rig ownership
+				// if this rig is a new rig
+				$('#rig-type-modal').modal('show');
+			}
+			
+		}
+		
+		$('.continue-save-btn').click(continueSave);
+		
+		function continueSave(){
 			var postRig = currentRig['parts'];
 			postRig['name'] = currentRig['name'];
-			if (currentRig.upgrading) postRig['upgrading'] = currentRig.upgrading;
-			if (currentRig.use) postRig['use'] = currentRig.use;
+			postRig['owned'] = currentRig['owned'] && currentRig['owned'] === true;
 			if (currentRig.rig_id !== undefined) postRig['rig_id'] = currentRig.rig_id;
 			
 			$.post('/savecube', postRig).success(function(data){
 				window.location.href = '/bench?rig=' + data.rig_id;
 			});
-			
 		}
 		
 		function resetCube(){
@@ -814,6 +944,12 @@
  		// dismiss modal after saving
  		//
  		$('#modal-save-btn').click(function(){
+ 			
+ 			// set edited part
+ 			var currEquipId = currentRig['parts'][equipType + '_id'];
+ 			if (currEquipId !== toEquip) currentRig['edited'][equipType] = true; // edited part
+ 			
+ 			// set part to equip in view
  			console.log('equip ' + equipType + ' ' + toEquip);
  			currentRig['parts'][equipType + '_id'] = toEquip;
  			$('#part-item-list').empty();
@@ -1074,7 +1210,19 @@
 				$('#bench-cube-subtitle').html(constructPerformanceNote(worstComponentDetail));
 				
 				// enable save button and share button
-				if (AC_GLOBALS.myRig || blankRig) $('#save-cube-button').show();
+				if (AC_GLOBALS.myRig) {
+					$('#save-cube-button').text('Update Cube');
+					$('#save-cube-button').show();
+					if (currentRig && (Object.keys(currentRig['edited']).length > 0 || currentRig['miscEdited'] === true)) {
+						$('#save-cube-button').attr('disabled', false);
+					}
+					else {
+						$('#save-cube-button').attr('disabled', true);
+					}
+				} else if (blankRig) {
+					$('#save-cube-button').text('Save Cube');
+					$('#save-cube-button').show();
+				}
 				$('#benchtab-share').removeClass('benchtab-disabled');
 				
 				// enable equiping secondary components
@@ -1092,14 +1240,11 @@
 				$('#bench-cube-title').html(currentRig['name']);
 			}
 			
-			// set upgrading name if available
-			if (currentRig.upgradingName) {
-				$('#bench-upgrade-subtitle').html('Upgrading from <b>' + currentRig.upgradingName + '</b>');
-			}
-			
-			// set use
-			if (currentRig.use && toRigUseString(currentRig.use)) {
-				$('#bench-rig-use-subtitle').html(toRigUseString(currentRig.use));
+			// render edited flags
+			if (currentRig.rig_id !== undefined && currentRig.rig_id !==null){
+				for (comp in currentRig['edited']) {
+					renderEditedFlag(comp);
+				}
 			}
 			
 		}
@@ -1145,6 +1290,12 @@
 			
 		}
 		
+		function renderEditedFlag(compType){
+			// modify core view
+			var view = $('#ac-' + compType + '-section');
+			view.siblings('.label-edited').show();
+		}
+		
 		function resetBenchUI(){
 			//
 			//
@@ -1181,6 +1332,10 @@
 			//
 			// Do not show save cube button
 			$('#save-cube-button').hide();
+			
+			//
+			// Hide all edited labels
+			$('.label-edited').hide();
 		}
 		
 		function constructDisplayName(part){
@@ -1274,6 +1429,24 @@
 		$('#legendIconButton').click(function(){
 			// open legend modal
 			$('#legend-modal').modal('show');
+			
+		});
+		
+		$('.rig-type-selector').click(function(){
+			
+			// select one
+			var rigSelect = $(this).find('.select-rig-type');
+			var selectUrl = $(this).data('selected-img');
+			var rigType = $(this).data('type');
+			currentRig['owned'] = rigType === 'owned';
+			rigSelect.addClass('selected-rig-type').removeClass('select-rig-type').find('img').attr('src', selectUrl);
+			
+			
+			// deselect the other one
+			var otherSelector = $(this).siblings('.rig-type-selector'); 
+			var rigDeselect = otherSelector.find('.selected-rig-type');
+			var deselectUrl = otherSelector.data('deselect-img');
+			rigDeselect.addClass('select-rig-type').removeClass('selected-rig-type').find('img').attr('src', deselectUrl);
 			
 		});
 

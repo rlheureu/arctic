@@ -1,12 +1,15 @@
 
 
+from datetime import datetime
+
+from flask_login import current_user
+from sqlalchemy.sql.expression import or_
+
 from database import db
 from models import models
-from models.models import AccountClaim
-from datetime import datetime
-from sqlalchemy.sql.expression import or_
+from models.models import AccountClaim, OwnedPart
 from utils.exception import InvalidInput
-from flask_login import current_user
+
 
 def get_rig_presets():
     return db.session().query(models.Rig).filter(models.Rig.rig_preset == True).order_by(models.Rig.rig_preset_sort_order.desc()).all()
@@ -61,6 +64,21 @@ def get_component(component_id):
 def get_rig(rig_id):
     return db.session().query(models.Rig).filter(models.Rig.id == rig_id).first()
 
+def get_part(part_id):
+    return db.session().query(models.OwnedPart).filter(models.OwnedPart.id == part_id).first()
+
+def extract_part_ids(rig_dict):
+    part_ids = []
+    if rig_dict.get('cpu_id'): part_ids.append(int(rig_dict.get('cpu_id')))
+    if rig_dict.get('display_id'): part_ids.append(int(rig_dict.get('display_id')))
+    if rig_dict.get('memory_id'): part_ids.append(int(rig_dict.get('memory_id')))
+    if rig_dict.get('motherboard_id'): part_ids.append(int(rig_dict.get('motherboard_id')))
+    if rig_dict.get('gpu_id'): part_ids.append(int(rig_dict.get('gpu_id')))
+    if rig_dict.get('power_id'): part_ids.append(int(rig_dict.get('power_id')))
+    if rig_dict.get('storage_id'): part_ids.append(int(rig_dict.get('storage_id')))
+    if rig_dict.get('chassis_id'): part_ids.append(int(rig_dict.get('chassis_id')))
+    return part_ids
+
 def save_rig(rig_dict, user_id):
     
     rig = get_rig(rig_dict.get('rig_id')) if rig_dict.get('rig_id') else models.Rig()
@@ -72,15 +90,62 @@ def save_rig(rig_dict, user_id):
     rig.power_component = get_component(rig_dict.get('power_id'))
     rig.storage_component = get_component(rig_dict.get('storage_id'))
     rig.chassis_component = get_component(rig_dict.get('chassis_id'))
-    rig.upgrade_from_id = rig_dict.get('upgrading')
     rig.name = rig_dict.get('name')
-    rig.use = rig_dict.get('use') if rig_dict.get('use') and rig_dict.get('use') in ['owned', 'other'] else None
-    rig.user_id = user_id
+    if rig_dict.get('owned'): rig.use = 'owned' if rig_dict.get('owned') == 'true' else 'other'
+    if not rig.user_id: rig.user_id = user_id
     
     db.session().add(rig)
     db.session().flush()
     
+    part_ids = set(extract_part_ids(rig_dict))
+    if rig.use == 'owned':
+        """ determine the updated parts and add them as owned parts """
+        owned_parts_set = set()
+        for part in rig.owned_parts:
+            owned_parts_set.add(part.component.id)
+            
+            """ also unequip any existing owned parts that are not in the newest save """
+            if not part.component.id in part_ids:
+                part.rig_id = None
+                db.session().add(part)
+            
+        
+        for part_id in part_ids:
+            if not part_id in owned_parts_set:
+                op = OwnedPart()
+                op.component_id = part_id
+                op.rig_id = rig.id
+                op.user_id = user_id
+                db.session().add(op)
+                
+        db.session().flush()
+    
+    
+    
     return rig
+
+def modify_use(rig_dict, user_id):
+    
+    if not rig_dict.get('rig_id'): return None
+    rig = get_rig(rig_dict.get('rig_id'))
+    if rig.user_id != user_id: return None
+
+    rig.use = rig_dict.get('use')
+        
+    db.session().add(rig)
+    db.session().flush()
+    
+    return rig
+
+def remove_part(part_id, user_id):
+    
+    part = get_part(part_id)
+    if part.user_id != user_id: return None
+        
+    db.session().delete(part)
+    db.session().flush()
+    
+    return part_id
 
 def delete_rig(rig_id):
     

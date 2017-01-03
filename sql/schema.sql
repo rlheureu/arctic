@@ -129,3 +129,14 @@ CREATE TABLE `arctic_account_claim` (
   CONSTRAINT `acctclaimuser` FOREIGN KEY (`user_id`) REFERENCES `arctic_user` (`arctic_user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `arctic_owned_part` (
+  `arctic_owned_part_id` int(11) NOT NULL AUTO_INCREMENT,
+  `component_id` int(11) NOT NULL,
+  `rig_id` int(11) DEFAULT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`arctic_owned_part_id`),
+  KEY `owned_component` (`component_id`),
+  KEY `rig_component` (`rig_id`),
+  CONSTRAINT `owned_component` FOREIGN KEY (`component_id`) REFERENCES `arctic_component` (`arctic_component_id`),
+  CONSTRAINT `rig_component` FOREIGN KEY (`rig_id`) REFERENCES `arctic_rig` (`arctic_rig_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

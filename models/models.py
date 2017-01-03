@@ -40,6 +40,66 @@ class BaseComponent(Base):
         'polymorphic_on':type,
         'polymorphic_identity':'base'
     }
+    
+    def get_type_str(self):
+        raise NotImplemented('should be implemented in subclass')
+    
+    def adjusted_display_name(self):
+        if self.display_name: return self.display_name
+        part_name = ''
+        if self.vendor: part_name += self.vendor + ' '
+        if self.brand_name: part_name += self.brand_name + ' '
+        if self.model_number: part_name += self.model_number
+        return part_name
+    
+    def get_performance_color(self):
+        
+        if not self.max_performance or self.max_performance == '':
+            """
+            performance not available
+            """
+            return 'gray'
+    
+        perf = self.max_performance.lower() 
+        
+        if '4k' in perf:
+            return 'purple'
+        elif 'vr' in perf:
+            return 'black'
+        elif '1440p' in perf:
+            return 'orange'
+        elif '1080p@60' in perf:
+            return 'blue'
+        elif '1080p@30' in perf:
+            return 'green'
+        elif '720p' in perf:
+            return 'gray'
+        else:
+            return 'gray'
+    
+    def get_performance_color_coded(self):
+        if not self.max_performance or self.max_performance == '':
+            """
+            performance not available
+            """
+            return 0
+    
+        perf = self.max_performance.lower() 
+        
+        if '4k' in perf:
+            return 6
+        elif 'vr' in perf:
+            return 5
+        elif '1440p' in perf:
+            return 4
+        elif '1080p@60' in perf:
+            return 3
+        elif '1080p@30' in perf:
+            return 2
+        elif '720p' in perf:
+            return 1
+        else:
+            return 0
 
 class CPUComponent(BaseComponent):
     
@@ -57,11 +117,17 @@ class CPUComponent(BaseComponent):
     dvi = Column('dvi', Boolean)
     vga = Column('vga', Boolean)
     
+    def get_type_str(self):
+        return 'Processor'
+    
     __mapper_args__ = {
         'polymorphic_identity' : 'CPU'
     }
 
 class GPUComponent(BaseComponent):
+    
+    def get_type_str(self):
+        return 'Graphics'
     
     __mapper_args__ = {
         'polymorphic_identity' : 'GPU'
@@ -72,18 +138,27 @@ class ChassisComponent(BaseComponent):
     __mapper_args__ = {
         'polymorphic_identity' : 'CHASSIS'
     }
+    
+    def get_type_str(self):
+        return 'Chassis'
 
 class StorageComponent(BaseComponent):
     
     __mapper_args__ = {
         'polymorphic_identity' : 'STORAGE'
     }
+    
+    def get_type_str(self):
+        return 'Storage'
 
 class PowerComponent(BaseComponent):
     
     __mapper_args__ = {
         'polymorphic_identity' : 'POWER'
     }
+    
+    def get_type_str(self):
+        return 'Power Supply'
 
 class MemoryComponent(BaseComponent):
     
@@ -96,6 +171,9 @@ class MemoryComponent(BaseComponent):
     __mapper_args__ = {
         'polymorphic_identity' : 'MEMORY'
     }
+    
+    def get_type_str(self):
+        return 'Memory'
     
 class MotherboardComponent(BaseComponent):
     
@@ -114,6 +192,9 @@ class MotherboardComponent(BaseComponent):
     __mapper_args__ = {
         'polymorphic_identity' : 'MOTHERBOARD'
     }
+    
+    def get_type_str(self):
+        return 'Motherboard'
 
 class DisplayComponent(BaseComponent):
     
@@ -124,6 +205,9 @@ class DisplayComponent(BaseComponent):
     __mapper_args__ = {
         'polymorphic_identity' : 'DISPLAY'
     }
+    
+    def get_type_str(self):
+        return 'Display'
 
 class User(Base, UserMixin):
     __tablename__ = 'arctic_user'
@@ -184,6 +268,37 @@ class Rig(Base):
     rig_preset_description = Column('rig_preset_description', String(1000))
     upgrade_from_id = Column('upgrade_from_id', Integer, ForeignKey('arctic_rig.arctic_rig_id'))
     upgrade_from = relationship('Rig', remote_side=[id])
+    
+    def get_max_performance_color(self):
+        perf_color = self.cpu_component.get_performance_color()
+        perf_color_coded = self.cpu_component.get_performance_color_coded()
+        max_performance = self.cpu_component.max_performance if self.cpu_component else None
+        if self.gpu_component and self.gpu_component.get_performance_color_coded() < perf_color_coded:
+            """ GPU has lower performance """
+            perf_color = self.gpu_component.get_performance_color()
+            perf_color_coded = self.gpu_component.get_performance_color_coded()
+            max_performance = self.gpu_component.max_performance
+        if self.memory_component and self.memory_component.get_performance_color_coded() < perf_color_coded:
+            perf_color = self.memory_component.get_performance_color()
+            perf_color_coded = self.memory_component.get_performance_color_coded()
+            max_performance = self.memory_component.max_performance
+        if self.display_component and self.display_component.get_performance_color_coded() < perf_color_coded:
+            perf_color = self.display_component.get_performance_color()
+            perf_color_coded = self.display_component.get_performance_color_coded()
+            max_performance = self.display_component.max_performance
+        
+        return perf_color
+
+class OwnedPart(Base):
+    __tablename__ = 'arctic_owned_part'
+
+    id = Column('arctic_owned_part_id', Integer, primary_key=True)
+    component_id = Column('component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
+    component = relationship('BaseComponent', foreign_keys='OwnedPart.component_id')
+    rig_id = Column('rig_id', Integer, ForeignKey('arctic_rig.arctic_rig_id'))
+    rig = relationship('Rig', foreign_keys='OwnedPart.rig_id', backref='owned_parts')
+    user_id = Column('user_id', Integer, ForeignKey('arctic_user.arctic_user_id'))
+    user = relationship('User', foreign_keys='OwnedPart.user_id', backref='owned_parts')
 
 class AccountClaim(Base):
     __tablename__ = 'arctic_account_claim'

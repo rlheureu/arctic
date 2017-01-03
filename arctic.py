@@ -232,6 +232,25 @@ def use():
 
     return render_template('use.html', **context)
 
+@app.route("/use/modify", methods=['POST'])
+def use_modify():
+    
+    print request.form
+    
+    rig = dataaccess.modify_use(request.form, current_user.get_id())
+
+    return jsonify({'rig_use' : rig.use}) if rig else jsonify({})
+
+@app.route("/removepart", methods=['POST'])
+def remove_part():
+    
+    print request.form.get('part_id')
+    part_id = request.form.get('part_id')
+    
+    dataaccess.remove_part(part_id, current_user.get_id())
+
+    return jsonify({'part_id' : part_id})
+
 @app.route("/faq", methods=['GET'])
 def faq():
     
@@ -309,8 +328,18 @@ def showcase():
     perf_utils.set_performance_color_for_rigs(rigs)
 
     rigs.sort(key=lambda rig: rig.perf_color_coded, reverse=True)
+    
+    owned_rigs = []
+    exp_rigs = []
+    all_parts = []
+    for rig in rigs:
+        if rig.use == 'owned': owned_rigs.append(rig)
+        else: exp_rigs.append(rig)
+    
+    all_parts.extend(current_user.owned_parts)
+    all_parts.sort(key=lambda part: part.component.get_type_str, reverse=True)
 
-    context = {'rigs':rigs, 'currpagenav' : 'showcase'}
+    context = {'exp_rigs':exp_rigs, 'owned_rigs': owned_rigs, 'currpagenav' : 'showcase', 'all_parts': all_parts}
     return render_template('showcase.html', **context)
 
 @app.route("/showcasenew", methods=['GET'])

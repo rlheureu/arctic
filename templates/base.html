@@ -34,9 +34,65 @@
 
     {% block styling %}
     <!-- Bootstrap -->
-    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
     
     <style type="text/css">
+      .clickable {
+        cursor: pointer;
+      }
+      .border-orange{
+        border-color: #fede86 !important;
+      }
+      .border-purple{
+        border-color: #fe4aea !important;
+      }
+      .border-blue{
+        border-color: #29a0de !important;
+      }
+      .border-gray{
+        border-color: #333333 !important;
+      }
+      .border-black{
+        border-color: #000000 !important;
+      }
+      .border-green{
+        border-color: #1ed311 !important;
+      }
+      .border-default{
+        border-color: #cccccc !important;
+      }
+      
+      .fg-purple{
+        color: #fe4aea;
+      }
+      .fg-orange{
+        color: #e6d55e;
+      }
+      .fg-gray{
+        color: #777;
+      }
+      .fg-gray{
+        color: #777;
+      }
+      .fg-white{
+        color: #888;
+      }
+      .fg-blue{
+        color: #29a0de;
+      }
+      .fg-black{
+        color: #ffffff;
+      }
+      .fg-green{
+        color: #1ed311;
+      }
+      .fg-inc{
+        color: #b9b9b9;
+      }
+      .fg-inc-red{
+        color: #f4101a;
+        font-weight: bold;
+      }
       .navbar {
         border-radius: 0px;
       }
@@ -245,6 +301,15 @@
         outline: 1px solid #2c91df;
         color:#2c91df;
       }
+      .ac-btn:disabled {
+        color: #254f6f;
+        outline-color: #254f6f;
+      }
+      .ac-btn:disabled:hover {
+        color: #254f6f;
+        outline-color: #254f6f;
+        background-color: transparent;
+      }
       nav{
         background-image: url("/static/images/Top-Nav-bg.png") !important;
         background-repeat: no-repeat;
@@ -304,6 +369,23 @@
         border: 1px solid #777777;
         border-top:3px solid #777777;
         text-align: center;
+      }
+      .owned-parts-list-item-container{
+        display: inline-block;
+        padding: 10px;
+        margin:8px;
+        width: 500px;
+      }
+      .owned-parts-list-item-title{
+        font-size:13px;
+      }
+      .owned-parts-list-item-header{
+        font-size: 12px;
+        color: #cccccc;
+      }
+      .owned-part-item-in-modal{
+        background-color: #222222;
+        padding: 10px;
       }
     </style>
     {% endblock %}
@@ -503,6 +585,30 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
     
+    <!-- --------------- -->
+    <!-- --------------- -->
+    <!-- EDIT OWNED PART MODAL -->
+    <!-- --------------- -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="edit-owned-part-modal">
+      <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Part</h4>
+          </div>
+          <div class="modal-body">
+            <br>
+            <p>You currenty own this part:</p>
+            <div class="owned-part-item-in-modal"></div>
+            <br>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="ac-btn" data-dismiss="modal">Cancel</button>
+            &nbsp;&nbsp;
+            <button type="button" class="ac-btn" id="remove-part-button">Remove from parts</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
     
     <!-- DEBUGGING -->
     <span id="status"></span>
@@ -595,6 +701,26 @@
     	$('#not-registered-login').click(function(){
     		$('#login-modal').modal('hide');
     		$('#register-modal').modal({show:true});
+    	});
+    	
+    	var currentRemovePartDiv = null;
+    	var currentRemovePartId = null;
+    	
+    	$('.owned-parts-list-item-title').click(function(){
+    		var color = $(this).data('color');
+    		var text = $(this).text();
+    		var equipText = $(this).data('equipped-str');
+    		currentRemovePartId = $(this).data('part-id');;
+    		currentRemovePartDiv = $(this).parent();
+    		$('#edit-owned-part-modal').find('.owned-part-item-in-modal').empty().html('<span class="fg-' + color + '">' + text + '</span>&nbsp;<span style="color:#dddddd;">(' + equipText + ')</span>');
+    		$('#edit-owned-part-modal').modal('show');
+    	});
+    	
+    	$('#remove-part-button').click(function(){
+            $.post('/removepart', {'part_id': currentRemovePartId}).success(function(data){
+            	currentRemovePartDiv.remove();
+            	$('#edit-owned-part-modal').modal('hide');
+  			});
     	});
     	
     });
