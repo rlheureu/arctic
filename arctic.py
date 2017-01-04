@@ -337,9 +337,39 @@ def showcase():
         else: exp_rigs.append(rig)
     
     all_parts.extend(current_user.owned_parts)
-    all_parts.sort(key=lambda part: part.component.get_type_str, reverse=True)
-
-    context = {'exp_rigs':exp_rigs, 'owned_rigs': owned_rigs, 'currpagenav' : 'showcase', 'all_parts': all_parts}
+    all_parts.sort(key=lambda part: part.component.adjusted_display_name, reverse=True)
+    
+    owned_cpu = []
+    owned_gpu = []
+    owned_memory = []
+    owned_display = []
+    owned_power = []
+    owned_chassis = []
+    owned_motherboard = []
+    owned_storage = []
+    
+    for owned_part in all_parts:
+        if owned_part.component.type == 'CPU': owned_cpu.append(owned_part)
+        elif owned_part.component.type == 'GPU': owned_gpu.append(owned_part)
+        elif owned_part.component.type == 'CHASSIS': owned_chassis.append(owned_part)
+        elif owned_part.component.type == 'STORAGE': owned_storage.append(owned_part)
+        elif owned_part.component.type == 'POWER': owned_power.append(owned_part)
+        elif owned_part.component.type == 'MEMORY': owned_memory.append(owned_part)
+        elif owned_part.component.type == 'MOTHERBOARD': owned_motherboard.append(owned_part)
+        elif owned_part.component.type == 'DISPLAY': owned_display.append(owned_part)
+    
+    context = {'exp_rigs':exp_rigs, 'owned_rigs': owned_rigs,
+               'currpagenav' : 'showcase',
+               'all_parts': all_parts,
+               'owned_cpu' : owned_cpu,
+               'owned_gpu' : owned_gpu,
+               'owned_memory' :owned_gpu,
+               'owned_display' : owned_display,
+               'owned_power' : owned_power,
+               'owned_chassis' : owned_chassis,
+               'owned_motherboard' : owned_motherboard,
+               'owned_storage' : owned_storage}
+    
     return render_template('showcase.html', **context)
 
 @app.route("/showcasenew", methods=['GET'])

@@ -67,17 +67,17 @@ def get_rig(rig_id):
 def get_part(part_id):
     return db.session().query(models.OwnedPart).filter(models.OwnedPart.id == part_id).first()
 
-def extract_part_ids(rig_dict):
-    part_ids = []
-    if rig_dict.get('cpu_id'): part_ids.append(int(rig_dict.get('cpu_id')))
-    if rig_dict.get('display_id'): part_ids.append(int(rig_dict.get('display_id')))
-    if rig_dict.get('memory_id'): part_ids.append(int(rig_dict.get('memory_id')))
-    if rig_dict.get('motherboard_id'): part_ids.append(int(rig_dict.get('motherboard_id')))
-    if rig_dict.get('gpu_id'): part_ids.append(int(rig_dict.get('gpu_id')))
-    if rig_dict.get('power_id'): part_ids.append(int(rig_dict.get('power_id')))
-    if rig_dict.get('storage_id'): part_ids.append(int(rig_dict.get('storage_id')))
-    if rig_dict.get('chassis_id'): part_ids.append(int(rig_dict.get('chassis_id')))
-    return part_ids
+def extract_component_ids(rig_dict):
+    component_ids = []
+    if rig_dict.get('cpu_id'): component_ids.append(int(rig_dict.get('cpu_id')))
+    if rig_dict.get('display_id'): component_ids.append(int(rig_dict.get('display_id')))
+    if rig_dict.get('memory_id'): component_ids.append(int(rig_dict.get('memory_id')))
+    if rig_dict.get('motherboard_id'): component_ids.append(int(rig_dict.get('motherboard_id')))
+    if rig_dict.get('gpu_id'): component_ids.append(int(rig_dict.get('gpu_id')))
+    if rig_dict.get('power_id'): component_ids.append(int(rig_dict.get('power_id')))
+    if rig_dict.get('storage_id'): component_ids.append(int(rig_dict.get('storage_id')))
+    if rig_dict.get('chassis_id'): component_ids.append(int(rig_dict.get('chassis_id')))
+    return component_ids
 
 def save_rig(rig_dict, user_id):
     
@@ -97,7 +97,7 @@ def save_rig(rig_dict, user_id):
     db.session().add(rig)
     db.session().flush()
     
-    part_ids = set(extract_part_ids(rig_dict))
+    component_ids = set(extract_component_ids(rig_dict))
     if rig.use == 'owned':
         """ determine the updated parts and add them as owned parts """
         owned_parts_set = set()
@@ -105,21 +105,34 @@ def save_rig(rig_dict, user_id):
             owned_parts_set.add(part.component.id)
             
             """ also unequip any existing owned parts that are not in the newest save """
-            if not part.component.id in part_ids:
+            if not part.component.id in component_ids:
                 part.rig_id = None
                 db.session().add(part)
-            
         
-        for part_id in part_ids:
-            if not part_id in owned_parts_set:
-                op = OwnedPart()
-                op.component_id = part_id
+        """ get all unequipped parts """
+        user = get_user_by_id(user_id)
+        unequipped_parts_dict = {}
+        for part in user.owned_parts:
+            if part.rig_id == None:
+                unequipped_parts_dict[part.component_id] = part
+        
+        for component_id in component_ids:
+            if not component_id in owned_parts_set:
+                """ this part needs to be either created or found and equipped """
+                
+                op = None
+                if unequipped_parts_dict.get(component_id):
+                    op = unequipped_parts_dict.get(component_id)
+                else:
+                    op = OwnedPart()
+                    op.component_id = component_id
+                    op.user_id = user_id
+                
                 op.rig_id = rig.id
-                op.user_id = user_id
                 db.session().add(op)
                 
     else:
-        """ if there are in owned parts, unequip them """
+        """ if there are equipped owned parts, unequip them """
         for part in rig.owned_parts:
             part.rig_id = None
             db.session().add(part)

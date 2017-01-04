@@ -198,10 +198,9 @@
       
         <!-- Wrapper for slides -->
         <div class="carousel-inner" role="listbox">
-          <br><br><br>
           {% for rig in owned_rigs %}
           <div class="item {%if loop.index == 1 %}active{% endif %}">
-            
+            <br><br><br>
             <div class="container">
               <div class="row">
                 <div class="col-md-4 col-md-offset-1">
@@ -286,7 +285,151 @@
         <br><br><br>
         <span class="wizard-sub-heading">All Owned Parts ({{all_parts|length}})</span>
         <hr>
+        {% if owned_cpu|length > 0 %}
+        <h5>Processors</h5>
+          {% for part in owned_cpu %}
+          <div class="owned-parts-list-item-container">
+            <span class="owned-parts-list-item-title fg-{{part.component.get_performance_color()}} clickable"
+                  data-color="{{part.component.get_performance_color()}}"
+                  data-part-id="{{part.id}}"
+                  data-equipped-str="{% if part.rig %}equipped on {{part.rig.name}}{% else %}not currently equipped{% endif %}">{{part.component.adjusted_display_name()}}</span>
+            ({% if part.rig %}
+            <b>Equipped: <a href="bench?rig={{part.rig.id}}" class="fg-{{part.rig.get_max_performance_color()}}">{{part.rig.name}}</a></b>
+            {% else %}
+            <b>Not Equipped.</b>
+            {% endif %})
+          </div>
+          {% endfor %}
         
+        {% endif %}
+        
+        {% if owned_gpu|length > 0 %}
+        <h5>Graphics</h5>
+          {% for part in owned_gpu %}
+          <div class="owned-parts-list-item-container">
+            <span class="owned-parts-list-item-title fg-{{part.component.get_performance_color()}} clickable"
+                  data-color="{{part.component.get_performance_color()}}"
+                  data-part-id="{{part.id}}"
+                  data-equipped-str="{% if part.rig %}equipped on {{part.rig.name}}{% else %}not currently equipped{% endif %}">{{part.component.adjusted_display_name()}}</span>
+            ({% if part.rig %}
+            <b>Equipped: <a href="bench?rig={{part.rig.id}}" class="fg-{{part.rig.get_max_performance_color()}}">{{part.rig.name}}</a></b>
+            {% else %}
+            <b>Not Equipped.</b>
+            {% endif %})
+          </div>
+          {% endfor %}
+        
+        {% endif %}
+        
+        {% if owned_memory|length > 0 %}
+        <h5>Memory</h5>
+          {% for part in owned_memory %}
+          <div class="owned-parts-list-item-container">
+            <span class="owned-parts-list-item-title fg-{{part.component.get_performance_color()}} clickable"
+                  data-color="{{part.component.get_performance_color()}}"
+                  data-part-id="{{part.id}}"
+                  data-equipped-str="{% if part.rig %}equipped on {{part.rig.name}}{% else %}not currently equipped{% endif %}">{{part.component.adjusted_display_name()}}</span>
+            ({% if part.rig %}
+            <b>Equipped: <a href="bench?rig={{part.rig.id}}" class="fg-{{part.rig.get_max_performance_color()}}">{{part.rig.name}}</a></b>
+            {% else %}
+            <b>Not Equipped.</b>
+            {% endif %})
+          </div>
+          {% endfor %}
+        
+        {% endif %}
+        
+        {% if owned_display|length > 0 %}
+        <h5>Displays</h5>
+          {% for part in owned_display %}
+          <div class="owned-parts-list-item-container">
+            <span class="owned-parts-list-item-title fg-{{part.component.get_performance_color()}} clickable"
+                  data-color="{{part.component.get_performance_color()}}"
+                  data-part-id="{{part.id}}"
+                  data-equipped-str="{% if part.rig %}equipped on {{part.rig.name}}{% else %}not currently equipped{% endif %}">{{part.component.adjusted_display_name()}}</span>
+            ({% if part.rig %}
+            <b>Equipped: <a href="bench?rig={{part.rig.id}}" class="fg-{{part.rig.get_max_performance_color()}}">{{part.rig.name}}</a></b>
+            {% else %}
+            <b>Not Equipped.</b>
+            {% endif %})
+          </div>
+          {% endfor %}
+        
+        {% endif %}
+        
+        {% if owned_motherboard|length > 0 %}
+        <h5>Motherboards</h5>
+          {% for part in owned_motherboard %}
+          <div class="owned-parts-list-item-container">
+            <span class="owned-parts-list-item-title fg-{{part.component.get_performance_color()}} clickable"
+                  data-color="{{part.component.get_performance_color()}}"
+                  data-part-id="{{part.id}}"
+                  data-equipped-str="{% if part.rig %}equipped on {{part.rig.name}}{% else %}not currently equipped{% endif %}">{{part.component.adjusted_display_name()}}</span>
+            ({% if part.rig %}
+            <b>Equipped: <a href="bench?rig={{part.rig.id}}" class="fg-{{part.rig.get_max_performance_color()}}">{{part.rig.name}}</a></b>
+            {% else %}
+            <b>Not Equipped.</b>
+            {% endif %})
+          </div>
+          {% endfor %}
+        
+        {% endif %}
+        
+        {% if owned_storage|length > 0 %}
+        <h5>Storage</h5>
+          {% for part in owned_storage %}
+          <div class="owned-parts-list-item-container">
+            <span class="owned-parts-list-item-title fg-{{part.component.get_performance_color()}} clickable"
+                  data-color="{{part.component.get_performance_color()}}"
+                  data-part-id="{{part.id}}"
+                  data-equipped-str="{% if part.rig %}equipped on {{part.rig.name}}{% else %}not currently equipped{% endif %}">{{part.component.adjusted_display_name()}}</span>
+            ({% if part.rig %}
+            <b>Equipped: <a href="bench?rig={{part.rig.id}}" class="fg-{{part.rig.get_max_performance_color()}}">{{part.rig.name}}</a></b>
+            {% else %}
+            <b>Not Equipped.</b>
+            {% endif %})
+          </div>
+          {% endfor %}
+        
+        {% endif %}
+        
+        {% if owned_power|length > 0 %}
+        <h5>Power Supplies</h5>
+          {% for part in owned_power %}
+          <div class="owned-parts-list-item-container">
+            <span class="owned-parts-list-item-title fg-{{part.component.get_performance_color()}} clickable"
+                  data-color="{{part.component.get_performance_color()}}"
+                  data-part-id="{{part.id}}"
+                  data-equipped-str="{% if part.rig %}equipped on {{part.rig.name}}{% else %}not currently equipped{% endif %}">{{part.component.adjusted_display_name()}}</span>
+            ({% if part.rig %}
+            <b>Equipped: <a href="bench?rig={{part.rig.id}}" class="fg-{{part.rig.get_max_performance_color()}}">{{part.rig.name}}</a></b>
+            {% else %}
+            <b>Not Equipped.</b>
+            {% endif %})
+          </div>
+          {% endfor %}
+        
+        {% endif %}
+        
+        {% if owned_chassis|length > 0 %}
+        <h5>Chassis</h5>
+          {% for part in owned_chassis %}
+          <div class="owned-parts-list-item-container">
+            <span class="owned-parts-list-item-title fg-{{part.component.get_performance_color()}} clickable"
+                  data-color="{{part.component.get_performance_color()}}"
+                  data-part-id="{{part.id}}"
+                  data-equipped-str="{% if part.rig %}equipped on {{part.rig.name}}{% else %}not currently equipped{% endif %}">{{part.component.adjusted_display_name()}}</span>
+            ({% if part.rig %}
+            <b>Equipped: <a href="bench?rig={{part.rig.id}}" class="fg-{{part.rig.get_max_performance_color()}}">{{part.rig.name}}</a></b>
+            {% else %}
+            <b>Not Equipped.</b>
+            {% endif %})
+          </div>
+          {% endfor %}
+        
+        {% endif %}
+        
+        {# REMOVE FOR NOW
         {% for part in all_parts %}
           <div class="owned-parts-list-item-container">
             <span class="owned-parts-list-item-header">{{part.component.get_type_str()}}</span><br>
@@ -301,6 +444,7 @@
             {% endif %})
           </div>
         {% endfor %}
+        #}
         
       </div>
     </div>

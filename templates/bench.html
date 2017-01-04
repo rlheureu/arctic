@@ -642,7 +642,7 @@
           <h4 class="modal-title">Owned Parts Updated</h4>
         </div>
         <div class="modal-body">
-          <h5>You are about to modify a rig that you own. Select which parts you would like to add to your owned parts inventory:</h5>
+          <h5>You are about to modify a rig that you own. The following parts will be added to your owned parts inventory:</h5>
           <br>
           <div id="owned-parts-list">
           </div>
@@ -893,6 +893,7 @@
 			
 			if (currentRig.rig_id !== undefined && Object.keys(currentRig['edited']).length === 0) {
 				continueSave();
+				return;
 			}
 			
 			//
@@ -902,7 +903,7 @@
 				$('#owned-parts-list').empty();
 				for (comp in currentRig['edited']) {
 					var text = $('#ac-' + comp + '-section').find('.part-item-title').text();
-					$('#owned-parts-list').append('<div class="added-owned-part">' + text + '</div>');
+					if (text && text !== '') $('#owned-parts-list').append('<div class="added-owned-part">' + text + '</div>');
 				}
 				$('#add-owned-parts-modal').modal('show');
 			} else {
