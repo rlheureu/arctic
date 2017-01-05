@@ -363,7 +363,7 @@ def showcase():
                'all_parts': all_parts,
                'owned_cpu' : owned_cpu,
                'owned_gpu' : owned_gpu,
-               'owned_memory' :owned_gpu,
+               'owned_memory' :owned_memory,
                'owned_display' : owned_display,
                'owned_power' : owned_power,
                'owned_chassis' : owned_chassis,
