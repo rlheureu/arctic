@@ -396,7 +396,15 @@
   <br>
 
   <div class="container">
-  
+    <div class="row">
+      <div class="col-md-6" style="color:#cccccc; font-size:14px;">
+        {% if my_rig %}
+        <a href="/showcase">Showcase</a>&nbsp;&nbsp;>&nbsp;&nbsp;{{rig.name}}
+        {% elif not rig %}
+        
+        {% endif %}
+      </div>
+    </div>
     <div class="row">
       <div class="col-md-6">
         <h1 id="bench-cube-title">Cube Name</h1>
@@ -446,6 +454,8 @@
       <br>
     </div>
   </div>
+  {% else %}
+  <div style="width:100%; border-bottom:1px solid #333;"></div>
   {% endif %}
 
   <div class="container" id="share-cube-div" style="display:none;">
