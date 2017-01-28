@@ -230,6 +230,13 @@ class User(Base, UserMixin):
         self.active = False
         self.anonymous = False
     
+    def get_unequipped_parts(self):
+        unequipped = []
+        for p in self.owned_parts:
+            if not p.rig_id:
+                unequipped.append(p) 
+        return unequipped
+    
     def get_id(self): return self.id
     
     """ NOTE the below have been set to True, meaning the session

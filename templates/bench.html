@@ -779,7 +779,8 @@
 			upgradeName : {% if upgrade_name %}'{{upgrade_name}}'{% else %}null{% endif %},
 			use : {% if use %}'{{use}}'{% elif rig and rig.use %}'{{rig.use}}'{% else %}null{% endif %},
 			rig : {% if rig %}'{{rig.id}}'{% else %}null{% endif %},
-			myRig : {% if my_rig %}true{% else %}false{% endif %}
+			myRig : {% if my_rig %}true{% else %}false{% endif %},
+			unequippedParts : [{% if current_user.is_authenticated %}{% for part in current_user.get_unequipped_parts() %} {{part.component_id}} {% if not loop.last %},{% endif %} {% endfor %}{% endif %}]
 		};
 	}();
 
@@ -911,11 +912,19 @@
 			if (currentRig.rig_id !== undefined) {
 				// determine the edited parts
 				$('#owned-parts-list').empty();
+				var addingNewPart = false;
 				for (comp in currentRig['edited']) {
-					var text = $('#ac-' + comp + '-section').find('.part-item-title').text();
-					if (text && text !== '') $('#owned-parts-list').append('<div class="added-owned-part">' + text + '</div>');
+					var partId = currentRig['parts'][comp + '_id'];
+					if( $.inArray(partId, AC_GLOBALS.unequippedParts) < 0) {
+						addingNewPart = true;
+						var text = $('#ac-' + comp + '-section').find('.part-item-title').text();
+						if (text && text !== '') $('#owned-parts-list').append('<div class="added-owned-part">' + text + '</div>');
+					}
 				}
-				$('#add-owned-parts-modal').modal('show');
+				if (addingNewPart)
+					$('#add-owned-parts-modal').modal('show');
+				else
+					continueSave();
 			} else {
 				//
 				// otherwise prompt user with question about rig ownership
