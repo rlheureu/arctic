@@ -339,24 +339,27 @@
     font-weight: bold;
   }
   .selected-rig-type{
-    background-color: #676767;
-    width: 200px;
+    background-image:url("/static/images/btn-selected.png");
+    background-size: 250px;
+    width: 250px;
+    height: 271px;
     padding: 11px;
+    color: #cccccc;
   }
   .select-rig-type{
-    background-color: #d5d5d5;
-    width: 200px;
+    background-image:url("/static/images/btn-normal.png");
+    background-size: 250px;
+    width: 250px;
+    height: 271px;
     padding: 11px;
+    color: #333333;
   }
   .rig-type-selector{
     display:inline-block;
-    margin: 7px;
-    border: #444444 solid 1px;
   }
   .select-rig-type-footer{
-    background-color:#555555;
     padding: 10px;
-    color: #cccccc;
+    font-size:14px;
   }
   .selected-rig-type-footer{
     background-color:#333333;
@@ -614,21 +617,25 @@
         <div class="modal-body">
           <h5>Before we save your rig, we would like to know more about it.</h5>
           <div style="text-align: center;">
-            <div class="rig-type-selector" data-deselect-img="/static/images/own_rig_select.png"
-              data-selected-img="/static/images/own_rig_selected.png"
+            <div class="rig-type-selector" data-deselect-img="/static/images/icon-own-normal.png"
+              data-selected-img="/static/images/icon-own-selected.png"
               data-type="owned">
               <div class="select-rig-type clickable">
-                <img src="/static/images/own_rig_select.png">
+                <br><br>
+                <img src="/static/images/icon-own-normal.png" width="90px">
+                <br><br>
+                <div class="select-rig-type-footer">I own this rig</div>
               </div>
-              <div class="select-rig-type-footer">Owned</div>
             </div>
-            <div class="rig-type-selector" data-deselect-img="/static/images/exp_rig_select.png"
-              data-selected-img="/static/images/exp_rig_selected.png"
+            <div class="rig-type-selector" data-deselect-img="/static/images/icon-experimental-normal.png"
+              data-selected-img="/static/images/icon-experimental-selected.png"
               data-type="experimental">
               <div class="select-rig-type clickable">
-                <img src="/static/images/exp_rig_select.png">
+                <br><br>
+                <img src="/static/images/icon-experimental-normal.png" width="90px">
+                <br><br>
+                <div class="select-rig-type-footer">Experimental rig</div>
               </div>
-              <div class="select-rig-type-footer">Experimental</div>
             </div>
           </div>
         </div>
