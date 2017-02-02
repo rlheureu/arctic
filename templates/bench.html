@@ -909,7 +909,8 @@
 		function saveCubePrompt(){
 			
 			
-			if (currentRig.rig_id !== undefined && Object.keys(currentRig['edited']).length === 0) {
+			if ((currentRig.rig_id !== undefined && Object.keys(currentRig['edited']).length === 0)
+					|| currentRig.use !== 'owned'){
 				continueSave();
 				return;
 			}
