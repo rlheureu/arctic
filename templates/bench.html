@@ -825,6 +825,7 @@
 		// set the usage in the model
 		if (AC_GLOBALS.use !== null) {
 			currentRig['use'] = AC_GLOBALS.use;
+			currentRig['owned'] = AC_GLOBALS.use === 'owned';
 		}
 		
 		// initialize edited functionality
@@ -908,14 +909,13 @@
 		
 		function saveCubePrompt(){
 			
-			
-			if ((currentRig.rig_id !== undefined && Object.keys(currentRig['edited']).length === 0)
-					|| currentRig.use !== 'owned'){
+			// Rig already exists and has not been edited.. continue save
+			if (currentRig.rig_id !== undefined && Object.keys(currentRig['edited']).length === 0){
 				continueSave();
 				return;
 			}
 			
-			//
+			// rig exists - check to see which parts have been edited
 			// show the user which part is changing
 			if (currentRig.rig_id !== undefined) {
 				// determine the edited parts
@@ -929,7 +929,7 @@
 						if (text && text !== '') $('#owned-parts-list').append('<div class="added-owned-part">' + text + '</div>');
 					}
 				}
-				if (addingNewPart)
+				if (addingNewPart && currentRig.owned)
 					$('#add-owned-parts-modal').modal('show');
 				else
 					continueSave();
