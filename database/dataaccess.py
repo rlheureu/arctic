@@ -11,7 +11,6 @@ from models.models import AccountClaim, OwnedPart, CPUComponent, GPUComponent,\
     MemoryComponent, DisplayComponent, MotherboardComponent, ChassisComponent,\
     PowerComponent, StorageComponent
 from utils.exception import InvalidInput
-import simplejson
 
 
 
