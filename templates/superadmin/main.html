@@ -1,0 +1,572 @@
+<html>
+<head>
+  <title>Super Admin Page</title>
+  
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  
+  <style type="text/css">
+    table{
+      font-size: 12px;
+    }
+    .edited{
+      background-color:yellow;
+    }
+  </style>
+  
+</head>
+
+<body>
+  
+  <div class="container-fluid">
+    <br>
+    <div class="row">
+      <div class="col-md-10"><h1>Super Admin Page</h1></div>
+      <div class="col-md-2">
+        <div class="pull-right">
+          <button class="btn btn-primary btn-sm" id="save-all-btn">Save all tabs</button>
+          <br>
+          Note: save frequently!
+        </div>
+      </div>
+    </div>
+    <br>
+    
+    <div>
+
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#cpu_section" aria-controls="home" role="tab" data-toggle="tab">CPU ({{all_cpus|length}})</a></li>
+        <li role="presentation"><a href="#gpu_section" aria-controls="profile" role="tab" data-toggle="tab">GPU ({{all_gpus|length}})</a></li>
+        <li role="presentation"><a href="#display_section" aria-controls="messages" role="tab" data-toggle="tab">Display ({{all_displays|length}})</a></li>
+        <li role="presentation"><a href="#memory_section" aria-controls="settings" role="tab" data-toggle="tab">Memory ({{all_memory|length}})</a></li>
+        <li role="presentation"><a href="#motherboard_section" aria-controls="settings" role="tab" data-toggle="tab">Motherboard ({{all_mobos|length}})</a></li>
+        <li role="presentation"><a href="#chassis_section" aria-controls="settings" role="tab" data-toggle="tab">Chassis ({{all_chassis|length}})</a></li>
+        <li role="presentation"><a href="#powersupply_section" aria-controls="settings" role="tab" data-toggle="tab">Power Supply ({{all_power|length}})</a></li>
+        <li role="presentation"><a href="#storage_section" aria-controls="settings" role="tab" data-toggle="tab">Storage ({{all_storage|length}})</a></li>        
+      </ul>
+    
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="cpu_section">
+          <!-- ----------------------- -->
+          <!-- CPU TAB SECTION -->
+          <!-- ----------------------- -->
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Active</th>
+                <th>Display Name</th>
+                <th>Recommended</th>
+                <th>Sort order</th>
+                <th>Vendor Name</th>
+                <th>Brand Name</th>
+                <th>Model Number</th>
+                <th>Max Performance</th>
+                <th>Generation</th>
+                <th>Integrated GPU</th>
+                <th>Socket</th>
+                <th>DDR3</th>
+                <th>DDR3L</th>
+                <th>DDR4</th>
+                <th>Max Memory Size</th>
+                <th>Unlocked</th>
+                <th>DX12 Capable</th>
+                <th>Display Port</th>
+                <th>HDMI</th>
+                <th>DVI</th>
+                <th>VGA</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-component-id" data-id="new_cpu"></td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox"/></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3"  /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15"  /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="generation" class="matrix-field" type="text" size="10" /></td>
+                <td><input data-fieldname="int_gpu" class="matrix-field" type="text" size="20" /></td>
+                <td><input data-fieldname="socket" class="matrix-field" type="text" size="20" /></td>
+                <td><input data-fieldname="ddr3" class="matrix-field" type="text" size="20" /></td>
+                <td><input data-fieldname="ddr3l" class="matrix-field" type="text" size="20"  /></td>
+                <td><input data-fieldname="ddr4" class="matrix-field" type="text" size="20" /></td>
+                <td><input data-fieldname="max_memory_size" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="unlocked" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="dx12_cap" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="display_port" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="hdmi" class="matrix-field" type="checkbox" /></td>
+                <td><input data-fieldname="dvi" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="vga" class="matrix-field" type="checkbox"  /></td>
+              </tr>
+              {% for comp in all_cpus %}
+              <tr>
+                <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" value="{{comp.vendor}}" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+                <td><input data-fieldname="generation" class="matrix-field" type="text" size="10" value="{{comp.generation}}" /></td>
+                <td><input data-fieldname="int_gpu" class="matrix-field" type="text" size="20" value="{{comp.int_gpu}}" /></td>
+                <td><input data-fieldname="socket" class="matrix-field" type="text" size="20" value="{{comp.socket}}" /></td>
+                <td><input data-fieldname="ddr3" class="matrix-field" type="text" size="20" value="{{comp.ddr3}}" /></td>
+                <td><input data-fieldname="ddr3l" class="matrix-field" type="text" size="20" value="{{comp.ddr3l}}" /></td>
+                <td><input data-fieldname="ddr4" class="matrix-field" type="text" size="20" value="{{comp.ddr4}}" /></td>
+                <td><input data-fieldname="max_memory_size" class="matrix-field" type="text" size="10" value="{{comp.max_memory_size}}" /></td>
+                <td><input data-fieldname="unlocked" class="matrix-field" type="checkbox" {% if comp.unlocked == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="dx12_cap" class="matrix-field" type="checkbox" {% if comp.dx12_cap == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="display_port" class="matrix-field" type="checkbox" {% if comp.display_port == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="hdmi" class="matrix-field" type="checkbox" {% if comp.hdmi == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="dvi" class="matrix-field" type="checkbox" {% if comp.dvi == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="vga" class="matrix-field" type="checkbox" {% if comp.vga == True %}checked="checked"{%endif%} /></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        
+        <div role="tabpanel" class="tab-pane" id="gpu_section">
+          <!-- ----------------------- -->
+          <!-- GPU (GRAPHICS CARD) TAB SECTION -->
+          <!-- ----------------------- -->
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Active</th>
+                <th>Display Name</th>
+                <th>Recommended</th>
+                <th>Sort order</th>
+                <th>Vendor Name</th>
+                <th>Brand Name</th>
+                <th>Model Number</th>
+                <th>Max Performance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-component-id" data-id="new_gpu"></td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox"/></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3"  /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15"  /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10"  /></td>
+              </tr>
+              {% for comp in all_gpus %}
+              <tr>
+                <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" value="{{comp.vendor}}" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        
+        
+        <div role="tabpanel" class="tab-pane" id="display_section">
+          <!-- ----------------------- -->
+          <!-- DISPLAY TAB SECTION -->
+          <!-- ----------------------- -->
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Active</th>
+                <th>Display Name</th>
+                <th>Recommended</th>
+                <th>Sort order</th>
+                <th>Vendor Name</th>
+                <th>Brand Name</th>
+                <th>Model Number</th>
+                <th>Max Performance</th>
+                <th>Resolution</th>
+                <th>Max framerate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-component-id" data-id="new_display"></td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox"/></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3"  /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15"  /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="resolution" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="max_framerate" class="matrix-field" type="text" size="10"  /></td>
+              </tr>
+              {% for comp in all_displays %}
+              <tr>
+                <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" value="{{comp.vendor}}" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+                <td><input data-fieldname="resolution" class="matrix-field" type="text" size="10" value="{{comp.resolution}}" /></td>
+                <td><input data-fieldname="max_framerate" class="matrix-field" type="text" size="10" value="{{comp.max_framerate}}" /></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        
+        <div role="tabpanel" class="tab-pane" id="memory_section">
+          <!-- ----------------------- -->
+          <!-- MEMORY TAB SECTION -->
+          <!-- ----------------------- -->
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Active</th>
+                <th>Display Name</th>
+                <th>Recommended</th>
+                <th>Sort order</th>
+                <th>Vendor Name</th>
+                <th>Brand Name</th>
+                <th>Model Number</th>
+                <th>Max Performance</th>
+                <th>Memory Config</th>
+                <th>Memory Capacity</th>
+                <th>Memory Frequency</th>
+                <th>Color</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-component-id" data-id="new_memory"></td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox"/></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3"  /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15"  /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="memory_config" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="memory_capacity" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="memory_frequency" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="color" class="matrix-field" type="text" size="10"  /></td>
+              </tr>
+              {% for comp in all_memory %}
+              <tr>
+                <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" value="{{comp.vendor}}" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+                <td><input data-fieldname="memory_config" class="matrix-field" type="text" size="10" value="{{comp.memory_config}}"  /></td>
+                <td><input data-fieldname="memory_capacity" class="matrix-field" type="text" size="10"  value="{{comp.memory_capacity}}" /></td>
+                <td><input data-fieldname="memory_frequency" class="matrix-field" type="text" size="10" value="{{comp.memory_frequency}}"  /></td>
+                <td><input data-fieldname="color" class="matrix-field" type="text" size="10"  value="{{comp.color}}" /></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        
+        <div role="tabpanel" class="tab-pane" id="motherboard_section">
+          <!-- ----------------------- -->
+          <!-- Motherboard TAB SECTION -->
+          <!-- ----------------------- -->
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Active</th>
+                <th>Display Name</th>
+                <th>Recommended</th>
+                <th>Sort order</th>
+                <th>Vendor Name</th>
+                <th>Brand Name</th>
+                <th>Model Number</th>
+                <th>Max Performance</th>
+                <th>Socket</th>
+                <th>Unlocked</th>
+                <th>Memory Spec</th>
+                <th>Chipset Vendor</th>
+                <th>Form Factor</th>
+                <th>Memory Type</th>
+                <th>External Ports</th>
+                <th>PCIE Bus</th>
+                <th>MPCIE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-component-id" data-id="new_motherboard"></td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox"/></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3"  /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15"  /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="socket" class="matrix-field" type="text" size="20" /></td>
+                <td><input data-fieldname="unlocked" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="memory_spec" class="matrix-field" type="text" size="20" /></td>
+                <td><input data-fieldname="chipset_vendor" class="matrix-field" type="text" size="20" /></td>
+                <td><input data-fieldname="form_factor" class="matrix-field" type="text" size="20" /></td>
+                <td><input data-fieldname="memory_type" class="matrix-field" type="text" size="20" /></td>
+                <td><input data-fieldname="external_ports" class="matrix-field" type="text" size="20" /></td>
+                <td><input data-fieldname="pcie_bus" class="matrix-field" type="text" size="20" /></td>
+                <td><input data-fieldname="mpcie" class="matrix-field" type="text" size="20" /></td>
+                
+              </tr>
+              {% for comp in all_mobos %}
+              <tr>
+                <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" value="{{comp.vendor}}" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+                <td><input data-fieldname="socket" class="matrix-field" type="text" size="20" value="{{comp.socket}}" /></td>
+                <td><input data-fieldname="unlocked" class="matrix-field" type="checkbox" {% if comp.unlocked == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="memory_spec" class="matrix-field" type="text" size="20" value="{{comp.memory_spec}}"  /></td>
+                <td><input data-fieldname="chipset_vendor" class="matrix-field" type="text" size="20"  value="{{comp.chipset_vendor}}"  /></td>
+                <td><input data-fieldname="form_factor" class="matrix-field" type="text" size="20" value="{{comp.form_factor}}"   /></td>
+                <td><input data-fieldname="memory_type" class="matrix-field" type="text" size="20"  value="{{comp.memory_type}}"  /></td>
+                <td><input data-fieldname="external_ports" class="matrix-field" type="text" size="20" value="{{comp.external_ports}}"   /></td>
+                <td><input data-fieldname="pcie_bus" class="matrix-field" type="text" size="20" value="{{comp.pcie_bus}}"   /></td>
+                <td><input data-fieldname="mpcie" class="matrix-field" type="text" size="20" value="{{comp.mpcie}}"   /></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        
+        <div role="tabpanel" class="tab-pane" id="chassis_section">
+          <!-- ----------------------- -->
+          <!-- CHASSIS TAB SECTION -->
+          <!-- ----------------------- -->
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Active</th>
+                <th>Display Name</th>
+                <th>Recommended</th>
+                <th>Sort order</th>
+                <th>Vendor Name</th>
+                <th>Brand Name</th>
+                <th>Model Number</th>
+                <th>Max Performance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-component-id" data-id="new_chassis"></td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox"/></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3"  /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15"  /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10"  /></td>
+              </tr>
+              {% for comp in all_chassis %}
+              <tr>
+                <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" value="{{comp.vendor}}" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        
+        <div role="tabpanel" class="tab-pane" id="powersupply_section">
+          <!-- ----------------------- -->
+          <!-- POWER SUPPLY TAB SECTION -->
+          <!-- ----------------------- -->
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Active</th>
+                <th>Display Name</th>
+                <th>Recommended</th>
+                <th>Sort order</th>
+                <th>Vendor Name</th>
+                <th>Brand Name</th>
+                <th>Model Number</th>
+                <th>Max Performance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-component-id" data-id="new_power"></td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox"/></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3"  /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15"  /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10"  /></td>
+              </tr>
+              {% for comp in all_power %}
+              <tr>
+                <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" value="{{comp.vendor}}" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        
+        <div role="tabpanel" class="tab-pane" id="storage_section">
+          <!-- ----------------------- -->
+          <!-- STORAGE TAB SECTION -->
+          <!-- ----------------------- -->
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Active</th>
+                <th>Display Name</th>
+                <th>Recommended</th>
+                <th>Sort order</th>
+                <th>Vendor Name</th>
+                <th>Brand Name</th>
+                <th>Model Number</th>
+                <th>Max Performance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-component-id" data-id="new_storage"></td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox"/></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox"  /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3"  /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15"  /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10"  /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10"  /></td>
+              </tr>
+              {% for comp in all_storage %}
+              <tr>
+                <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
+                <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" value="{{comp.vendor}}" /></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+  
+    </div>
+  
+    
+  </div>
+  
+  
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  	$(function(){
+  		
+  		$('#save-all-btn').attr('disabled', true);
+  		var toSave = {};
+  		$('.matrix-field').change(function(){
+  			$(this).parents('td').addClass('edited');
+  			var componentId = $(this).parents('td').siblings('.row-component-id').data('id');
+  			var field = $(this).data('fieldname');
+  			var value = null;
+  			if ($(this).is(':checkbox')) {
+  				// get value as True/False
+  				value = $(this).is(':checked') ? 1 : 0;
+  			} else {
+  				// get value as val
+  				value = $(this).val();
+  			}
+  			
+  			// now add this to the list to be saved
+  			if (toSave[componentId] === undefined) {
+  				toSave[componentId] = {};
+  			}
+  			toSave[componentId][field] = value;
+  			
+  			
+  			$('#save-all-btn').attr('disabled', false);
+  		});
+  		
+  		$('#save-all-btn').click(function(){
+  			$.ajax({
+  				url: '/superadmin/savecomponents',
+  				contentType : 'application/json',
+  				data: JSON.stringify(toSave),
+  				method: "POST"
+  				
+  			})
+  			.fail(function(){alert('Failed for some reason.')})
+  			.done(function(){location.reload();});
+  			
+  		});
+  		
+  	});
+  </script>
+  
+</body>
+</html>

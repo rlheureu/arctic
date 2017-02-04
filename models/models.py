@@ -224,6 +224,7 @@ class User(Base, UserMixin):
     first_name = Column('first_name', String(100))
     last_name = Column('last_name', String(100))
     fb_token = Column('fb_token', Text)
+    superadmin = Column('superadmin', Boolean())
 
     def __init__(self):
         self.authenticated = False
@@ -239,8 +240,8 @@ class User(Base, UserMixin):
     
     def get_id(self): return self.id
     
-    """ NOTE the below have been set to True, meaning the session
-    will manage whether a user is logged in or not, this needs to be fixed """
+    def is_super_admin(self):
+        return self.superadmin
     def is_authenticated(self): return False
     def is_active(self): return True
     def is_anonymous(self): return False

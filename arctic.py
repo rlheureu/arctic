@@ -200,6 +200,47 @@ def fbregisternew():
     return jsonify({'registered' : errormsg != None,
                     'error' : errormsg})
 
+
+def super_admin_login_required(func):
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if not current_user.is_authenticated:
+            return login_manager.unauthorized()
+        elif not current_user.is_super_admin():
+            return login_manager.unauthorized()
+        return func(*args, **kwargs)
+    return decorated_view
+
+@app.route("/superadmin", methods=['GET'])
+@super_admin_login_required
+def superadmin():
+    
+    context = {'all_cpus' : dataaccess.get_all_cpus(active_only=False),
+               'all_chassis' : dataaccess.get_all_chassis(active_only=False),
+               'all_displays' : dataaccess.get_all_displays(active_only=False),
+               'all_gpus' : dataaccess.get_all_gpus(active_only=False),
+               'all_memory' : dataaccess.get_all_memory(active_only=False),
+               'all_mobos' : dataaccess.get_all_mobos(active_only=False),
+               'all_power' : dataaccess.get_all_power(active_only=False),
+               'all_storage' : dataaccess.get_all_storage(active_only=False)}
+    
+    return render_template('superadmin/main.html', **context)
+
+@app.route("/superadmin/savecomponents", methods=['POST'])
+@super_admin_login_required
+def superadmin_savecomponents():
+    
+    """
+    Get data from the form to save
+    """
+    
+    print 'posted data: {}'.format(str(request.get_json())) 
+    
+    dataaccess.superadmin_save_components(current_user, request.get_json())
+    #rig = dataaccess.save_rig(request.form, current_user.get_id())
+    
+    return jsonify({'success' : True})
+
 @app.route("/selectrig", methods=['GET'])
 def selectrig():
     

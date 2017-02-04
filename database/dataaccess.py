@@ -7,53 +7,105 @@ from sqlalchemy.sql.expression import or_
 
 from database import db
 from models import models
-from models.models import AccountClaim, OwnedPart
+from models.models import AccountClaim, OwnedPart, CPUComponent, GPUComponent,\
+    MemoryComponent, DisplayComponent, MotherboardComponent, ChassisComponent,\
+    PowerComponent, StorageComponent
 from utils.exception import InvalidInput
+import simplejson
 
+
+
+def superadmin_save_components(user, savelist):
+    """
+    superadmin saving of components
+    """
+    print "savelist is {}".format(savelist)
+    ids = savelist.keys()
+    
+    for cid in ids:
+        """ get component """
+        
+        comp = None
+        print "the cid is {}".format(cid)
+        if "cpu" in cid.lower(): comp = CPUComponent()
+        elif "gpu" in cid.lower(): comp = GPUComponent()
+        elif "mem" in cid.lower(): comp = MemoryComponent()
+        elif "disp" in cid.lower(): comp = DisplayComponent()
+        elif "mother" in cid.lower(): comp = MotherboardComponent()
+        elif "chassis" in cid.lower(): comp = ChassisComponent()
+        elif "power" in cid.lower(): comp = PowerComponent()
+        elif "storage" in cid.lower(): comp = StorageComponent()
+        else: comp = db.session().query(models.BaseComponent).filter(models.BaseComponent.id == cid).first()
+        
+        
+        updates = savelist.get(cid)
+        fields = updates.keys()
+        
+        for field in fields:
+            setattr(comp, field, updates.get(field))
+        
+        db.session().add(comp)
+    
+    db.session().flush()
+    
 
 def get_rig_presets():
     return db.session().query(models.Rig).filter(models.Rig.rig_preset == True).order_by(models.Rig.rig_preset_sort_order.desc()).all()
 
-def get_all_cpus():
-    return db.session().query(models.CPUComponent).filter(models.CPUComponent.active == True).all()
+def get_all_cpus(active_only=True):
+    q = db.session().query(models.CPUComponent)
+    if active_only: q.filter(models.CPUComponent.active == True)
+    return q.all()
 
-def get_all_gpus(return_query=False):
+def get_all_gpus(return_query=False, active_only=True):
+    q = db.session().query(models.GPUComponent)
+    if active_only: q.filter(models.GPUComponent.active == True)
     if return_query:
-        return db.session().query(models.GPUComponent).filter(models.GPUComponent.active == True)
+        return q
     else:
-        return db.session().query(models.GPUComponent).filter(models.GPUComponent.active == True).all()
+        return q.all()
 
-def get_all_chassis(return_query=False):
+def get_all_chassis(return_query=False, active_only=True):
+    q = db.session().query(models.ChassisComponent)
+    if active_only: q.filter(models.ChassisComponent.active == True)
     if return_query:
-        return db.session().query(models.ChassisComponent).filter(models.ChassisComponent.active == True)
+        return q
     else:
-        return db.session().query(models.ChassisComponent).filter(models.ChassisComponent.active == True).all()
+        return q.all()
 
-def get_all_power(return_query=False):
+def get_all_power(return_query=False, active_only=True):
+    q = db.session().query(models.PowerComponent)
+    if active_only: q.filter(models.PowerComponent.active == True)
     if return_query:
-        return db.session().query(models.PowerComponent).filter(models.PowerComponent.active == True)
+        return q
     else:
-        return db.session().query(models.PowerComponent).filter(models.PowerComponent.active == True).all()
+        return q.all()
 
-def get_all_storage(return_query=False):
+def get_all_storage(return_query=False, active_only=True):
+    q = db.session().query(models.StorageComponent)
+    if active_only: q.filter(models.StorageComponent.active == True)
     if return_query:
-        return db.session().query(models.StorageComponent).filter(models.StorageComponent.active == True)
+        return q
     else:
-        return db.session().query(models.StorageComponent).filter(models.StorageComponent.active == True).all()
+        return q.all()
 
-def get_all_mobos():
+def get_all_mobos(active_only=True):
+    q = db.session().query(models.MotherboardComponent)
+    if active_only: q.filter(models.MotherboardComponent.active == True)
+    return q.all()
 
-    return db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.active == True).all()
-
-def get_all_displays(return_query=False):
+def get_all_displays(return_query=False,active_only=True):
+    q = db.session().query(models.DisplayComponent)
+    if active_only: q.filter(models.DisplayComponent.active == True)
     if return_query:
-        return db.session().query(models.DisplayComponent).filter(models.DisplayComponent.active == True)
+        return q
     else:
-        return db.session().query(models.DisplayComponent).filter(models.DisplayComponent.active == True).all()
+        return q.all()
 
-def get_all_memory():
-
-    return db.session().query(models.MemoryComponent).filter(models.MemoryComponent.active == True).all()
+def get_all_memory(active_only=True):
+    q = db.session().query(models.MemoryComponent)
+    if active_only: q.filter(models.MemoryComponent.active == True)
+    return q.all()
 
 def get_component(component_id):
     if component_id:
