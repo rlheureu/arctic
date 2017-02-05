@@ -111,20 +111,20 @@
               <tr>
                 <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
                 <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" {%if comp.display_name%}value="{{comp.display_name}}" {%endif%}/></td>
                 <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
-                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" value="{{comp.vendor}}" /></td>
-                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
-                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
-                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
-                <td><input data-fieldname="generation" class="matrix-field" type="text" size="10" value="{{comp.generation}}" /></td>
-                <td><input data-fieldname="int_gpu" class="matrix-field" type="text" size="20" value="{{comp.int_gpu}}" /></td>
-                <td><input data-fieldname="socket" class="matrix-field" type="text" size="20" value="{{comp.socket}}" /></td>
-                <td><input data-fieldname="ddr3" class="matrix-field" type="text" size="20" value="{{comp.ddr3}}" /></td>
-                <td><input data-fieldname="ddr3l" class="matrix-field" type="text" size="20" value="{{comp.ddr3l}}" /></td>
-                <td><input data-fieldname="ddr4" class="matrix-field" type="text" size="20" value="{{comp.ddr4}}" /></td>
-                <td><input data-fieldname="max_memory_size" class="matrix-field" type="text" size="10" value="{{comp.max_memory_size}}" /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" {%if comp.sort_order%}value="{{comp.sort_order}}" {%endif%}/></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" {%if comp.vendor%}value="{{comp.vendor}}" {%endif%}/></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" {%if comp.brand_name%}value="{{comp.brand_name}}" {%endif%}/></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" {%if comp.model_number%}value="{{comp.model_number}}"{%endif%} /></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" {%if comp.max_performance%}value="{{comp.max_performance}}" {%endif%}/></td>
+                <td><input data-fieldname="generation" class="matrix-field" type="text" size="10" {%if comp.generation%}value="{{comp.generation}}" {%endif%}/></td>
+                <td><input data-fieldname="int_gpu" class="matrix-field" type="text" size="20" {%if comp.int_gpu%}value="{{comp.int_gpu}}"{%endif%} /></td>
+                <td><input data-fieldname="socket" class="matrix-field" type="text" size="20" {%if comp.socket%}value="{{comp.socket}}" {%endif%}/></td>
+                <td><input data-fieldname="ddr3" class="matrix-field" type="text" size="20" {%if comp.ddr3%}value="{{comp.ddr3}}" {%endif%}/></td>
+                <td><input data-fieldname="ddr3l" class="matrix-field" type="text" size="20" {%if comp.ddr3l%}value="{{comp.ddr3l}}" {%endif%}/></td>
+                <td><input data-fieldname="ddr4" class="matrix-field" type="text" size="20" {%if comp.ddr4%}value="{{comp.ddr4}}" {%endif%}/></td>
+                <td><input data-fieldname="max_memory_size" class="matrix-field" type="text" size="10" {%if comp.max_memory_size%}value="{{comp.max_memory_size}}" {%endif%}/></td>
                 <td><input data-fieldname="unlocked" class="matrix-field" type="checkbox" {% if comp.unlocked == True %}checked="checked"{%endif%} /></td>
                 <td><input data-fieldname="dx12_cap" class="matrix-field" type="checkbox" {% if comp.dx12_cap == True %}checked="checked"{%endif%} /></td>
                 <td><input data-fieldname="display_port" class="matrix-field" type="checkbox" {% if comp.display_port == True %}checked="checked"{%endif%} /></td>
@@ -171,13 +171,13 @@
               <tr>
                 <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
                 <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" {%if comp.display_name%}value="{{comp.display_name}}" {%endif%}/></td>
                 <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
-                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" value="{{comp.vendor}}" /></td>
-                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
-                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
-                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" {%if comp.sort_order%}value="{{comp.sort_order}}" {%endif%}/></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" {%if comp.vendor%}value="{{comp.vendor}}" {%endif%}/></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" {%if comp.brand_name%}value="{{comp.brand_name}}" {%endif%}/></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" {%if comp.model_number%}value="{{comp.model_number}}" {%endif%}/></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" {%if comp.max_performance%}value="{{comp.max_performance}}" {%endif%}/></td>
               </tr>
               {% endfor %}
             </tbody>
@@ -223,15 +223,15 @@
               <tr>
                 <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
                 <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" {%if comp.display_name%}value="{{comp.display_name}}" {%endif%}/></td>
                 <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
-                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" value="{{comp.vendor}}" /></td>
-                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
-                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
-                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
-                <td><input data-fieldname="resolution" class="matrix-field" type="text" size="10" value="{{comp.resolution}}" /></td>
-                <td><input data-fieldname="max_framerate" class="matrix-field" type="text" size="10" value="{{comp.max_framerate}}" /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" {%if comp.sort_order%}value="{{comp.sort_order}}" {%endif%}/></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" {%if comp.vendor%}value="{{comp.vendor}}" {%endif%}/></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" {%if comp.brand_name%}value="{{comp.brand_name}}" {%endif%}/></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" {%if comp.model_number%}value="{{comp.model_number}}" {%endif%}/></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" {%if comp.max_performance%}value="{{comp.max_performance}}" {%endif%}/></td>
+                <td><input data-fieldname="resolution" class="matrix-field" type="text" size="10" {%if comp.resolution%}value="{{comp.resolution}}" {%endif%}/></td>
+                <td><input data-fieldname="max_framerate" class="matrix-field" type="text" size="10" {%if comp.max_framerate%}value="{{comp.max_framerate}}" {%endif%}/></td>
               </tr>
               {% endfor %}
             </tbody>
@@ -280,17 +280,17 @@
               <tr>
                 <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
                 <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" {%if comp.display_name%}value="{{comp.display_name}}" {%endif%}/></td>
                 <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
-                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" value="{{comp.vendor}}" /></td>
-                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
-                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
-                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
-                <td><input data-fieldname="memory_config" class="matrix-field" type="text" size="10" value="{{comp.memory_config}}"  /></td>
-                <td><input data-fieldname="memory_capacity" class="matrix-field" type="text" size="10"  value="{{comp.memory_capacity}}" /></td>
-                <td><input data-fieldname="memory_frequency" class="matrix-field" type="text" size="10" value="{{comp.memory_frequency}}"  /></td>
-                <td><input data-fieldname="color" class="matrix-field" type="text" size="10"  value="{{comp.color}}" /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" {%if comp.sort_order%}value="{{comp.sort_order}}" {%endif%}/></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" {%if comp.vendor%}value="{{comp.vendor}}" {%endif%}/></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" {%if comp.brand_name%}value="{{comp.brand_name}}" {%endif%}/></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" {%if comp.model_number%}value="{{comp.model_number}}" {%endif%}/></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" {%if comp.max_performance%}value="{{comp.max_performance}}" {%endif%}/></td>
+                <td><input data-fieldname="memory_config" class="matrix-field" type="text" size="10" {%if comp.memory_config%}value="{{comp.memory_config}}"  {%endif%}/></td>
+                <td><input data-fieldname="memory_capacity" class="matrix-field" type="text" size="10"  {%if comp.memory_capacity%}value="{{comp.memory_capacity}}" {%endif%}/></td>
+                <td><input data-fieldname="memory_frequency" class="matrix-field" type="text" size="10" {%if comp.memory_frequency%}value="{{comp.memory_frequency}}"  {%endif%}/></td>
+                <td><input data-fieldname="color" class="matrix-field" type="text" size="10"  {%if comp.color%}value="{{comp.color}}" {%endif%}/></td>
               </tr>
               {% endfor %}
             </tbody>
@@ -350,22 +350,22 @@
               <tr>
                 <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
                 <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" {%if comp.display_name%}value="{{comp.display_name}}" {%endif%}/></td>
                 <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
-                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" value="{{comp.vendor}}" /></td>
-                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
-                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
-                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
-                <td><input data-fieldname="socket" class="matrix-field" type="text" size="20" value="{{comp.socket}}" /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" {%if comp.sort_order%}value="{{comp.sort_order}}" {%endif%}/></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="5" {%if comp.vendor%}value="{{comp.vendor}}" {%endif%}/></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" {%if comp.brand_name%}value="{{comp.brand_name}}" {%endif%}/></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" {%if comp.model_number%}value="{{comp.model_number}}" {%endif%}/></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" {%if comp.max_performance%}value="{{comp.max_performance}}" {%endif%}/></td>
+                <td><input data-fieldname="socket" class="matrix-field" type="text" size="20" {%if comp.socket%}value="{{comp.socket}}" {%endif%}/></td>
                 <td><input data-fieldname="unlocked" class="matrix-field" type="checkbox" {% if comp.unlocked == True %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="memory_spec" class="matrix-field" type="text" size="20" value="{{comp.memory_spec}}"  /></td>
-                <td><input data-fieldname="chipset_vendor" class="matrix-field" type="text" size="20"  value="{{comp.chipset_vendor}}"  /></td>
-                <td><input data-fieldname="form_factor" class="matrix-field" type="text" size="20" value="{{comp.form_factor}}"   /></td>
-                <td><input data-fieldname="memory_type" class="matrix-field" type="text" size="20"  value="{{comp.memory_type}}"  /></td>
-                <td><input data-fieldname="external_ports" class="matrix-field" type="text" size="20" value="{{comp.external_ports}}"   /></td>
-                <td><input data-fieldname="pcie_bus" class="matrix-field" type="text" size="20" value="{{comp.pcie_bus}}"   /></td>
-                <td><input data-fieldname="mpcie" class="matrix-field" type="text" size="20" value="{{comp.mpcie}}"   /></td>
+                <td><input data-fieldname="memory_spec" class="matrix-field" type="text" size="20" {%if comp.memory_spec%}value="{{comp.memory_spec}}"  {%endif%}/></td>
+                <td><input data-fieldname="chipset_vendor" class="matrix-field" type="text" size="20"  {%if comp.chipset_vendor%}value="{{comp.chipset_vendor}}"  {%endif%}/></td>
+                <td><input data-fieldname="form_factor" class="matrix-field" type="text" size="20" {%if comp.form_factor%}value="{{comp.form_factor}}"   {%endif%}/></td>
+                <td><input data-fieldname="memory_type" class="matrix-field" type="text" size="20"  {%if comp.memory_type%}value="{{comp.memory_type}}"  {%endif%}/></td>
+                <td><input data-fieldname="external_ports" class="matrix-field" type="text" size="20" {%if comp.external_ports%}value="{{comp.external_ports}}"   {%endif%}/></td>
+                <td><input data-fieldname="pcie_bus" class="matrix-field" type="text" size="20" {%if comp.pcie_bus%}value="{{comp.pcie_bus}}"   {%endif%}/></td>
+                <td><input data-fieldname="mpcie" class="matrix-field" type="text" size="20" {%if comp.mpcie%}value="{{comp.mpcie}}"   {%endif%}/></td>
               </tr>
               {% endfor %}
             </tbody>
@@ -406,13 +406,13 @@
               <tr>
                 <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
                 <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" {%if comp.display_name%}value="{{comp.display_name}}" {%endif%}/></td>
                 <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
-                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" value="{{comp.vendor}}" /></td>
-                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
-                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
-                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" {%if comp.sort_order%}value="{{comp.sort_order}}" {%endif%}/></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" {%if comp.vendor%}value="{{comp.vendor}}" {%endif%}/></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" {%if comp.brand_name%}value="{{comp.brand_name}}" {%endif%}/></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" {%if comp.model_number%}value="{{comp.model_number}}" {%endif%}/></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" {%if comp.max_performance%}value="{{comp.max_performance}}" {%endif%}/></td>
               </tr>
               {% endfor %}
             </tbody>
@@ -453,13 +453,13 @@
               <tr>
                 <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
                 <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" {%if comp.display_name%}value="{{comp.display_name}}" {%endif%}/></td>
                 <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
-                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" value="{{comp.vendor}}" /></td>
-                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
-                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
-                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" {%if comp.sort_order%}value="{{comp.sort_order}}" {%endif%}/></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" {%if comp.vendor%}value="{{comp.vendor}}" {%endif%}/></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" {%if comp.brand_name%}value="{{comp.brand_name}}" {%endif%}/></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" {%if comp.model_number%}value="{{comp.model_number}}" {%endif%}/></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" {%if comp.max_performance%}value="{{comp.max_performance}}" {%endif%}/></td>
               </tr>
               {% endfor %}
             </tbody>
@@ -500,13 +500,13 @@
               <tr>
                 <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
                 <td><input data-fieldname="active" class="matrix-field" type="checkbox" {% if comp.active %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" value="{{comp.display_name}}" /></td>
+                <td><input data-fieldname="display_name" class="matrix-field" type="text" size="40" {%if comp.display_name%}value="{{comp.display_name}}" {%endif%}/></td>
                 <td><input data-fieldname="recommended" class="matrix-field" type="checkbox" {% if comp.recommended == True %}checked="checked"{%endif%} /></td>
-                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" value="{{comp.sort_order}}" /></td>
-                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" value="{{comp.vendor}}" /></td>
-                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" value="{{comp.brand_name}}" /></td>
-                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" value="{{comp.model_number}}" /></td>
-                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" value="{{comp.max_performance}}" /></td>
+                <td><input data-fieldname="sort_order" class="matrix-field" type="text" size="3" {%if comp.sort_order%}value="{{comp.sort_order}}" {%endif%}/></td>
+                <td><input data-fieldname="vendor" class="matrix-field" type="text" size="10" {%if comp.vendor%}value="{{comp.vendor}}" {%endif%}/></td>
+                <td><input data-fieldname="brand_name" class="matrix-field" type="text" size="15" {%if comp.brand_name%}value="{{comp.brand_name}}" {%endif%}/></td>
+                <td><input data-fieldname="model_number" class="matrix-field" type="text" size="10" {%if comp.model_number%}value="{{comp.model_number}}" {%endif%}/></td>
+                <td><input data-fieldname="max_performance" class="matrix-field" type="text" size="10" {%if comp.max_performance%}value="{{comp.max_performance}}" {%endif%}/></td>
               </tr>
               {% endfor %}
             </tbody>
