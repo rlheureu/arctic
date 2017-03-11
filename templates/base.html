@@ -560,6 +560,16 @@
                   <input type="text" placeholder="How did you hear about us?" name="howheard" class="form-control ac-input-light" id="signup-howheard" />
                 </div>
               </div>
+<!--               <div class="checkbox"> -->
+<!--                 <label class="col-sm-8 col-sm-offset-4"> -->
+<!--                   <input type="checkbox"> Subscribe me to the beta updates newsletter -->
+<!--                 </label> -->
+<!--               </div> -->
+<!--               <div class="checkbox"> -->
+<!--                 <label class="col-sm-8 col-sm-offset-4"> -->
+<!--                   <input type="checkbox"> Send me alerts when new parts are available -->
+<!--                 </label> -->
+<!--               </div> -->
             </form>
           </div>
           <div class="modal-footer">
@@ -680,6 +690,7 @@
     $(function(){
     	
     	$('#signup-button').click(function(){
+    		
     		var registerPost = {};
     		registerPost.email = $('#signup-email').val();
     		registerPost.password = $('#signup-password').val();
@@ -688,6 +699,14 @@
     		
     		$.post('/createuser', registerPost).success(function(resp){
     			// user is now logged in!
+    			
+    			//
+//     			// Register with mailchimp here?
+//     			$.post('//amdahlcube.us13.list-manage.com/subscribe/post?u=890ae45442acd7189245c110a&amp;id=657d2cd15b', {'EMAIL' : registerPost.email})
+//     			.success(function(){
+//     				alert('succes mailchimp');
+//     			});
+    			
     			ArcticBasics.loginComplete();
     		}).fail(function(resp){
     			$('#registration-alert').show().find('.alert').empty().text('Failed to register: ' + resp.responseJSON.reason);
