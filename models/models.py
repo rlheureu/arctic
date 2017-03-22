@@ -9,7 +9,8 @@ from flask_login import UserMixin
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey, Column
-from sqlalchemy.sql.sqltypes import Integer, String, Boolean, Text, DateTime
+from sqlalchemy.sql.sqltypes import Integer, String, Boolean, Text, DateTime,\
+    Float
 
 
 Base = declarative_base()
@@ -33,6 +34,7 @@ class BaseComponent(Base):
     recommended = Column('recommended', Boolean)
     
     sort_order = Column('sort_order', Integer)
+    msrp = Column('msrp', Float)
     
     type = Column('data_type_discriminator', String(45))
 
@@ -308,6 +310,19 @@ class OwnedPart(Base):
     user_id = Column('user_id', Integer, ForeignKey('arctic_user.arctic_user_id'))
     user = relationship('User', foreign_keys='OwnedPart.user_id', backref='owned_parts')
 
+class ComponentFps(Base):
+    __tablename__ = 'arctic_component_fps'
+
+    id = Column('arctic_component_fps_id', Integer, primary_key=True)
+    component_id = Column('component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
+    component = relationship('BaseComponent', foreign_keys='ComponentFps.component_id')
+    benchmark_type = Column('benchmark_type', String(128))
+    benchmark_name = Column('benchmark_name', String(128))
+    description = Column('description', String(512))
+    fps_average = Column('fps_average', Float)
+    fps_one = Column('fps_one', Float)
+    fps_point_one = Column('fps_point_one', Float)
+    
 class AccountClaim(Base):
     __tablename__ = 'arctic_account_claim'
 

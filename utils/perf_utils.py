@@ -5,6 +5,72 @@ Performance Utility
 
 """
 
+def get_fps_map(fps_data):
+    
+    """
+    want to return data in the following format:
+    {
+        "datapoints":[
+            { "price" : 355, "name" : "Display name" , "fps_average" : .. , "component_id" : 123 ...
+    }
+    """
+    max_x = 0
+    min_x = None
+    max_y = 0
+    min_y = None
+    alldata = {}
+    for fd in fps_data:
+        bmarkdata = alldata.get(fd.benchmark_type)
+        if not bmarkdata: 
+            bmarkdata = {"datapoints" : []}
+            alldata[fd.benchmark_type] = bmarkdata
+        
+        bmarkdata['datapoints'].append({
+                                        "component_id" : fd.component_id,
+                                        "component_display_name" : fd.component.adjusted_display_name(),
+                                        "msrp" : fd.component.msrp,
+                                        "fps_average" : fd.fps_average,
+                                        "fps_one" : fd.fps_one,
+                                        "fps_point_one" : fd.fps_point_one,
+                                        "svg_plot" : get_svg_data_point(fd),
+                                        "benchmark_name" : fd.benchmark_name
+                                        })
+        
+        if fd.component.msrp > max_x: max_x = fd.component.msrp
+        if not min_x or fd.component.msrp < min_x: min_x = fd.component.msrp
+        if fd.fps_average > max_y: max_y = fd.fps_average
+        if not min_y or fd.fps_point_one < min_y: min_y = fd.fps_point_one
+        
+    alldata['x_range'] = [min_x, max_x]
+    alldata['y_range'] = [min_y, max_y]
+    return alldata
+        
+def get_svg_data_point(fd):
+    
+    """
+    Example:  'M 1 1 L 1 2 L 0.5 3 L 1.5 3 L 1 2 Z',
+    """
+    
+    msrp = fd.component.msrp
+    fps_avg = fd.fps_average
+    fps_one = fd.fps_one
+    fps_point_one = fd.fps_point_one
+    
+    if msrp == None or fps_avg == None or fps_one == None or fps_point_one == None: return None
+    
+    return "M {} {} L {} {} L {} {} L {} {} L {} {} Z".format(msrp,
+                                                              fps_point_one,
+                                                              msrp,
+                                                              fps_one,
+                                                              float(msrp) - 3,
+                                                              fps_avg,
+                                                              float(msrp) + 3,
+                                                              fps_avg,
+                                                              msrp,
+                                                              fps_one)
+    
+    
+
 def set_performance_color_for_rigs(rigs):
     for rig in rigs:
         rig.perf_color = get_performance_color(rig.cpu_component)

@@ -9,7 +9,7 @@ from database import db
 from models import models
 from models.models import AccountClaim, OwnedPart, CPUComponent, GPUComponent,\
     MemoryComponent, DisplayComponent, MotherboardComponent, ChassisComponent,\
-    PowerComponent, StorageComponent
+    PowerComponent, StorageComponent, ComponentFps
 from utils.exception import InvalidInput
 
 
@@ -117,6 +117,19 @@ def get_rig(rig_id):
 
 def get_part(part_id):
     return db.session().query(models.OwnedPart).filter(models.OwnedPart.id == part_id).first()
+
+def get_component_fps_data(component_type="CPU"):
+    
+    """
+    part = get_part(part_id)
+    if part.user_id != user_id: return None
+        
+    db.session().delete(part)
+    db.session().flush()
+    
+    return part_id
+    """
+    return db.session().query(models.ComponentFps).all()
 
 def extract_component_ids(rig_dict):
     component_ids = []

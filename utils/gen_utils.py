@@ -10,6 +10,8 @@ from datetime import datetime
 from pytz import timezone
 import subprocess
 import os
+from sqlalchemy.sql.sqltypes import Float
+from decimal import Decimal
 
 def enum(**enums):
     return type('Enum', (), enums)
@@ -42,6 +44,8 @@ def jsonify_sql_alchemy_model(revisit_self=False, fields_to_expand=[]):
                             continue
                     elif isinstance(val, datetime):
                         val = val.strftime('%m/%d/%Y')
+                    elif isinstance(val, Decimal):
+                        val = str(val)
                     elif inspect.ismethod(val):
                         continue
 

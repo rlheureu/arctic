@@ -307,6 +307,14 @@ def account():
 
     return render_template('account.html', **context)
 
+@app.route("/componentfps", methods=['GET'])
+@login_required
+def get_component_fps():
+    
+    fpsdata = dataaccess.get_component_fps_data('CPU')
+
+    return jsonify({'fps_data' : perf_utils.get_fps_map(fpsdata)})
+
 @app.route("/forgotpwd", methods=['GET'])
 def forgotpwd():
     

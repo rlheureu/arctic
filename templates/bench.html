@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+
+{% block head %}
+<title>Amdahl Cube</title>
+<script src="http://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
+
 {% block styling %}
   {{ super() }}
   <style type="text/css">
@@ -99,12 +105,12 @@
     padding-right:50px;
     margin:5px;
   }
-  #part-item-list{
-    padding:10px;
+  .modal-content-styling{
     background-image: url("/static/images/modal-bg.png");
     background-size: 100% 100%;
     overflow-y:auto;
-    height:80%;
+    padding:10px;
+    height:100%;
   }
   .equip-clickable, .pointer{
     cursor: pointer;
@@ -759,10 +765,28 @@
             <div class="clearfix"></div>
           </div>
           
-          <!-- ITEM LIST -->
-          <div id="part-item-list">
-            
+          <br>
+          <ul class="nav nav-tabs" role="tablist" style="padding-left:20px;">
+            <li role="presentation" class="active"><a href="#part-item-list" aria-controls="home" role="tab" data-toggle="tab">Part List</a></li>
+            <li role="presentation"><a href="#chart" aria-controls="profile" role="tab" data-toggle="tab">Comparison</a></li>
+          </ul>
+          
+          <div class="tab-content" style="height:80%;">
+            <!-- ITEM LIST -->
+            <div role="tabpanel" class="tab-pane active modal-content-styling"  id="part-item-list"></div>
+            <div role="tabpanel" class="tab-pane modal-content-styling" id="chart">
+              <br>
+              <div class="center-block" style="text-align: center;">
+                <button class="ac-btn active genre-select-btn" data-genre="FPS">First Person Shooter</button>
+                <button class="ac-btn genre-select-btn" data-genre="OPEN_WORLD">Open World</button>
+                <button class="ac-btn genre-select-btn" data-genre="RTS">Real Time Strategy</button>
+                <button class="ac-btn genre-select-btn" data-genre="SIMULATION">Simulation</button>
+              </div>
+              <br>
+              <div id="tester" style="width:600px;height:300px;" class="center-block"></div>
+            </div>
           </div>
+          
           <div style="padding:10px; border: solid 1px #545359; background-color: #1b1a22; text-align: center;">
             <button class="ac-btn" id="modal-unequip-btn">UNEQUIP »</button>
             <button class="ac-btn" id="modal-cancel-btn">CANCEL »</button>
@@ -774,6 +798,8 @@
 {% endblock %}
 
 {% block javascript %}
+
+<script type="text/javascript" src="/static/js/charts.js"></script>
 
 <script type="text/javascript">
 	//
@@ -790,7 +816,6 @@
 			unequippedParts : [{% if current_user.is_authenticated %}{% for part in current_user.get_unequipped_parts() %} {{part.component_id}} {% if not loop.last %},{% endif %} {% endfor %}{% endif %}]
 		};
 	}();
-
 </script>
 
 <script type="text/javascript">
