@@ -16,7 +16,9 @@ $.getJSON( "/componentfps", function( data ) {
 				+ '<br><b>Framerate:</b> <b>' + dataPoint.fps_average
 				+ '</b> fps on average (<b>' + dataPoint.fps_one + '</b> fps 99% of the time)'
 				+ '<br><b>Benchmark:</b> ' + dataPoint.benchmark_name
-				+ '</div></div>');
+				+ '</div>'
+				+ '<div style="display:none" id="tt-equip-div"><hr><div><button>Examine</button><button>Equip</button></div></div>'
+				+ '</div>');
 		tt.css('top', (shapePosition.top - 40) + 'px');
 		tt.css('left', (shapePosition.left + 50) + 'px');
 		return tt;
@@ -131,6 +133,7 @@ $.getJSON( "/componentfps", function( data ) {
 		}).on('plotly_click', function(data){
 			$('#chart-tooltip-div').addClass('clicked');
 			$('#tt-close-button').show();
+			$('#tt-equip-div').show();
 			$('#tt-close-button').click(function(){
 				$('#chart-tooltip-div').remove();
 			})

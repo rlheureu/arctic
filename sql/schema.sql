@@ -39,8 +39,9 @@ CREATE TABLE `arctic_component` (
   `recommended` int(11) DEFAULT NULL,
   `sort_order` int(11) DEFAULT '0',
   `display_name` varchar(500) DEFAULT NULL,
+  `msrp` decimal(10,5) DEFAULT NULL,
   PRIMARY KEY (`arctic_component_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=867 DEFAULT CHARSET=latin1;
 
 
 CREATE TABLE `arctic_user` (
@@ -145,3 +146,17 @@ CREATE TABLE `arctic_owned_part` (
   CONSTRAINT `owned_component` FOREIGN KEY (`component_id`) REFERENCES `arctic_component` (`arctic_component_id`),
   CONSTRAINT `rig_component` FOREIGN KEY (`rig_id`) REFERENCES `arctic_rig` (`arctic_rig_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `arctic_component_fps` (
+  `arctic_component_fps_id` int(11) NOT NULL AUTO_INCREMENT,
+  `component_id` int(11) DEFAULT NULL,
+  `benchmark_type` varchar(128) DEFAULT NULL,
+  `benchmark_name` varchar(128) DEFAULT NULL,
+  `description` varchar(512) DEFAULT NULL,
+  `fps_average` decimal(10,5) DEFAULT NULL,
+  `fps_one` decimal(10,5) DEFAULT NULL,
+  `fps_point_one` decimal(10,5) DEFAULT NULL,
+  PRIMARY KEY (`arctic_component_fps_id`),
+  KEY `fps_component` (`component_id`),
+  CONSTRAINT `fps_component` FOREIGN KEY (`component_id`) REFERENCES `arctic_component` (`arctic_component_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
