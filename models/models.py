@@ -79,6 +79,21 @@ class BaseComponent(Base):
         else:
             return 'gray'
     
+    def get_rgb_colors(self):
+        color = self.get_performance_color()
+        if color == 'purple':
+            return {'r' : 254, 'g' : 74, 'b' : 234}
+        elif color == 'black':
+            return {'r' : 96, 'g' : 96, 'b' : 96}
+        elif color == 'orange':
+            return {'r' : 254, 'g' : 222, 'b' : 134}
+        elif color == 'blue':
+            return {'r' : 41, 'g' : 160, 'b' : 222}
+        elif color == 'blue':
+            return {'r' : 30, 'g' : 211, 'b' : 17}
+        else:
+            return {'r' : 51, 'g' : 51, 'b' : 51}
+    
     def get_performance_color_coded(self):
         if not self.max_performance or self.max_performance == '':
             """

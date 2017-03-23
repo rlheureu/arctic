@@ -25,6 +25,7 @@ def get_fps_map(fps_data):
             bmarkdata = {"datapoints" : []}
             alldata[fd.benchmark_type] = bmarkdata
         
+        rgbcolors = fd.component.get_rgb_colors()
         bmarkdata['datapoints'].append({
                                         "component_id" : fd.component_id,
                                         "component_display_name" : fd.component.adjusted_display_name(),
@@ -33,7 +34,10 @@ def get_fps_map(fps_data):
                                         "fps_one" : fd.fps_one,
                                         "fps_point_one" : fd.fps_point_one,
                                         "svg_plot" : get_svg_data_point(fd),
-                                        "benchmark_name" : fd.benchmark_name
+                                        "benchmark_name" : fd.benchmark_name,
+                                        "background_rgba" : "rgba({}, {}, {}, 0.5)".format(rgbcolors['r'], rgbcolors['g'], rgbcolors['b']),
+                                        "outline_rgb" : "rgb({}, {}, {})".format(rgbcolors['r'], rgbcolors['g'], rgbcolors['b']),
+                                        "perf_color" : fd.component.get_performance_color()
                                         })
         
         if fd.component.msrp > max_x: max_x = fd.component.msrp

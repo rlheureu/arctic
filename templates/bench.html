@@ -2,7 +2,7 @@
 
 {% block head %}
 <title>Amdahl Cube</title>
-<script src="http://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="/static/js/plotly-latest.1.25.0.min.js"></script>
 {% endblock %}
 
 {% block styling %}
@@ -24,6 +24,15 @@
   }
   .benchtab-disabled{
     cursor: default;
+  }
+  .chart-tt{
+    background-image: url("/static/images/charts-tt-bg.png");
+    background-size: 100% 100%;
+    border: 4px solid #cccccc;
+    padding:14px;
+    z-index:10000;
+    position:fixed;
+    color: #aaaaaa;
   }
   .benchtabsep{
     display: inline-block;

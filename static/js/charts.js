@@ -7,6 +7,21 @@ $.getJSON( "/componentfps", function( data ) {
 	
 	var fpsData = data.fps_data;
 	
+	function constructTooltipDiv(divName, dataPoint, shapePosition) {
+		var tt = $('<div id="' + divName + '" class="chart-tt">'
+				+ '<div><button class="btn pull-right" style="display:none" id="tt-close-button">Close</button></div>'
+				+ '<div>'
+				+ '<b class="fg-' + dataPoint.perf_color + '">' + dataPoint.component_display_name
+				+ '</b><br><b>MSRP:</b> $' + dataPoint.msrp
+				+ '<br><b>Framerate:</b> <b>' + dataPoint.fps_average
+				+ '</b> fps on average (<b>' + dataPoint.fps_one + '</b> fps 99% of the time)'
+				+ '<br><b>Benchmark:</b> ' + dataPoint.benchmark_name
+				+ '</div></div>');
+		tt.css('top', (shapePosition.top - 40) + 'px');
+		tt.css('left', (shapePosition.left + 50) + 'px');
+		return tt;
+	}
+	
 	function renderChart(genre){
 		var shapes = [];
 		var plottedPoints = [];
@@ -31,34 +46,42 @@ $.getJSON( "/componentfps", function( data ) {
 			shapes.push({
 							type : 'path',
 							path : dp.svg_plot,
-							fillcolor: 'rgba(44, 160, 101, 0.5)',
+							fillcolor: dp.background_rgba,
 						    line: {
-						    	color: 'rgb(44, 160, 101)'
+						    	color: dp.outline_rgb
 						    }
 						});
-			trace1.x.push(dp.msrp);
+			trace1.x.push('$' + dp.msrp);
 			trace1.y.push(dp.fps_average - ((dp.fps_average - dp.fps_one)/2));
 			trace1.text.push(dp.component_display_name);
 			
 			plottedPoints.push(dp);
 		}
-
 		layout = {
-		  title: 'Genre: ' + genre,
 		  xaxis: {
-			  title: "FPS",
-			  ticks: "inside",
-			  zeroline: false
-		  },
-		  yaxis: {
 			  title: "MSRP",
 			  ticks: "inside",
-			  showgrid: false
+			  showline : true,
+			  gridcolor: "#333333"
+		  },
+		  yaxis: {
+			  title: "FPS",
+			  ticks: "inside",
+			  showline : true,
+			  gridcolor: "#333333"
+		  },
+		  margin: {
+			  l:50,r:70,t:10,b:50,pad:15
 		  },
 		  width: 650,
-		  height: 390,
+		  height: 300,
 		  shapes: shapes,
-		  hovermode: "closest"
+		  hovermode: "closest",
+		  paper_bgcolor: 'rgba(0,0,0,0)',
+		  plot_bgcolor: 'rgba(0,0,0,0)',
+		  font : {
+			  color:"#aaaaaa"
+		  }
 		};
 
 		var data = [trace1];
@@ -66,6 +89,12 @@ $.getJSON( "/componentfps", function( data ) {
 		Plotly.newPlot('tester', data, layout, {displayModeBar: false});
 		
 		document.getElementById('tester').on('plotly_hover', function(data){
+			
+			if ($('#chart-tooltip-div').length) {
+				// dialog is already visible do nothing
+				return;
+			}
+			
 			var dataIn = data;
 			var pointNumber = data.points[0].pointNumber;		
 			
@@ -73,18 +102,7 @@ $.getJSON( "/componentfps", function( data ) {
 			var position = path.position();
 			
 			var dp = plottedPoints[pointNumber];
-			var tt = $('<div id="helloCrazyDiv"><b>' + dp.component_display_name
-					+ '</b><br><b>MSRP:</b> $' + dp.msrp
-					+ '<br><b>Framerate:</b> <b>' + dp.fps_average +'</b> fps on average (<b>' + dp.fps_one + '</b> fps 99% of the time)'
-					+ '<br><b>Benchmark:</b> ' + dp.benchmark_name
-					+ '</div>');
-			tt.css('position', 'fixed');
-			tt.css('top', (position.top - 40) + 'px');
-			tt.css('left', (position.left + 50) + 'px');
-			tt.css('background-color', 'white');
-			tt.css('border', '1px solid black');
-			tt.css('padding', '10px');
-			tt.css('z-index', 10000);
+			var tt = constructTooltipDiv('chart-tooltip-div', dp, position);
 			$('body').append(tt);
 			
 			var xPos = data.points[0].x;
@@ -92,19 +110,34 @@ $.getJSON( "/componentfps", function( data ) {
 			shapes[pointNumber].fillcolor = 'rgba(255, 15, 15, 0.5)';
 			shapes[pointNumber].line.color = 'rgb(255, 15, 15)';
 			Plotly.plot('tester', data, layout, {displayModeBar: false});
+			
+			document.getElementsByClassName('nsewdrag')[0].style.cursor = 'pointer';
+			
 		}).on('plotly_unhover', function(data){
 			var dataIn = data;
 			var pointNumber = data.points[0].pointNumber;
-			shapes[pointNumber].fillcolor = 'rgba(44, 160, 101, 0.5)';
-			shapes[pointNumber].line.color = 'rgb(44, 160, 101)';
+			shapes[pointNumber].fillcolor = plottedPoints[pointNumber].background_rgba;
+			shapes[pointNumber].line.color = plottedPoints[pointNumber].outline_rgb;
 			
+			$('html,body').css('cursor','');
 			
-			$('#helloCrazyDiv').remove();
+			if (!$('#chart-tooltip-div').hasClass('clicked')) {
+				$('#chart-tooltip-div').remove();
+			}
 			
 			Plotly.plot('tester', data, layout, {displayModeBar: false});
+			
+			document.getElementsByClassName('nsewdrag')[0].style.cursor = '';
+		}).on('plotly_click', function(data){
+			$('#chart-tooltip-div').addClass('clicked');
+			$('#tt-close-button').show();
+			$('#tt-close-button').click(function(){
+				$('#chart-tooltip-div').remove();
+			})
 		});
 	}
 	
+	// initially render FPS chart
 	renderChart('FPS');
 	
 	$('.genre-select-btn').click(function(){
