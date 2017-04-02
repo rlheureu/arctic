@@ -177,13 +177,17 @@ $(function(){
 	//
 	$('#modal-save-btn').click(function(){
 		
-		// set edited part
-		var currEquipId = currentRig['parts'][equipType + '_id'];
-		if (currEquipId !== toEquip) currentRig['edited'][equipType] = true; // edited part
+		// if toEquip is null
+		if (toEquip !== null) {
+			// set edited part
+			var currEquipId = currentRig['parts'][equipType + '_id'];
+			if (currEquipId !== toEquip) currentRig['edited'][equipType] = true; // edited part
+			
+			// set part to equip in view
+			console.log('equip ' + equipType + ' ' + toEquip);
+			currentRig['parts'][equipType + '_id'] = toEquip;	
+		}
 		
-		// set part to equip in view
-		console.log('equip ' + equipType + ' ' + toEquip);
-		currentRig['parts'][equipType + '_id'] = toEquip;
 		$('#part-item-list').empty();
 		$('#pick-part-modal').modal('hide');
 		renderRig();
@@ -710,22 +714,39 @@ $(function(){
 	//
 	//
 
+	function constructComponentForTtHtml(dataPoint, addClassStr) {
+		var compHtml = '<div>';
+		
+		compHtml += '<b class="' + addClassStr + ' fg-' + dataPoint.perf_color + '"data-component-id="' + dataPoint.component_id + '">'
+		+ dataPoint.component_display_name + '</b>';
+		compHtml += '<br><b>MSRP: </b> $' + dataPoint.msrp;
+		compHtml += '<br><b>Framerate:</b> <b>' + dataPoint.fps_average + '</b>'
+		compHtml += ' fps on average (<b>' + dataPoint.fps_one + '</b> fps 99% of the time)'
+		compHtml += '<br><b>Benchmark:</b> ' + dataPoint.benchmark_name
+		
+		compHtml += '</div>';
+		return compHtml;
+	}
+	
 	function constructTooltipDiv(divName, dataPoint, shapePosition) {
 		
-		//for (var other )
+		var otherPartsHtml = '<div id="tt-others"><hr><h5>Other parts in same price range:</h5>';
+		var otherPartsExist = false;
+		for (i = 0; i < dataPoint.others.length; i++) {
+			var otherComp = dataPoint.others[i];
+			otherPartsHtml += constructComponentForTtHtml(otherComp, 'hover-other-part clickable');
+			otherPartsExist = true;
+		}
+		otherPartsHtml += '</div>';
 		
 		var ttHtml = '<div id="' + divName + '" class="chart-tt remove-click-away">'
-		+ '<div>'
-		+ '<b class="fg-' + dataPoint.perf_color + '">' + dataPoint.component_display_name
-		+ '</b><br><b>MSRP:</b> $' + dataPoint.msrp
-		+ '<br><b>Framerate:</b> <b>' + dataPoint.fps_average
-		+ '</b> fps on average (<b>' + dataPoint.fps_one + '</b> fps 99% of the time)'
-		+ '<br><b>Benchmark:</b> ' + dataPoint.benchmark_name
-		+ '</div>'
+		+ constructComponentForTtHtml(dataPoint, '')
 		+ '<div style="display:none" id="tt-equip-div"><hr><div><button class="ac-btn">Examine</button>'
 		+ '<button id="equip-from-chart-btn" class="ac-btn" data-component-id="' + dataPoint.component_id + '">Equip</button>'
 		+ '<button class="ac-btn" id="tt-close-button">Close</button>'
-		+ '</div></div>'
+		+ '</div>'
+		+ (otherPartsExist ? otherPartsHtml : '')
+		+ '</div>'
 		+ '</div>';
 		
 		var tt = $(ttHtml);
@@ -735,8 +756,21 @@ $(function(){
 		return tt;
 	}
 	
-	function generateShapes(dataPoints) {
+	function createShape(dp, outlineColor) {
+		if (dp.svg_plot === null || dp.svg_plot === undefined || dp.svg_plot === "") return null;
+		return {
+			type : 'path',
+			path : dp.svg_plot,
+			fillcolor: dp.background_rgba,
+		    line: {
+		    	color: outlineColor ? outlineColor : dp.outline_rgb
+		    }
+		};
+	}
+	
+	function generateShapes(dataPoints, otherComponent) {
 		var shapes = [];
+		var otherRendered = false;
 		for (i = 0; i < dataPoints.length; i++) {
 			
 			var dp = dataPoints[i];
@@ -748,15 +782,23 @@ $(function(){
 				outlineColor = 'rgb(255,255,255)';
 			}
 			
-			if (dp.svg_plot === null || dp.svg_plot === undefined || dp.svg_plot === "") continue;
-			shapes.push({
-							type : 'path',
-							path : dp.svg_plot,
-							fillcolor: dp.background_rgba,
-						    line: {
-						    	color: outlineColor ? outlineColor : dp.outline_rgb
-						    }
-						});
+			var shape = createShape(dp, outlineColor);
+			if (shape) shapes.push(shape);
+			else continue;
+			
+			if (otherComponent && !otherRendered) {
+				// iterate through other components:
+				for (j=0; j < dp.others.length; j++) {
+					var otherDp = dp.others[j];
+					if (otherDp.component_id == otherComponent) {
+						// render shape
+						var shape = createShape(otherDp, null);
+						if (shape) shapes.push(shape);
+						otherRendered = true;
+						break;
+					}
+				}
+			}
 		}
 		return shapes;
 	}
@@ -781,7 +823,7 @@ $(function(){
 		}
 		
 		// create shapes
-		var shapes = generateShapes(dataPoints);
+		var shapes = generateShapes(dataPoints, null);
 		
 		var layout = {
 			  xaxis: {
@@ -859,7 +901,7 @@ $(function(){
 			var dataPoint = chartData.plottedPoints[pointNumber];
 			
 			// render shapes (in case there are changes)
-			chartData.layout.shapes = generateShapes(dataPoints);
+			chartData.layout.shapes = generateShapes(dataPoints, null);
 			
 			if (!$('#chart-tooltip-div').hasClass('clicked')) {
 				$('#chart-tooltip-div').remove();
@@ -880,8 +922,17 @@ $(function(){
 				$('#chart-tooltip-div').remove();
 				
 				// render shapes (in case there are changes)
-				chartData.layout.shapes = generateShapes(dataPoints);
+				chartData.layout.shapes = generateShapes(dataPoints, null);
 				
+				Plotly.plot('tester', null, chartData.layout, {displayModeBar: false});
+			});
+			
+			// bind mouse over and mouse out for other parts
+			$('.hover-other-part').mouseover(function(){
+				chartData.layout.shapes = generateShapes(dataPoints, $(this).data('component-id'));
+				Plotly.plot('tester', null, chartData.layout, {displayModeBar: false});
+			}).mouseout(function(){
+				chartData.layout.shapes = generateShapes(dataPoints, null);
 				Plotly.plot('tester', null, chartData.layout, {displayModeBar: false});
 			});
 			
