@@ -711,57 +711,41 @@ $(function(){
 	//
 
 	function constructTooltipDiv(divName, dataPoint, shapePosition) {
-		var tt = $('<div id="' + divName + '" class="chart-tt remove-click-away">'
-				+ '<div>'
-				+ '<b class="fg-' + dataPoint.perf_color + '">' + dataPoint.component_display_name
-				+ '</b><br><b>MSRP:</b> $' + dataPoint.msrp
-				+ '<br><b>Framerate:</b> <b>' + dataPoint.fps_average
-				+ '</b> fps on average (<b>' + dataPoint.fps_one + '</b> fps 99% of the time)'
-				+ '<br><b>Benchmark:</b> ' + dataPoint.benchmark_name
-				+ '</div>'
-				+ '<div style="display:none" id="tt-equip-div"><hr><div><button class="ac-btn">Examine</button>'
-				+ '<button id="equip-from-chart-btn" class="ac-btn" data-component-id="' + dataPoint.component_id + '">Equip</button>'
-				+ '<button class="ac-btn" id="tt-close-button">Close</button>'
-				+ '</div></div>'
-				+ '</div>');
+		
+		//for (var other )
+		
+		var ttHtml = '<div id="' + divName + '" class="chart-tt remove-click-away">'
+		+ '<div>'
+		+ '<b class="fg-' + dataPoint.perf_color + '">' + dataPoint.component_display_name
+		+ '</b><br><b>MSRP:</b> $' + dataPoint.msrp
+		+ '<br><b>Framerate:</b> <b>' + dataPoint.fps_average
+		+ '</b> fps on average (<b>' + dataPoint.fps_one + '</b> fps 99% of the time)'
+		+ '<br><b>Benchmark:</b> ' + dataPoint.benchmark_name
+		+ '</div>'
+		+ '<div style="display:none" id="tt-equip-div"><hr><div><button class="ac-btn">Examine</button>'
+		+ '<button id="equip-from-chart-btn" class="ac-btn" data-component-id="' + dataPoint.component_id + '">Equip</button>'
+		+ '<button class="ac-btn" id="tt-close-button">Close</button>'
+		+ '</div></div>'
+		+ '</div>';
+		
+		var tt = $(ttHtml);
 		tt.css('top', (shapePosition.top - 40) + 'px');
 		tt.css('left', (shapePosition.left + 50) + 'px');
 		
 		return tt;
 	}
 	
-	var fpsData = null;
-	function renderChart(genre, fpsDataIn){
-		fpsData = fpsDataIn;
+	function generateShapes(dataPoints) {
 		var shapes = [];
-		var plottedPoints = [];
-		
-		var dataPoints = fpsData[genre] !== undefined ? fpsData[genre].datapoints : [];
-		var minX = fpsData.x_range[0];
-		var maxX = fpsData.x_range[1];
-		var minY = fpsData.y_range[0];
-		var maxY = fpsData.y_range[1];
-		
-		var trace1 = {
-				  x: [],
-				  y: [],
-				  text: [],
-				  mode: 'none',
-				  hoverinfo: 'none'
-				};
-		
-		var equippedDp = null;
 		for (i = 0; i < dataPoints.length; i++) {
-			var dp = dataPoints[i];
 			
+			var dp = dataPoints[i];
 			var outlineColor = null;
-			if (dp.component_id == currentRig['parts']['cpu_id']) {
+			if (toEquip && toEquip == dp.component_id) {
 				outlineColor = 'rgb(255,255,255)';
-				equippedDp = dp;
 			}
-			if (toEquip && toEquip == currentRig['parts']['cpu_id']) {
+			else if (dp.component_id == currentRig['parts']['cpu_id'] && !toEquip) {
 				outlineColor = 'rgb(255,255,255)';
-				equippedDp = dp;
 			}
 			
 			if (dp.svg_plot === null || dp.svg_plot === undefined || dp.svg_plot === "") continue;
@@ -773,45 +757,77 @@ $(function(){
 						    	color: outlineColor ? outlineColor : dp.outline_rgb
 						    }
 						});
+		}
+		return shapes;
+	}
+	
+	function generateChartData(dataPoints) {
+		var plottedPoints = [];
+		var trace1 = {
+			  x: [],
+			  y: [],
+			  text: [],
+			  mode: 'none',
+			  hoverinfo: 'none'
+			};
+		
+		// create trace
+		for (i = 0; i < dataPoints.length; i++) {
+			var dp = dataPoints[i];
 			trace1.x.push('$' + dp.msrp);
 			trace1.y.push(dp.fps_average - ((dp.fps_average - dp.fps_one)/2));
 			trace1.text.push(dp.component_display_name);
-			
 			plottedPoints.push(dp);
 		}
-		layout = {
-		  xaxis: {
-			  title: "MSRP",
-			  ticks: "inside",
-			  showline : true,
-			  gridcolor: "#333333"
-		  },
-		  yaxis: {
-			  title: "FPS",
-			  ticks: "inside",
-			  showline : true,
-			  gridcolor: "#333333",
-			  range: [0,150]
-		  },
-		  margin: {
-			  l:50,r:70,t:10,b:50,pad:15
-		  },
-		  width: 650,
-		  height: 300,
-		  shapes: shapes,
-		  hovermode: "closest",
-		  paper_bgcolor: 'rgba(0,0,0,0)',
-		  plot_bgcolor: 'rgba(0,0,0,0)',
-		  font : {
-			  color:"#aaaaaa"
-		  }
-		};
-
-		var data = [trace1];
-
-		Plotly.newPlot('tester', data, layout, {displayModeBar: false});
 		
-		document.getElementById('tester').on('plotly_hover', function(data){
+		// create shapes
+		var shapes = generateShapes(dataPoints);
+		
+		var layout = {
+			  xaxis: {
+				  title: "MSRP",
+				  ticks: "inside",
+				  showline : true,
+				  gridcolor: "#333333"
+			  },
+			  yaxis: {
+				  title: "FPS",
+				  ticks: "inside",
+				  showline : true,
+				  gridcolor: "#333333",
+				  range: [0,150]
+			  },
+			  margin: {
+				  l:50,r:70,t:10,b:50,pad:15
+			  },
+			  width: 650,
+			  height: 300,
+			  shapes: shapes,
+			  hovermode: "closest",
+			  paper_bgcolor: 'rgba(0,0,0,0)',
+			  plot_bgcolor: 'rgba(0,0,0,0)',
+			  font : {
+				  color:"#aaaaaa"
+			  }
+		};
+		return {
+			plottedPoints: plottedPoints,
+			trace1: trace1,
+			layout: layout
+		};
+	}
+	
+	var fpsData = null;
+	function renderChart(genre, fpsDataIn){
+		fpsData = fpsDataIn;
+		var dataPoints = fpsData[genre] !== undefined ? fpsData[genre].datapoints : [];
+		
+		var chartData = generateChartData(dataPoints);
+
+		Plotly.newPlot('tester', [chartData.trace1], chartData.layout, {displayModeBar: false});
+		
+		document.getElementById('tester')
+		.on('plotly_hover', function(data){
 			
 			if ($('#chart-tooltip-div').length) {
 				// dialog is already visible do nothing
@@ -824,37 +840,37 @@ $(function(){
 			var path = $('#tester').find('path[data-index="' + pointNumber + '"]');
 			var position = path.position();
 			
-			var dp = plottedPoints[pointNumber];
+			var dp = chartData.plottedPoints[pointNumber];
 			var tt = constructTooltipDiv('chart-tooltip-div', dp, position);
 			$('body').append(tt);
 			
-			var xPos = data.points[0].x;
-			var yPos = data.points[0].y;
-			shapes[pointNumber].fillcolor = 'rgba(255, 15, 15, 0.5)';
-			shapes[pointNumber].line.color = 'rgb(255, 15, 15)';
-			Plotly.plot('tester', data, layout, {displayModeBar: false});
+			chartData.layout.shapes[pointNumber].fillcolor = 'rgba(255, 15, 15, 0.5)';
+			chartData.layout.shapes[pointNumber].line.color = 'rgb(255, 15, 15)';
+			
+			Plotly.plot('tester', null, chartData.layout, {displayModeBar: false});
 			
 			document.getElementsByClassName('nsewdrag')[0].style.cursor = 'pointer';
 			
 			
-		}).on('plotly_unhover', function(data){
+		})
+		.on('plotly_unhover', function(data){
 			var dataIn = data;
 			var pointNumber = data.points[0].pointNumber;
-			var dataPoint = plottedPoints[pointNumber];
-			shapes[pointNumber].fillcolor = dataPoint.background_rgba;
-			if (equippedDp !== null && equippedDp.component_id === dataPoint.component_id) shapes[pointNumber].line.color = 'rgb(255,255,255)';
-			else shapes[pointNumber].line.color = dataPoint.outline_rgb;
+			var dataPoint = chartData.plottedPoints[pointNumber];
 			
-			$('html,body').css('cursor','');
+			// render shapes (in case there are changes)
+			chartData.layout.shapes = generateShapes(dataPoints);
 			
 			if (!$('#chart-tooltip-div').hasClass('clicked')) {
 				$('#chart-tooltip-div').remove();
 			}
 			
-			Plotly.plot('tester', data, layout, {displayModeBar: false});
+			Plotly.plot('tester', null, chartData.layout, {displayModeBar: false});
 			
 			document.getElementsByClassName('nsewdrag')[0].style.cursor = '';
-		}).on('plotly_click', function(data){
+			
+		})
+		.on('plotly_click', function(data){
 			$('#chart-tooltip-div').addClass('clicked');
 			$('#tt-equip-div').show();
 			
@@ -862,7 +878,11 @@ $(function(){
 			$('#equip-from-chart-btn').click(function(){
 				equippableItemClicked($(this).data('component-id'));
 				$('#chart-tooltip-div').remove();
-				renderChart(genre, fpsData); // for now just pass in previously pulled data
+				
+				// render shapes (in case there are changes)
+				chartData.layout.shapes = generateShapes(dataPoints);
+				
+				Plotly.plot('tester', null, chartData.layout, {displayModeBar: false});
 			});
 			
 			$('#tt-close-button').click(function(){
