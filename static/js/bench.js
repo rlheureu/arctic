@@ -714,40 +714,80 @@ $(function(){
 	//
 	//
 
-	function constructComponentForTtHtml(dataPoint, addClassStr) {
+	function currentEquippedDatapoint(allDataPoints) {
+		var currEquippedId = toEquip ? toEquip : currentRig['parts']['cpu_id'];
+		
+		if (!currEquippedId) return null;
+		
+		for(i=0;i<allDataPoints.length;i++) {
+			// defnitely better way to do this i.e. store in map
+			if(allDataPoints[i].component_id === currEquippedId) return allDataPoints[i];
+		}
+		
+		return null;
+	}
+	
+	function contructComponentPerformanceDiffSpan(dataPoint, prevDataPoint) {
+		
+		var avgFps = '';
+		if (dataPoint.fps_average > prevDataPoint.fps_average) {
+			avgFps += '<b style="color:green;">(+' + (dataPoint.fps_average - prevDataPoint.fps_average).toFixed(2) + ')</b>';
+		} else if (dataPoint.fps_average !== prevDataPoint.fps_average) {
+			avgFps += '<b style="color:red;">(-' + (prevDataPoint.fps_average - dataPoint.fps_average).toFixed(2) + ')</b>';
+		}
+		
+		var oneFps = '';
+		if (dataPoint.fps_one > prevDataPoint.fps_one) {
+			oneFps += '<b style="color:green;">(+' + (dataPoint.fps_one - prevDataPoint.fps_one).toFixed(2) + ')</b>';
+		} else if (dataPoint.fps_one !== prevDataPoint.fps_one) {
+			oneFps += '<b style="color:red;">(-' + (prevDataPoint.fps_one - dataPoint.fps_one).toFixed(2) + ')</b>';
+		}
+		
+		return {
+			avgFps:avgFps,
+			oneFps:oneFps
+		};
+		 
+	}
+	
+	function constructComponentForTtHtml(dataPoint, addClassStr, plottedPoints) {
 		var compHtml = '<div>';
+		
+		var currentEquippedDp = currentEquippedDatapoint(plottedPoints);
+		var diffSpans = currentEquippedDp ? contructComponentPerformanceDiffSpan(dataPoint, currentEquippedDp) : null;
 		
 		compHtml += '<b class="' + addClassStr + ' fg-' + dataPoint.perf_color + '"data-component-id="' + dataPoint.component_id + '">'
 		+ dataPoint.component_display_name + '</b>';
 		compHtml += '<br><b>MSRP: </b> $' + dataPoint.msrp;
-		compHtml += '<br><b>Framerate:</b> <b>' + dataPoint.fps_average + '</b>'
-		compHtml += ' fps on average (<b>' + dataPoint.fps_one + '</b> fps 99% of the time)'
-		compHtml += '<br><b>Benchmark:</b> ' + dataPoint.benchmark_name
+		compHtml += '<br><b>Average Framerate:</b> ' + dataPoint.fps_average + ' fps on average ';
+		compHtml += (diffSpans ? diffSpans.avgFps : '');
+		compHtml += '<br><b>99th percentile:</b> ' + dataPoint.fps_one + ' fps 99% of the time ';
+		compHtml += (diffSpans ? diffSpans.oneFps : '');
+		compHtml += '<br><b>Benchmark:</b> ' + dataPoint.benchmark_name;
 		
 		compHtml += '</div>';
 		return compHtml;
 	}
 	
-	function constructTooltipDiv(divName, dataPoint, shapePosition) {
+	function constructTooltipDiv(divName, dataPoint, shapePosition, plottedPoints) {
 		
 		var otherPartsHtml = '<div id="tt-others"><hr><h5>Other parts in same price range:</h5>';
 		var otherPartsExist = false;
 		for (i = 0; i < dataPoint.others.length; i++) {
 			var otherComp = dataPoint.others[i];
-			otherPartsHtml += constructComponentForTtHtml(otherComp, 'hover-other-part clickable');
+			otherPartsHtml += constructComponentForTtHtml(otherComp, 'hover-other-part clickable', plottedPoints);
 			otherPartsExist = true;
 		}
 		otherPartsHtml += '</div>';
 		
-		var ttHtml = '<div id="' + divName + '" class="chart-tt remove-click-away">'
-		+ constructComponentForTtHtml(dataPoint, '')
-		+ '<div style="display:none" id="tt-equip-div"><hr><div><button class="ac-btn">Examine</button>'
-		+ '<button id="equip-from-chart-btn" class="ac-btn" data-component-id="' + dataPoint.component_id + '">Equip</button>'
-		+ '<button class="ac-btn" id="tt-close-button">Close</button>'
-		+ '</div>'
-		+ (otherPartsExist ? otherPartsHtml : '')
-		+ '</div>'
-		+ '</div>';
+		var ttHtml = '<div id="' + divName + '" class="chart-tt remove-click-away">';
+		ttHtml += constructComponentForTtHtml(dataPoint, '', plottedPoints);
+		ttHtml += '<div style="display:none" id="tt-equip-div"><hr><div><button class="ac-btn">Examine</button>';
+		ttHtml += '<button id="equip-from-chart-btn" class="ac-btn" data-component-id="' + dataPoint.component_id + '">Equip</button>';
+		ttHtml += '</div>';
+		ttHtml += (otherPartsExist ? otherPartsHtml : '');
+		ttHtml += '</div>';
+		ttHtml += '</div>';
 		
 		var tt = $(ttHtml);
 		tt.css('top', (shapePosition.top - 40) + 'px');
@@ -866,9 +906,9 @@ $(function(){
 		
 		var chartData = generateChartData(dataPoints);
 
-		Plotly.newPlot('tester', [chartData.trace1], chartData.layout, {displayModeBar: false});
+		Plotly.newPlot('cpu-chart-tab', [chartData.trace1], chartData.layout, {displayModeBar: false});
 		
-		document.getElementById('tester')
+		document.getElementById('cpu-chart-tab')
 		.on('plotly_hover', function(data){
 			
 			if ($('#chart-tooltip-div').length) {
@@ -879,17 +919,17 @@ $(function(){
 			var dataIn = data;
 			var pointNumber = data.points[0].pointNumber;		
 			
-			var path = $('#tester').find('path[data-index="' + pointNumber + '"]');
+			var path = $('#cpu-chart-tab').find('path[data-index="' + pointNumber + '"]');
 			var position = path.position();
 			
 			var dp = chartData.plottedPoints[pointNumber];
-			var tt = constructTooltipDiv('chart-tooltip-div', dp, position);
+			var tt = constructTooltipDiv('chart-tooltip-div', dp, position, chartData.plottedPoints);
 			$('body').append(tt);
 			
 			chartData.layout.shapes[pointNumber].fillcolor = 'rgba(255, 15, 15, 0.5)';
 			chartData.layout.shapes[pointNumber].line.color = 'rgb(255, 15, 15)';
 			
-			Plotly.plot('tester', null, chartData.layout, {displayModeBar: false});
+			Plotly.plot('cpu-chart-tab', null, chartData.layout, {displayModeBar: false});
 			
 			document.getElementsByClassName('nsewdrag')[0].style.cursor = 'pointer';
 			
@@ -907,7 +947,7 @@ $(function(){
 				$('#chart-tooltip-div').remove();
 			}
 			
-			Plotly.plot('tester', null, chartData.layout, {displayModeBar: false});
+			Plotly.plot('cpu-chart-tab', null, chartData.layout, {displayModeBar: false});
 			
 			document.getElementsByClassName('nsewdrag')[0].style.cursor = '';
 			
@@ -924,16 +964,16 @@ $(function(){
 				// render shapes (in case there are changes)
 				chartData.layout.shapes = generateShapes(dataPoints, null);
 				
-				Plotly.plot('tester', null, chartData.layout, {displayModeBar: false});
+				Plotly.plot('cpu-chart-tab', null, chartData.layout, {displayModeBar: false});
 			});
 			
 			// bind mouse over and mouse out for other parts
 			$('.hover-other-part').mouseover(function(){
 				chartData.layout.shapes = generateShapes(dataPoints, $(this).data('component-id'));
-				Plotly.plot('tester', null, chartData.layout, {displayModeBar: false});
+				Plotly.plot('cpu-chart-tab', null, chartData.layout, {displayModeBar: false});
 			}).mouseout(function(){
 				chartData.layout.shapes = generateShapes(dataPoints, null);
-				Plotly.plot('tester', null, chartData.layout, {displayModeBar: false});
+				Plotly.plot('cpu-chart-tab', null, chartData.layout, {displayModeBar: false});
 			});
 			
 			$('#tt-close-button').click(function(){
