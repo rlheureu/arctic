@@ -293,7 +293,7 @@ $(function(){
 
 		$.getJSON( "/manufacturers/get", {target: eType}).success(function(data) {
         	
-        	for(i=0;i<data.length;i++){
+        	for(var i=0;i<data.length;i++){
         		$('#search-manufacturer-select').append(
         			'<option value="' + data[i] + '">' + data[i] + '</option>'
         		);
@@ -719,7 +719,7 @@ $(function(){
 		
 		if (!currEquippedId) return null;
 		
-		for(i=0;i<allDataPoints.length;i++) {
+		for(var i=0;i<allDataPoints.length;i++) {
 			// defnitely better way to do this i.e. store in map
 			if(allDataPoints[i].component_id === currEquippedId) return allDataPoints[i];
 		}
@@ -773,7 +773,7 @@ $(function(){
 		
 		var otherPartsHtml = '<div id="tt-others"><hr><h5>Other parts in same price range:</h5>';
 		var otherPartsExist = false;
-		for (i = 0; i < dataPoint.others.length; i++) {
+		for (var i = 0; i < dataPoint.others.length; i++) {
 			var otherComp = dataPoint.others[i];
 			otherPartsHtml += constructComponentForTtHtml(otherComp, 'hover-other-part clickable', plottedPoints);
 			otherPartsExist = true;
@@ -811,7 +811,7 @@ $(function(){
 	function generateShapes(dataPoints, otherComponent) {
 		var shapes = [];
 		var otherRendered = false;
-		for (i = 0; i < dataPoints.length; i++) {
+		for (var i = 0; i < dataPoints.length; i++) {
 			
 			var dp = dataPoints[i];
 			var outlineColor = null;
@@ -854,7 +854,7 @@ $(function(){
 			};
 		
 		// create trace
-		for (i = 0; i < dataPoints.length; i++) {
+		for (var i = 0; i < dataPoints.length; i++) {
 			var dp = dataPoints[i];
 			trace1.x.push('$' + dp.msrp);
 			trace1.y.push(dp.fps_average - ((dp.fps_average - dp.fps_one)/2));
