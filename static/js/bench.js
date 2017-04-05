@@ -857,7 +857,7 @@ $(function(){
 		for (var i = 0; i < dataPoints.length; i++) {
 			var dp = dataPoints[i];
 			trace1.x.push('$' + dp.msrp);
-			trace1.y.push(dp.fps_average - ((dp.fps_average - dp.fps_one)/2));
+			trace1.y.push(dp.fps_average - ((dp.fps_average - dp.fps_one)/4));
 			trace1.text.push(dp.component_display_name);
 			plottedPoints.push(dp);
 		}
@@ -882,8 +882,8 @@ $(function(){
 			  margin: {
 				  l:50,r:70,t:10,b:50,pad:15
 			  },
-			  width: 650,
-			  height: 300,
+			  width: 900,
+			  height: 400,
 			  shapes: shapes,
 			  hovermode: "closest",
 			  paper_bgcolor: 'rgba(0,0,0,0)',
