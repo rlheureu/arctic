@@ -783,10 +783,12 @@ $(function(){
 		var compHtml = '<div>';
 		
 		var currentEquippedDp = currentEquippedDatapoint(plottedPoints);
-		var diffSpans = currentEquippedDp ? contructComponentPerformanceDiffSpan(dataPoint, currentEquippedDp) : null;
+		var componentIsEquipped = (currentEquippedDp && dataPoint.component_id === currentEquippedDp.component_id);
+		var diffSpans = currentEquippedDp && componentIsEquipped ? contructComponentPerformanceDiffSpan(dataPoint, currentEquippedDp) : null;
 		
 		compHtml += '<b class="' + addClassStr + ' fg-' + dataPoint.perf_color + '"data-component-id="' + dataPoint.component_id + '">'
 		+ dataPoint.component_display_name + '</b>';
+		compHtml += componentIsEquipped ? '&nbsp;&nbsp;<span class="label label-default">Equipped</span>' : '';
 		compHtml += '<br><b>MSRP: </b> $' + dataPoint.msrp;
 		compHtml += (diffSpans ? ' ' + diffSpans.msrp : '');
 		compHtml += '<br><b>Average Framerate:</b> ' + dataPoint.fps_average;
@@ -810,13 +812,19 @@ $(function(){
 		}
 		otherPartsHtml += '</div>';
 		
-		var ttHtml = '<div id="' + divName + '" class="chart-tt remove-click-away">';
+		var ttHtml = '<div id="' + divName + '" class="chart-tt remove-click-away"><div class="chart-tt-internal">';
+		
 		ttHtml += constructComponentForTtHtml(dataPoint, '', plottedPoints);
-		ttHtml += '<div style="display:none" id="tt-equip-div"><hr><div><button class="ac-btn">Examine</button>';
-		ttHtml += '<button id="equip-from-chart-btn" class="ac-btn" data-component-id="' + dataPoint.component_id + '">Equip</button>';
-		ttHtml += '</div>';
+		
+		ttHtml += '<div style="display:none" id="tt-equip-div">';
 		ttHtml += (otherPartsExist ? otherPartsHtml : '');
+		ttHtml += '</div>'; // chart-tt-internal
 		ttHtml += '</div>';
+		
+		ttHtml += '<div class="text-center" style="padding:10px;">';
+		ttHtml += '<button style="display:none;" id="equip-from-chart-btn" class="ac-btn">Equip Selected Item</button>';
+		ttHtml += '</div>'; // END button button div
+		
 		ttHtml += '</div>';
 		
 		var tt = $(ttHtml);
@@ -844,11 +852,12 @@ $(function(){
 		for (var i = 0; i < dataPoints.length; i++) {
 			
 			var dp = dataPoints[i];
+			
 			var outlineColor = null;
-			if (toEquip && toEquip == dp.component_id) {
+			if (toEquip && toEquip === dp.component_id) {
 				outlineColor = 'rgb(255,255,255)';
 			}
-			else if (dp.component_id == currentRig['parts']['cpu_id'] && !toEquip) {
+			else if (dp.component_id === currentRig['parts']['cpu_id'] && !toEquip) {
 				outlineColor = 'rgb(255,255,255)';
 			}
 			
@@ -858,7 +867,7 @@ $(function(){
 			
 			if (otherComponent && !otherRendered) {
 				// iterate through other components:
-				for (j=0; j < dp.others.length; j++) {
+				for (var j = 0; j < dp.others.length; j++) {
 					var otherDp = dp.others[j];
 					if (otherDp.component_id == otherComponent) {
 						// render shape
@@ -929,10 +938,59 @@ $(function(){
 		};
 	}
 	
+	function determinePointsToPlot(allDataPoints) {
+		var dpsToPlot = [];
+		for (var i = 0; i < allDataPoints.length; i++) {
+			var dp = allDataPoints[i];
+			
+			if ((toEquip && toEquip === dp.component_id) || (dp.component_id === currentRig['parts']['cpu_id'] && !toEquip)) {
+				// add to list and continue, no need to look at other dps
+				dp.equipped = true;
+				dpsToPlot.push(dp);
+				continue;
+			}
+			
+			// check if any child dps are currently equipped
+			var childDpEquipped = null;
+			for (var j = 0; j < dp.others.length; j++) {
+				var childDp = dp.others[j];
+				if ((toEquip && toEquip === childDp.component_id) || (childDp.component_id === currentRig['parts']['cpu_id'] && !toEquip)) {
+					childDpEquipped = childDp;
+					childDp.equipped = true;
+					break;
+				}
+			}
+			
+			if (childDpEquipped) {
+				// this is now the main dp, add others (including parent)
+				var others = [];
+				
+				others.push(dp); // parent
+				for (var j = 0; j < dp.others.length; j++) {
+					// add others, not including equipped
+					var otherDp = dp.others[j];
+					if (otherDp.component_id === childDpEquipped.component_id) continue;
+					others.push(otherDp);
+				}
+				
+				childDpEquipped.others = others;
+				dpsToPlot.push(childDpEquipped);
+				
+			} else {
+				// otherwise simply add this dp to be plotted
+				dpsToPlot.push(dp);
+			}
+		}
+		return dpsToPlot;
+		
+	}
+	
 	var fpsData = null;
 	function renderChart(genre, fpsDataIn){
 		fpsData = fpsDataIn;
-		var dataPoints = fpsData[genre] !== undefined ? fpsData[genre].datapoints : [];
+		var rawDataPoints = fpsData[genre] !== undefined ? fpsData[genre].datapoints : [];
+		
+		var dataPoints = determinePointsToPlot(rawDataPoints);
 		
 		var chartData = generateChartData(dataPoints);
 
