@@ -784,11 +784,16 @@ $(function(){
 		
 		var currentEquippedDp = currentEquippedDatapoint(plottedPoints);
 		var componentIsEquipped = (currentEquippedDp && dataPoint.component_id === currentEquippedDp.component_id);
-		var diffSpans = currentEquippedDp && componentIsEquipped ? contructComponentPerformanceDiffSpan(dataPoint, currentEquippedDp) : null;
+		var diffSpans = currentEquippedDp ? contructComponentPerformanceDiffSpan(dataPoint, currentEquippedDp) : null;
 		
-		compHtml += '<b class="' + addClassStr + ' fg-' + dataPoint.perf_color + '"data-component-id="' + dataPoint.component_id + '">'
+		var compatiblePart = partsCache[dataPoint.component_id] && partsCache[dataPoint.component_id].compatible;
+		
+		var classes = (addClassStr ? addClassStr : '') + ' fg-' + dataPoint.perf_color + ' ' + (compatiblePart ? 'clickable clickable-chart-part' : '');
+		
+		compHtml += '<b class="' + classes + '" data-component-id="' + dataPoint.component_id + '">'
 		+ dataPoint.component_display_name + '</b>';
 		compHtml += componentIsEquipped ? '&nbsp;&nbsp;<span class="label label-default">Equipped</span>' : '';
+		compHtml += compatiblePart ? '' : '<br><small>Incompatible</small>';
 		compHtml += '<br><b>MSRP: </b> $' + dataPoint.msrp;
 		compHtml += (diffSpans ? ' ' + diffSpans.msrp : '');
 		compHtml += '<br><b>Average Framerate:</b> ' + dataPoint.fps_average;
@@ -807,25 +812,19 @@ $(function(){
 		var otherPartsExist = false;
 		for (var i = 0; i < dataPoint.others.length; i++) {
 			var otherComp = dataPoint.others[i];
-			otherPartsHtml += constructComponentForTtHtml(otherComp, 'hover-other-part clickable', plottedPoints);
+			otherPartsHtml += constructComponentForTtHtml(otherComp, 'hover-other-part', plottedPoints);
 			otherPartsExist = true;
 		}
 		otherPartsHtml += '</div>';
 		
-		var ttHtml = '<div id="' + divName + '" class="chart-tt remove-click-away"><div class="chart-tt-internal">';
-		
+		var ttHtml = '<div id="' + divName + '" class="chart-tt remove-click-away">';
+		ttHtml += '<div class="chart-tt-internal">';
 		ttHtml += constructComponentForTtHtml(dataPoint, '', plottedPoints);
-		
 		ttHtml += '<div style="display:none" id="tt-equip-div">';
 		ttHtml += (otherPartsExist ? otherPartsHtml : '');
-		ttHtml += '</div>'; // chart-tt-internal
 		ttHtml += '</div>';
-		
-		ttHtml += '<div class="text-center" style="padding:10px;">';
-		ttHtml += '<button style="display:none;" id="equip-from-chart-btn" class="ac-btn">Equip Selected Item</button>';
-		ttHtml += '</div>'; // END button button div
-		
-		ttHtml += '</div>';
+		ttHtml += '</div>'; // END chart-tt-internal div
+		ttHtml += '</div>'; // END chart-tt div
 		
 		var tt = $(ttHtml);
 		tt.css('top', (shapePosition.top - 40) + 'px');
@@ -1045,14 +1044,12 @@ $(function(){
 			$('#tt-equip-div').show();
 			
 			// bind equip click event
-			$('#equip-from-chart-btn').click(function(){
+			$('.clickable-chart-part').click(function(){
 				equippableItemClicked($(this).data('component-id'));
 				$('#chart-tooltip-div').remove();
 				
-				// render shapes (in case there are changes)
-				chartData.layout.shapes = generateShapes(dataPoints, null);
-				
-				Plotly.plot('cpu-chart-tab', null, chartData.layout, {displayModeBar: false});
+				// re-render the whole chart
+				renderChart(genre, fpsData);
 			});
 			
 			// bind mouse over and mouse out for other parts
