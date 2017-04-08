@@ -780,20 +780,19 @@ $(function(){
 	}
 	
 	function constructComponentForTtHtml(dataPoint, addClassStr, plottedPoints) {
-		var compHtml = '<div>';
+		var compatiblePart = partsCache[dataPoint.component_id] && partsCache[dataPoint.component_id].compatible;
+		var classes = (addClassStr ? addClassStr : '') + ' ' + (compatiblePart ? 'clickable clickable-chart-part' : '');
+		
+		var compHtml = '<div class="chart-part-list-item ' + classes + '"  data-component-id="' + dataPoint.component_id + '">';
 		
 		var currentEquippedDp = currentEquippedDatapoint(plottedPoints);
 		var componentIsEquipped = (currentEquippedDp && dataPoint.component_id === currentEquippedDp.component_id);
 		var diffSpans = currentEquippedDp ? contructComponentPerformanceDiffSpan(dataPoint, currentEquippedDp) : null;
 		
-		var compatiblePart = partsCache[dataPoint.component_id] && partsCache[dataPoint.component_id].compatible;
-		
-		var classes = (addClassStr ? addClassStr : '') + ' fg-' + dataPoint.perf_color + ' ' + (compatiblePart ? 'clickable clickable-chart-part' : '');
-		
-		compHtml += '<b class="' + classes + '" data-component-id="' + dataPoint.component_id + '">'
+		compHtml += '<b class="' + 'fg-' + dataPoint.perf_color + '">'
 		+ dataPoint.component_display_name + '</b>';
 		compHtml += componentIsEquipped ? '&nbsp;&nbsp;<span class="label label-default">Equipped</span>' : '';
-		compHtml += compatiblePart ? '' : '<br><small>Incompatible</small>';
+		compHtml += compatiblePart ? '' : '&nbsp;&nbsp;<span class="label label-danger">Incompatible</span>';
 		compHtml += '<br><b>MSRP: </b> $' + dataPoint.msrp;
 		compHtml += (diffSpans ? ' ' + diffSpans.msrp : '');
 		compHtml += '<br><b>Average Framerate:</b> ' + dataPoint.fps_average;
@@ -818,6 +817,7 @@ $(function(){
 		otherPartsHtml += '</div>';
 		
 		var ttHtml = '<div id="' + divName + '" class="chart-tt remove-click-away">';
+		ttHtml += '<div class="text-center" id="select-part-chart-title" style="display:none"><br><span class="text-center small">Select Part to Equip</span></div>';
 		ttHtml += '<div class="chart-tt-internal">';
 		ttHtml += constructComponentForTtHtml(dataPoint, '', plottedPoints);
 		ttHtml += '<div style="display:none" id="tt-equip-div">';
@@ -1042,6 +1042,7 @@ $(function(){
 		.on('plotly_click', function(data){
 			$('#chart-tooltip-div').addClass('clicked');
 			$('#tt-equip-div').show();
+			$('#select-part-chart-title').show();
 			
 			// bind equip click event
 			$('.clickable-chart-part').click(function(){
