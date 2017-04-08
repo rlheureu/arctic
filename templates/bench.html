@@ -774,25 +774,33 @@
             <div class="clearfix"></div>
           </div>
           
-          <br>
-          <ul class="nav nav-tabs" role="tablist" style="padding-left:20px;">
-            <li role="presentation" class="active"><a href="#part-item-list" aria-controls="home" role="tab" data-toggle="tab">Part List</a></li>
-            <li role="presentation"><a href="#chart" aria-controls="profile" role="tab" data-toggle="tab">Comparison</a></li>
-          </ul>
+          <div id="part-picker-tabs">
+            <br>
+            <ul class="nav nav-tabs" role="tablist" style="padding-left:20px;">
+              <li role="presentation" class="active"><a id="part-item-list-tab" href="#part-item-list" aria-controls="home" role="tab" data-toggle="tab">List All Parts</a></li>
+              <li role="presentation"><a href="#chart" aria-controls="profile" role="tab" data-toggle="tab" id="chart-tab-selector">FPS Chart&nbsp;&nbsp;<span class="label label-info">Beta</span></a></li>
+            </ul>
+          </div>
           
           <div class="tab-content" style="height:80%;">
             <!-- ITEM LIST -->
             <div role="tabpanel" class="tab-pane active modal-content-styling"  id="part-item-list"></div>
             <div role="tabpanel" class="tab-pane modal-content-styling" id="chart">
               <br>
-              <div class="center-block" style="text-align: center;">
-                <button class="ac-btn active genre-select-btn" data-genre="FPS">First Person Shooter</button>
-                <button class="ac-btn genre-select-btn" data-genre="OPEN_WORLD">Open World</button>
-                <button class="ac-btn genre-select-btn" data-genre="RTS">Real Time Strategy</button>
-                <button class="ac-btn genre-select-btn" data-genre="SIMULATION">Simulation</button>
+              <div id="cpu-chart-container">
+                <div class="center-block" style="text-align: center;">
+                  <button class="ac-btn active genre-select-btn" data-genre="FPS">First Person Shooter</button>
+                  <button class="ac-btn genre-select-btn" data-genre="OPEN_WORLD">Open World</button>
+                  <button class="ac-btn genre-select-btn" data-genre="RTS">Real Time Strategy</button>
+                  <button class="ac-btn genre-select-btn" data-genre="SIMULATION">Simulation</button>
+                </div>
+                <br>
+                <div id="cpu-chart-tab" style="width:900px;height:450px;" class="center-block"></div>
               </div>
-              <br>
-              <div id="cpu-chart-tab" style="width:900px;height:450px;" class="center-block"></div>
+              <div id="coming-soon-chart-container">
+                <br><br>
+                <h2 class="text-center">Coming soon!</h2>
+              </div>
             </div>
           </div>
           

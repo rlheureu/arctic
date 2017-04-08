@@ -252,12 +252,33 @@ $(function(){
         });
 	}
 	
+	function renderChartForType(componentEType){
+		$('#coming-soon-chart-container').hide();
+		$('#part-picker-tabs').show();
+		if (componentEType === 'cpu') {
+			$('#cpu-chart-container').show();
+		}
+		else {
+			$('#part-picker-tabs').hide();
+			$('#cpu-chart-container').hide();
+			$('#coming-soon-chart-container').show();
+		}
+	}
+	
 	//
 	// Rendering PART PICKER MODAL
 	//
 	function renderPartPickerModal() {
 		var eType = $(this).parent().data('equip-type');
 		equipType = eType;
+		
+		//
+		// show the chart
+		renderChartForType(eType);
+		
+		//
+		// Always show the list by default
+		$('#part-item-list-tab').tab('show'); 
 		
 		//
 		// clear out search options
@@ -731,21 +752,29 @@ $(function(){
 		
 		var avgFps = '';
 		if (dataPoint.fps_average > prevDataPoint.fps_average) {
-			avgFps += '<b style="color:green;">(+' + (dataPoint.fps_average - prevDataPoint.fps_average).toFixed(2) + ')</b>';
+			avgFps += '<b style="color:green;">(+' + (dataPoint.fps_average - prevDataPoint.fps_average).toFixed(1) + ')</b>';
 		} else if (dataPoint.fps_average !== prevDataPoint.fps_average) {
-			avgFps += '<b style="color:red;">(-' + (prevDataPoint.fps_average - dataPoint.fps_average).toFixed(2) + ')</b>';
+			avgFps += '<b style="color:red;">(-' + (prevDataPoint.fps_average - dataPoint.fps_average).toFixed(1) + ')</b>';
 		}
 		
 		var oneFps = '';
 		if (dataPoint.fps_one > prevDataPoint.fps_one) {
-			oneFps += '<b style="color:green;">(+' + (dataPoint.fps_one - prevDataPoint.fps_one).toFixed(2) + ')</b>';
+			oneFps += '<b style="color:green;">(+' + (dataPoint.fps_one - prevDataPoint.fps_one).toFixed(1) + ')</b>';
 		} else if (dataPoint.fps_one !== prevDataPoint.fps_one) {
-			oneFps += '<b style="color:red;">(-' + (prevDataPoint.fps_one - dataPoint.fps_one).toFixed(2) + ')</b>';
+			oneFps += '<b style="color:red;">(-' + (prevDataPoint.fps_one - dataPoint.fps_one).toFixed(1) + ')</b>';
+		}
+		
+		var msrp = '';
+		if (dataPoint.msrp < prevDataPoint.msrp) {
+			msrp += '<b style="color:green;">(-$' + (prevDataPoint.msrp - dataPoint.msrp ).toFixed(2) + ')</b>';
+		} else if (dataPoint.fps_one !== prevDataPoint.fps_one) {
+			msrp += '<b style="color:red;">(+$' + (dataPoint.msrp - prevDataPoint.msrp).toFixed(2) + ')</b>';
 		}
 		
 		return {
 			avgFps:avgFps,
-			oneFps:oneFps
+			oneFps:oneFps,
+			msrp:msrp
 		};
 		 
 	}
@@ -759,10 +788,11 @@ $(function(){
 		compHtml += '<b class="' + addClassStr + ' fg-' + dataPoint.perf_color + '"data-component-id="' + dataPoint.component_id + '">'
 		+ dataPoint.component_display_name + '</b>';
 		compHtml += '<br><b>MSRP: </b> $' + dataPoint.msrp;
-		compHtml += '<br><b>Average Framerate:</b> ' + dataPoint.fps_average + ' fps on average ';
-		compHtml += (diffSpans ? diffSpans.avgFps : '');
-		compHtml += '<br><b>99th percentile:</b> ' + dataPoint.fps_one + ' fps 99% of the time ';
-		compHtml += (diffSpans ? diffSpans.oneFps : '');
+		compHtml += (diffSpans ? ' ' + diffSpans.msrp : '');
+		compHtml += '<br><b>Average Framerate:</b> ' + dataPoint.fps_average;
+		compHtml += (diffSpans ? ' ' + diffSpans.avgFps : '') + ' fps';
+		compHtml += '<br><b>99th percentile:</b> ' + dataPoint.fps_one;
+		compHtml += (diffSpans ? ' ' + diffSpans.oneFps : '') + ' fps';
 		compHtml += '<br><b>Benchmark:</b> ' + dataPoint.benchmark_name;
 		
 		compHtml += '</div>';
@@ -877,7 +907,7 @@ $(function(){
 				  ticks: "inside",
 				  showline : true,
 				  gridcolor: "#333333",
-				  range: [0,150]
+				  range: [0,200]
 			  },
 			  margin: {
 				  l:50,r:70,t:10,b:50,pad:15
@@ -987,6 +1017,7 @@ $(function(){
 		});
 	}
 	
+	// change on genre being selected
 	$('.genre-select-btn').click(function(){
 		var genre = $(this).data('genre');
 		$('.genre-select-btn').removeClass('active');
@@ -995,8 +1026,16 @@ $(function(){
 	});
 	
 	//
+	// when tab is selected kick off render again, also select genre
+	$('#chart-tab-selector').click(function(){
+		var genre = $('.genre-select-btn[class*="active"]').data('genre');
+		renderChart(genre, fpsData);
+	});
+	
+	//
 	//
 	// pull component FPS data when page loads (for now)
+	// NOTE: this is done on page load!
 	$.getJSON( "/componentfps", function( data ) {
 		// initially render FPS chart
 		renderChart('FPS', data.fps_data);
