@@ -915,7 +915,8 @@ $(function(){
 				  ticks: "inside",
 				  showline : true,
 				  gridcolor: "#333333",
-				  range: [0,200]
+				  range: [0,200],
+				  fixedrange : true
 			  },
 			  margin: {
 				  l:50,r:70,t:10,b:50,pad:15
@@ -985,14 +986,23 @@ $(function(){
 	}
 	
 	var fpsData = null;
-	function renderChart(genre, fpsDataIn){
+	var chartZoomData = {};
+	function renderChart(genre, fpsDataIn, persistZoom){
+		persistZoom = persistZoom || false;
+		
 		fpsData = fpsDataIn;
 		var rawDataPoints = fpsData[genre] !== undefined ? fpsData[genre].datapoints : [];
 		
 		var dataPoints = determinePointsToPlot(rawDataPoints);
 		
 		var chartData = generateChartData(dataPoints);
-
+		
+		if (persistZoom) {
+			// if zoom needs to be the same then use the data to set the layout
+			chartData.layout.xaxis.range = chartZoomData.xrange;
+			
+		}
+		
 		Plotly.newPlot('cpu-chart-tab', [chartData.trace1], chartData.layout, {displayModeBar: false});
 		
 		document.getElementById('cpu-chart-tab')
@@ -1050,7 +1060,7 @@ $(function(){
 				$('#chart-tooltip-div').remove();
 				
 				// re-render the whole chart
-				renderChart(genre, fpsData);
+				renderChart(genre, fpsData, true);
 			});
 			
 			// bind mouse over and mouse out for other parts
@@ -1070,6 +1080,12 @@ $(function(){
 			$('.remove-click-away').click(function(e){
 				e.stopPropagation();
 			});
+		})
+		.on('plotly_relayout', function(eventdata){
+			console.log('zoom event');
+			console.log(eventdata);
+			chartZoomData.xrange = [eventdata['xaxis.range[0]'], eventdata['xaxis.range[1]']];
+			chartZoomData.yrange = [eventdata['yaxis.range[0]'], eventdata['yaxis.range[1]']];
 		});
 	}
 	
