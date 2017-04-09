@@ -16,6 +16,8 @@ def to_datapoint_json(fd):
         "fps_point_one" : fd.fps_point_one,
         "svg_plot" : get_svg_data_point(fd),
         "benchmark_name" : fd.benchmark_name,
+        "source_url" : fd.source_url,
+        "source_description" : fd.source_description,
         "background_rgba" : "rgba({}, {}, {}, 0.5)".format(rgbcolors['r'], rgbcolors['g'], rgbcolors['b']),
         "outline_rgb" : "rgb({}, {}, {})".format(rgbcolors['r'], rgbcolors['g'], rgbcolors['b']),
         "perf_color" : fd.component.get_performance_color()

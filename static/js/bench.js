@@ -800,6 +800,7 @@ $(function(){
 		compHtml += '<br><b>99th percentile:</b> ' + dataPoint.fps_one;
 		compHtml += (diffSpans ? ' ' + diffSpans.oneFps : '') + ' fps';
 		compHtml += '<br><b>Benchmark:</b> ' + dataPoint.benchmark_name;
+		compHtml += (dataPoint.source_url && dataPoint.source_description) ? '<br><b>Source:</b> <a target="_blank" href="' + dataPoint.source_url + '">' + dataPoint.source_description + '</a>' : '';
 		
 		compHtml += '</div>';
 		return compHtml;

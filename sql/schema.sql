@@ -156,6 +156,8 @@ CREATE TABLE `arctic_component_fps` (
   `fps_average` decimal(10,5) DEFAULT NULL,
   `fps_one` decimal(10,5) DEFAULT NULL,
   `fps_point_one` decimal(10,5) DEFAULT NULL,
+  `source_url` varchar(512) DEFAULT NULL,
+  `source_description` varchar(512) DEFAULT NULL,
   PRIMARY KEY (`arctic_component_fps_id`),
   KEY `fps_component` (`component_id`),
   CONSTRAINT `fps_component` FOREIGN KEY (`component_id`) REFERENCES `arctic_component` (`arctic_component_id`)
