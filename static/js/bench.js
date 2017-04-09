@@ -987,7 +987,6 @@ $(function(){
 	}
 	
 	var fpsData = null;
-	var chartZoomData = {};
 	function renderChart(genre, fpsDataIn, persistZoom){
 		persistZoom = persistZoom || false;
 		
@@ -999,9 +998,11 @@ $(function(){
 		var chartData = generateChartData(dataPoints);
 		
 		if (persistZoom) {
-			// if zoom needs to be the same then use the data to set the layout
-			chartData.layout.xaxis.range = chartZoomData.xrange;
-			
+			// grab currently rendered layout
+			var currentLayout = document.getElementById('cpu-chart-tab').layout;
+			if (currentLayout) {
+				chartData.layout.xaxis.range = currentLayout.xaxis.range;
+			}
 		}
 		
 		Plotly.newPlot('cpu-chart-tab', [chartData.trace1], chartData.layout, {displayModeBar: false});
@@ -1081,12 +1082,6 @@ $(function(){
 			$('.remove-click-away').click(function(e){
 				e.stopPropagation();
 			});
-		})
-		.on('plotly_relayout', function(eventdata){
-			console.log('zoom event');
-			console.log(eventdata);
-			chartZoomData.xrange = [eventdata['xaxis.range[0]'], eventdata['xaxis.range[1]']];
-			chartZoomData.yrange = [eventdata['yaxis.range[0]'], eventdata['yaxis.range[1]']];
 		});
 	}
 	
