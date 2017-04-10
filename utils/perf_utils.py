@@ -34,7 +34,7 @@ def get_fps_map(fps_data):
     """
     alldata = {}
     
-    groupedfps = group_overlapping(fps_data)
+    groupedfps = group_overlapping_by_bracket(fps_data)
     
     for bmarktype in groupedfps.keys():
         
@@ -89,7 +89,42 @@ def get_rectangle(fps_datapoint):
             'y1': fps_datapoint.fps_point_one,
             'y2': fps_datapoint.fps_average}
 
-def group_overlapping(fps_data):
+def group_overlapping_by_bracket(fps_data):
+    """
+    this method will group components that are within a $10 range
+    i.e. $0-$10, $11-$20, etc.
+    """
+    allgroups = {}
+    for fpDp in fps_data:
+        
+        groups = allgroups.get(fpDp.benchmark_type)
+        if not groups:
+            groups = {}
+            allgroups[fpDp.benchmark_type] = groups
+        if not fpDp.component.msrp: continue
+        
+        group_bracket = int(fpDp.component.msrp)/10
+        
+        group = groups.get(group_bracket)
+        if not group:
+            groups[group_bracket] = {'top' : fpDp, 'others' : []}
+            continue
+        else:
+            currtop = group['top']
+            if currtop.fps_average > fpDp.fps_average: group['others'].append(fpDp)
+            else:
+                group['others'].append(group['top'])
+                group['top'] = currtop
+    
+    """ convert to list for backwards compatibility """
+    for btype in allgroups.keys():
+        groupsmap = allgroups.get(btype)
+        
+        allgroups[btype] = groupsmap.values()
+    
+    return allgroups
+
+def group_overlapping_legacy(fps_data):
     
     allgroups = {}
     for fpDp in fps_data:
