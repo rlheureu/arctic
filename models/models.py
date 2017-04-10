@@ -89,7 +89,7 @@ class BaseComponent(Base):
             return {'r' : 254, 'g' : 222, 'b' : 134}
         elif color == 'blue':
             return {'r' : 41, 'g' : 160, 'b' : 222}
-        elif color == 'blue':
+        elif color == 'green':
             return {'r' : 30, 'g' : 211, 'b' : 17}
         else:
             return {'r' : 51, 'g' : 51, 'b' : 51}

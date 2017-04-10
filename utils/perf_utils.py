@@ -102,15 +102,18 @@ def group_overlapping(fps_data):
         
         rect = get_rectangle(fpDp)
         
-        overlap = False
+        overlapping_groups = []
         
         for group in groups:
             if is_overlapping(rect, group['rect']):
-                overlap = True
+                
+                overlapping_groups.append(group)
+                if len(overlapping_groups) > 1:
+                    """ ONLY ADD TO ONE GROUP, consolidate later """
+                    continue
                 
                 """ combine the two and update """
                 group['rect'] = combine_rects(rect, group['rect'])
-                
                 
                 """ add datapoint to group as top or remainder """
                 top_rect = get_rectangle(group['top'])
@@ -119,11 +122,31 @@ def group_overlapping(fps_data):
                     """ this is new top performer, move prev to others list """
                     group['others'].append(group['top'])
                     group['top'] = fpDp
-                break
         
-        if not overlap:
+        if not len(overlapping_groups):
             """ no overlapping found, add rect as its own group """
             groups.append({'rect' : rect, 'others': [], 'top': fpDp})
+            
+        elif len(overlapping_groups) > 1:
+            """ the component matched with multiple groups - need to consolidate """
+            primary_group = overlapping_groups[0]
+            for idx, group in enumerate(overlapping_groups):
+                if idx == 0: continue
+                
+                primary_group['rect'] = combine_rects(primary_group['rect'], group['rect'])
+                top_rect_p = get_rectangle(primary_group['top'])
+                top_rect_g = get_rectangle(group['top'])
+                if top_rect_p['y2'] > top_rect_g['y2']:
+                    primary_group['others'].append(group['top'])
+                else:
+                    """ the top rect of other group is higher than top of primary """
+                    primary_group['others'].append(primary_group['top'])
+                    primary_group['top'] = group['top']
+                for group_other in group['others']:
+                    primary_group['others'].append(group_other)
+                
+                """ remove this group from list of groups """
+                groups.remove(group)
     
     return allgroups
 

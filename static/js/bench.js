@@ -828,8 +828,26 @@ $(function(){
 		ttHtml += '</div>'; // END chart-tt div
 		
 		var tt = $(ttHtml);
-		tt.css('top', (shapePosition.top - 40) + 'px');
-		tt.css('left', (shapePosition.left + 50) + 'px');
+		var shapeGap = 45; // by default render tt about 50px away from shape
+		
+		// increase gap if the chart is very zoomed in
+		var currentLayout = document.getElementById('cpu-chart-tab').layout;
+		if (currentLayout && currentLayout.xaxis.range) {
+			var startRange = currentLayout.xaxis.range[0];
+			var endRange =  currentLayout.xaxis.range[1];
+			if ((endRange - startRange) < 100) shapeGap = 85;
+			if ((endRange - startRange) < 50) shapeGap = 150;
+		}
+		
+		// determine vertical position based on window size
+		var preferredVertical = (shapePosition.top - 150);
+		if ((preferredVertical + 330) > window.innerHeight) preferredVertical = preferredVertical - ((preferredVertical + 330) - window.innerHeight);
+		tt.css('top', preferredVertical + 'px');
+		
+		// determine left or right side
+		var renderToRight = (window.innerWidth - shapePosition.left) > 380;
+		if (renderToRight) tt.css('left', (shapePosition.left + shapeGap) + 'px');
+		else tt.css('left', (shapePosition.left - shapeGap - 380) + 'px');
 		
 		return tt;
 	}
