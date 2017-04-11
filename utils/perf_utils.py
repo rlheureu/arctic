@@ -114,7 +114,7 @@ def group_overlapping_by_bracket(fps_data):
             if currtop.fps_average > fpDp.fps_average: group['others'].append(fpDp)
             else:
                 group['others'].append(group['top'])
-                group['top'] = currtop
+                group['top'] = fpDp
     
     """ convert to list for backwards compatibility """
     for btype in allgroups.keys():
