@@ -702,6 +702,8 @@ $(function(){
 	
 	$('.rig-type-selector').click(function(){
 		
+		$('.continue-save-btn').prop( "disabled", false );
+		
 		// select one
 		var rigSelect = $(this).find('.select-rig-type');
 		var selectUrl = $(this).data('selected-img');

@@ -689,6 +689,7 @@
 		
 		self.loginComplete = function(){
 			$('#login-modal').modal('hide');
+			$('#register-modal').modal('hide');
 			if (self.loginCompleteCB !== null) {
 				self.loginCompleteCB();
 			}
@@ -713,13 +714,6 @@
     		
     		$.post('/createuser', registerPost).success(function(resp){
     			// user is now logged in!
-    			
-    			//
-//     			// Register with mailchimp here?
-//     			$.post('//amdahlcube.us13.list-manage.com/subscribe/post?u=890ae45442acd7189245c110a&amp;id=657d2cd15b', {'EMAIL' : registerPost.email})
-//     			.success(function(){
-//     				alert('succes mailchimp');
-//     			});
     			
     			ArcticBasics.loginComplete();
     		}).fail(function(resp){
