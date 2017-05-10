@@ -33,6 +33,17 @@ class BaseComponent(Base):
     
     recommended = Column('recommended', Boolean)
     
+    chipset_vendor = Column('chipset_vendor', String(500))
+    chipset_name = Column('chipset_name', String(500))
+    
+    upc = Column('upc', String(128))
+    asin = Column('asin', String(128))
+    
+    auto_populated = Column('auto_populated', Boolean)
+    use_status = Column('use_status', String(30))
+    
+    available = Column('available', Boolean)
+    
     sort_order = Column('sort_order', Integer)
     msrp = Column('msrp', Float)
     
@@ -42,6 +53,12 @@ class BaseComponent(Base):
         'polymorphic_on':type,
         'polymorphic_identity':'base'
     }
+    
+    class Status:
+        CREATED='CREATED'
+        APPROVED = 'APPROVED'
+        REJECTED = 'REJECTED'
+        OBSOLUTE = 'OBSOLETE'
     
     def get_type_str(self):
         raise NotImplemented('should be implemented in subclass')
@@ -133,6 +150,7 @@ class CPUComponent(BaseComponent):
     hdmi = Column('hdmi', Boolean)
     dvi = Column('dvi', Boolean)
     vga = Column('vga', Boolean)
+    no_fhs = Column('no_fhs', Boolean)
     
     def get_type_str(self):
         return 'Processor'
@@ -194,8 +212,6 @@ class MemoryComponent(BaseComponent):
     
 class MotherboardComponent(BaseComponent):
     
-    chipset_vendor = Column('chipset_vendor', String(500))
-    chipset_name = Column('chipset_name', String(500))
     ####memory_spec = Column('memory_spec', String(500))
     ####memory_frequency = Column('memory_frequency', String(500))
     ####socket = Column('socket', String(500))
@@ -205,6 +221,8 @@ class MotherboardComponent(BaseComponent):
     pcie_bus = Column('pcie_bus', String(500))
     mpcie = Column('mpcie', String(500))
     ####unlocked = Column('unlocked', Boolean)
+    
+    dimms = Column('dimms', Integer)
     
     __mapper_args__ = {
         'polymorphic_identity' : 'MOTHERBOARD'
@@ -330,7 +348,7 @@ class ComponentFps(Base):
 
     id = Column('arctic_component_fps_id', Integer, primary_key=True)
     component_id = Column('component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
-    component = relationship('BaseComponent', foreign_keys='ComponentFps.component_id')
+    component = relationship('BaseComponent', foreign_keys='ComponentFps.component_id', backref='fps_data')
     benchmark_type = Column('benchmark_type', String(128))
     benchmark_name = Column('benchmark_name', String(128))
     description = Column('description', String(512))
@@ -351,4 +369,28 @@ class AccountClaim(Base):
     expiration = Column('expiration', DateTime)
     claimed = Column('claimed', Boolean)
     account_claim_type = Column('account_claim_type', String(45))
+
+class Retailer(Base):
+    __tablename__ = 'arctic_retailer'
+
+    id = Column('arctic_retailer_id', Integer, primary_key=True)
+    name = Column('name', String(128))
+    website = Column('website', String(128))
+    username = Column('username', String(128))
     
+
+class ComponentPrice(Base):
+    __tablename__ = 'arctic_component_price'
+
+    id = Column('arctic_component_price_id', Integer, primary_key=True)
+    component_id = Column('component_id', Integer, ForeignKey('arctic_component.arctic_component_id'))
+    component = relationship('BaseComponent', foreign_keys='ComponentPrice.component_id', backref='prices')
+    auto_populated = Column('auto_populated', Boolean)
+    use_status = Column('use_status', String(30))
+    retailer_id = Column('retailer_id', Integer, ForeignKey('arctic_retailer.arctic_retailer_id'))
+    component = relationship('Retailer', foreign_keys='ComponentPrice.retailer_id', backref='prices')
+    price = Column('price', Integer)
+    formatted_price = Column('formatted_price', String(30))
+    link = Column('link', String(2048))
+    foreign_id = Column('foreign_id', String(128))
+

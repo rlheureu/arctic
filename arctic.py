@@ -18,13 +18,15 @@ from flask_mail import Mail
 from flask_security.core import Security
 from flask_security.datastore import SQLAlchemyUserDatastore
 
-from action import fbauth, arctic_auth, new_user, account_claims
+from action import fbauth, arctic_auth, new_user, account_claims,\
+    recommendations, price_grabber
 from database import dataaccess
 from database.database import db
-from models.models import User, Rig
+from models.models import User, Rig, BaseComponent
 from utils import perf_utils
 from utils.exception import ClaimInvalidException
 from utils.gen_utils import jsonify_sql_alchemy_model
+from action.price_grabber import AmazonExtractor
 
 
 app = Flask(__name__)
@@ -674,6 +676,44 @@ def claimpost():
         except ClaimInvalidException: pass
 
     return render_template('claimacct.html', **context)
+
+
+@app.route("/recommendcpu", methods=['GET'])
+@super_admin_login_required
+def recommendcpu():
+    context = {}
+
+    cpu_id = request.args.get('id', None)
+    
+    context['results'] = recommendations.recommend_a_cpu(dataaccess.get_component(cpu_id))
+    
+    return render_template('recommendations.html', **context)  
+
+@app.route("/fetchprices", methods=['GET'])
+@super_admin_login_required
+def invoke_price_fetch():
+    
+    price_grabber.get_3p_prices()
+    
+    return 'Done'  
+
+@app.route("/approvaltool", methods=['GET'])
+@super_admin_login_required
+def approvaltool():
+    context = {}
+    
+    mobos = dataaccess.get_all_mobos(active_only=False, use_status = BaseComponent.Status.CREATED)
+
+    for mobo in mobos:
+        
+        iteminfo = AmazonExtractor().fetch_3p_item_info(mobo.asin)
+        mobo.title_3p = iteminfo.title
+        mobo.url_3p = iteminfo.url
+        
+            
+    context['motherboards'] = mobos 
+    
+    return render_template('approvaltool.html', **context)
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):

@@ -40,6 +40,13 @@ CREATE TABLE `arctic_component` (
   `sort_order` int(11) DEFAULT '0',
   `display_name` varchar(500) DEFAULT NULL,
   `msrp` decimal(10,5) DEFAULT NULL,
+  `available` int(11) DEFAULT NULL,
+  `dimms` int(11) DEFAULT NULL,
+  `upc` varchar(128) DEFAULT NULL,
+  `autopopulated` int(11) DEFAULT NULL,
+  `user_status` varchar(30) DEFAULT NULL,
+  `asin` varchar(128) DEFAULT NULL,
+  `no_fhs` int(11) DEFAULT NULL,
   PRIMARY KEY (`arctic_component_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=867 DEFAULT CHARSET=latin1;
 
@@ -162,3 +169,28 @@ CREATE TABLE `arctic_component_fps` (
   KEY `fps_component` (`component_id`),
   CONSTRAINT `fps_component` FOREIGN KEY (`component_id`) REFERENCES `arctic_component` (`arctic_component_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `arctic_component_price` (
+  `arctic_component_price_id` int(11) NOT NULL AUTO_INCREMENT,
+  `component_id` int(11) DEFAULT NULL,
+  `auto_populated` int(11) DEFAULT NULL,
+  `use_status` varchar(30) DEFAULT NULL,
+  `retailer_id` int(11) DEFAULT '0',
+  `price` int(11) DEFAULT '0',
+  `formatted_price` varchar(30) DEFAULT NULL,
+  `link` varchar(2048) DEFAULT NULL,
+  `foreign_id` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`arctic_component_price_id`),
+  KEY `price_retailer` (`retailer_id`),
+  KEY `price_component` (`component_id`),
+  CONSTRAINT `price_component` FOREIGN KEY (`component_id`) REFERENCES `arctic_component` (`arctic_component_id`),
+  CONSTRAINT `price_retailer` FOREIGN KEY (`retailer_id`) REFERENCES `arctic_retailer` (`arctic_retailer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `arctic_retailer` (
+  `arctic_retailer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) DEFAULT NULL,
+  `website` varchar(128) DEFAULT NULL,
+  `username` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`arctic_retailer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -1,0 +1,73 @@
+<html>
+<head>
+  <title>Approval Tool</title>
+  
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  
+  <style type="text/css">
+    table{
+      font-size: 12px;
+    }
+    .edited{
+      background-color:yellow;
+    }
+  </style>
+  
+</head>
+
+<body>
+  
+  <div class="container-fluid">
+    <br>
+    <div class="row">
+      <div class="col-md-10"><h1>Approval Tool!</h1><small>"CREATED" Status Parts Shown Below</small></div>
+      <div class="col-md-2"></div>
+    </div>
+    <br>
+    
+    <div>
+      
+     <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>Component ID</th>
+                <th>Arctic Display Name</th>
+                <th>Amazon Display Name</th>
+                <th>Amazon URL</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for comp in motherboards %}
+              <tr>
+                <td class="row-component-id" data-id="{{comp.id}}">{{comp.id}}</td>
+                <td>{{comp.adjusted_display_name()}}</td>
+                <td>{{comp.title_3p}}</td>
+                <td><a href="{{comp.url_3p}}">Link</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table> 
+      
+    </div>
+  
+    
+  </div>
+  
+  
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  	$(function(){
+  		
+  		
+  	});
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,27 @@
+
+
+
+<h2>Input: {{results.input_cpu.adjusted_display_name()}}</h2>
+<h3>Your current tier: {{results.current_tier}}</h3>
+
+<h4>Same Socket Upgrade</h4>
+<hr>
+<br>
+
+{% for key, value in results.same_socket_upgrades.items() %}
+  <b>Tier: {{key}}</b> {% if value %}{{ value.adjusted_display_name() }}{% endif %}
+  <br>
+{% endfor %}
+
+
+<br><br>
+
+<h4>New Platform Upgrades</h4>
+<hr>
+<br>
+{% for key, value in results.new_platform_upgrades.items() %}
+  <b>Tier: {{key}}</b> {% if value %}{{ value.adjusted_display_name() }}{% endif %}
+  <br>
+{% endfor %}
+
+
