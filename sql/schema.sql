@@ -44,7 +44,7 @@ CREATE TABLE `arctic_component` (
   `dimms` int(11) DEFAULT NULL,
   `upc` varchar(128) DEFAULT NULL,
   `autopopulated` int(11) DEFAULT NULL,
-  `user_status` varchar(30) DEFAULT NULL,
+  `use_status` varchar(30) DEFAULT NULL,
   `asin` varchar(128) DEFAULT NULL,
   `no_fhs` int(11) DEFAULT NULL,
   PRIMARY KEY (`arctic_component_id`)
