@@ -12,3 +12,4 @@ flask-security==1.7.5
 requests==2.13.0
 simplejson==3.10.0
 beautifulsoup4==4.6.0
+bottlenose==1.1.2
