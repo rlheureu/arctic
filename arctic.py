@@ -19,7 +19,7 @@ from flask_security.core import Security
 from flask_security.datastore import SQLAlchemyUserDatastore
 
 from action import fbauth, arctic_auth, new_user, account_claims,\
-    recommendations, price_grabber
+    recommendations, price_grabber, jobs
 from database import dataaccess
 from database.database import db
 from models.models import User, Rig, BaseComponent
@@ -61,8 +61,16 @@ app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 mail = Mail(app)
 
-
+"""
+init logger
+"""
 LOG = logging.getLogger('app')
+
+"""
+initialize jobs
+"""
+jobs.start_scheduler()
+
 
 # This callback is used to reload the user object from the user id stored in the session.
 @login_manager.user_loader
@@ -88,6 +96,8 @@ def unauthorized():
 
 @app.route("/", methods=['GET'])
 def home():
+    
+    LOG.info('homepage requested')
     
     context = {}
     context['show_get_started'] = True
@@ -693,7 +703,8 @@ def recommendcpu():
 @super_admin_login_required
 def invoke_price_fetch():
     
-    price_grabber.get_3p_prices()
+    LOG.info('running sync prices')
+    price_grabber.sync_prices()
     
     return 'Done'  
 
@@ -703,15 +714,25 @@ def approvaltool():
     context = {}
     
     mobos = dataaccess.get_all_mobos(active_only=False, use_status = BaseComponent.Status.CREATED)
-
+    
+    mobosforapproval = []
+    
+    
+    count=0
+    
     for mobo in mobos:
         
-        iteminfo = AmazonExtractor().fetch_3p_item_info(mobo.asin)
-        mobo.title_3p = iteminfo.title
-        mobo.url_3p = iteminfo.url
+        count += 1
+        if count > 20: break
         
+        iteminfo = AmazonExtractor().fetch_3p_item_info(mobo.asin)
+        if iteminfo:
+            mobo.title_3p = iteminfo.title
+            mobo.url_3p = iteminfo.url
             
-    context['motherboards'] = mobos 
+            mobosforapproval.append(mobo)
+            
+    context['motherboards'] = mobosforapproval
     
     return render_template('approvaltool.html', **context)
 
@@ -725,4 +746,5 @@ def commit_session(response):
     return response
 
 if __name__ == "__main__":
+    
     app.run(host='0.0.0.0', debug=True, use_reloader=True)

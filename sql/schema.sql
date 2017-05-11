@@ -170,6 +170,14 @@ CREATE TABLE `arctic_component_fps` (
   CONSTRAINT `fps_component` FOREIGN KEY (`component_id`) REFERENCES `arctic_component` (`arctic_component_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
+CREATE TABLE `arctic_retailer` (
+  `arctic_retailer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) DEFAULT NULL,
+  `website` varchar(128) DEFAULT NULL,
+  `username` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`arctic_retailer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `arctic_component_price` (
   `arctic_component_price_id` int(11) NOT NULL AUTO_INCREMENT,
   `component_id` int(11) DEFAULT NULL,
@@ -185,12 +193,4 @@ CREATE TABLE `arctic_component_price` (
   KEY `price_component` (`component_id`),
   CONSTRAINT `price_component` FOREIGN KEY (`component_id`) REFERENCES `arctic_component` (`arctic_component_id`),
   CONSTRAINT `price_retailer` FOREIGN KEY (`retailer_id`) REFERENCES `arctic_retailer` (`arctic_retailer_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `arctic_retailer` (
-  `arctic_retailer_id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(128) DEFAULT NULL,
-  `website` varchar(128) DEFAULT NULL,
-  `username` varchar(128) DEFAULT NULL,
-  PRIMARY KEY (`arctic_retailer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

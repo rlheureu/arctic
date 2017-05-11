@@ -14,9 +14,10 @@ MYSQL_DATABASE_USER = os.environ['DB_USER']
 MYSQL_DATABASE_PASSWORD = os.environ['DB_PASSWORD']
 MYSQL_DATABASE_DB = os.environ['DB']
 
-DEFAULT_ENGINE_DEF ='mysql+mysqldb://{}:{}@{}/{}'.format(MYSQL_DATABASE_USER,
+DEFAULT_ENGINE_DEF ='mysql+mysqldb://{}:{}@{}:{}/{}'.format(MYSQL_DATABASE_USER,
                                                  MYSQL_DATABASE_PASSWORD,
                                                  MYSQL_DATABASE_HOST,
+                                                 MYSQL_DATABASE_PORT,
                                                  MYSQL_DATABASE_DB)
 
 class Database:

@@ -52,12 +52,14 @@ def get_rig_presets():
     return db.session().query(models.Rig).filter(models.Rig.rig_preset == True).order_by(models.Rig.rig_preset_sort_order.desc()).all()
 
 def get_all_cpus(active_only=True, use_status = BaseComponent.Status.APPROVED):
-    q = db.session().query(models.CPUComponent).filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
+    q = db.session().query(models.CPUComponent)
+    if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
     if active_only: q = q.filter(models.CPUComponent.active == True)
     return q.all()
 
 def get_all_gpus(return_query=False, active_only=True, use_status = BaseComponent.Status.APPROVED):
-    q = db.session().query(models.GPUComponent).filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
+    q = db.session().query(models.GPUComponent)
+    if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
     if active_only: q = q.filter(models.GPUComponent.active == True)
     if return_query:
         return q
@@ -65,7 +67,8 @@ def get_all_gpus(return_query=False, active_only=True, use_status = BaseComponen
         return q.all()
 
 def get_all_chassis(return_query=False, active_only=True, use_status = BaseComponent.Status.APPROVED):
-    q = db.session().query(models.ChassisComponent).filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
+    q = db.session().query(models.ChassisComponent)
+    if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
     if active_only: q = q.filter(models.ChassisComponent.active == True)
     if return_query:
         return q
@@ -73,7 +76,8 @@ def get_all_chassis(return_query=False, active_only=True, use_status = BaseCompo
         return q.all()
 
 def get_all_power(return_query=False, active_only=True, use_status = BaseComponent.Status.APPROVED):
-    q = db.session().query(models.PowerComponent).filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
+    q = db.session().query(models.PowerComponent)
+    if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
     if active_only: q = q.filter(models.PowerComponent.active == True)
     if return_query:
         return q
@@ -81,7 +85,8 @@ def get_all_power(return_query=False, active_only=True, use_status = BaseCompone
         return q.all()
 
 def get_all_storage(return_query=False, active_only=True, use_status = BaseComponent.Status.APPROVED):
-    q = db.session().query(models.StorageComponent).filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
+    q = db.session().query(models.StorageComponent)
+    if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
     if active_only: q = q.filter(models.StorageComponent.active == True)
     if return_query:
         return q
@@ -89,12 +94,14 @@ def get_all_storage(return_query=False, active_only=True, use_status = BaseCompo
         return q.all()
 
 def get_all_mobos(active_only=True, use_status = BaseComponent.Status.APPROVED):
-    q = db.session().query(models.MotherboardComponent).filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
+    q = db.session().query(models.MotherboardComponent)
+    if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
     if active_only: q = q.filter(models.MotherboardComponent.active == True)
     return q.all()
 
 def get_all_displays(return_query=False,active_only=True, use_status = BaseComponent.Status.APPROVED):
-    q = db.session().query(models.DisplayComponent).filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
+    q = db.session().query(models.DisplayComponent)
+    if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
     if active_only: q = q.filter(models.DisplayComponent.active == True)
     if return_query:
         return q
@@ -102,7 +109,8 @@ def get_all_displays(return_query=False,active_only=True, use_status = BaseCompo
         return q.all()
 
 def get_all_memory(active_only=True, use_status = BaseComponent.Status.APPROVED):
-    q = db.session().query(models.MemoryComponent).filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
+    q = db.session().query(models.MemoryComponent)
+    if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
     if active_only: q = q.filter(models.MemoryComponent.active == True)
     return q.all()
 
@@ -115,11 +123,24 @@ def get_component_by_upc(upc, return_query=False, active_only=True):
     else:
         return q.first()
 
+def get_component_by_asin(asin, return_query=False, active_only=True):
+    q = db.session().query(models.BaseComponent)
+    q = q.filter(models.BaseComponent.asin == asin)
+    if active_only: q = q.filter(models.BaseComponent.active == True)
+    if return_query:
+        return q
+    else:
+        return q.first()
+
 def get_component(component_id):
     if component_id:
         return db.session().query(models.BaseComponent).filter(models.BaseComponent.id == component_id).filter(models.BaseComponent.active == True).first()
     else:
         return None
+
+def get_retailer_by_name(retailername):
+    
+    return db.session().query(models.Retailer).filter(models.Retailer.name == retailername).first()
 
 def get_cpus_by_chipset(chipsets, active_only=True):
     

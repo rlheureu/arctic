@@ -3,6 +3,7 @@ Created on May 9, 2017
 
 @author: shanrandhawa
 '''
+import logging
 import os
 
 import bottlenose
@@ -10,8 +11,12 @@ from bs4 import BeautifulSoup
 
 from database import dataaccess
 from database.database import db
-from models.models import BaseComponent, GPUComponent, MotherboardComponent
-from utils import retry_util
+from models.models import BaseComponent, GPUComponent, MotherboardComponent, \
+    ComponentPrice, MemoryComponent
+from utils import retry_util, retaildata_utils
+
+
+LOG = logging.getLogger('app')
 
 class ItemInfo3p:
     """
@@ -64,15 +69,15 @@ class AmazonExtractor(BaseExtractor):
     def _extract_addl_attributes(self, item, component):
         raise NotImplementedError('Call subclass')
     
-    def _product_type_name(self):
+    def _product_type_names(self):
         raise NotImplementedError('Call subclass')
     
-    def _matches_existing(self, existing_component, item):
-        raise NotImplementedError('Call subclass')
+    def _item_type_further_confirmation(self, item):
+        return True
     
     def fetch_3p_item_info(self, item3pid):
         
-        rawxml = retry_util.retry_func(3, 2, self.amazon.ItemLookup, ItemId=item3pid)
+        rawxml = retry_util.retry_func(3, 2, self.amazon.ItemLookup, ItemId=item3pid, ResponseGroup='ItemAttributes,Offers')
         
         bs = BeautifulSoup(rawxml, 'html.parser')
         
@@ -82,14 +87,15 @@ class AmazonExtractor(BaseExtractor):
         info = ItemInfo3p()
         info.title = item.title.string
         info.url = item.detailpageurl.string
+        info.rawdata = item
         
         return info
     
     def _populate_component(self, item, component):
         
-        if not item.upc: return None
-        if item.producttypename.string != self._product_type_name():
-            return None
+        if not item.producttypename.string in self._product_type_names(): return None
+        
+        if not self._item_type_further_confirmation(item): return None
         
         attrmap = self._get_attribute_mapping()
         
@@ -99,34 +105,33 @@ class AmazonExtractor(BaseExtractor):
             itemval = getattr(item, mk).string if getattr(item, mk) else None
             
             """ update the component if that value does not exist (i.e. do not overwrite) """
-            if itemval and not hasattr(component, mv): setattr(component, mv, itemval)
+            if itemval and not getattr(component, mv): setattr(component, mv, itemval)
         
         """ set any stuff that requires more knowledge on this particular part type """
         self._extract_addl_attributes(item, component)
         
         """ set UPC & ASIN """
-        if not component.upc: component.upc = item.upc.string
+        if not component.upc and item.upc: component.upc = item.upc.string
         if not component.asin: component.asin = item.asin.string
         
         return component
         
     def _filter_existing_components(self, item_list):
         
-        newcomps = []
+        newcomps = {}
         
         for item in item_list:
             
-            if not item.itemattributes.upc:
-                """ unfortunately, if there's no UPC we cannot use this product for now """
+            if not item.asin:
                 continue
             
-            upc = item.itemattributes.upc.string
+            asin = item.asin.string
             
-            component = dataaccess.get_component_by_upc(upc)
+            component = dataaccess.get_component_by_asin(asin, active_only=False)
             
-            if not component: newcomps.append(item)
+            if not component: newcomps[asin] = item
             
-        return newcomps    
+        return newcomps.values()
 
     def _discover(self, searchcriteria, max_items, existing, update_existing):
         
@@ -136,9 +141,11 @@ class AmazonExtractor(BaseExtractor):
         
         """ amazon returns 10 items per page, do another search if there are more pages """
         itemcount = len(items)
+        pagenum = 1
         while itemcount < max_items:
-            if int(bs.find('totalpages').string) > 1:
-                rawxml = retry_util.retry_func(3, 5, self.amazon.ItemSearch, Keywords=searchcriteria.keywords, SearchIndex="PCHardware", ResponseGroup='ItemAttributes,Offers', ItemPage=2)
+            if bs.find('totalpages') and int(bs.find('totalpages').string) > pagenum:
+                pagenum += 1
+                rawxml = retry_util.retry_func(3, 5, self.amazon.ItemSearch, Keywords=searchcriteria.keywords, SearchIndex="PCHardware", ResponseGroup='ItemAttributes,Offers', ItemPage=pagenum)
                 bs = BeautifulSoup(rawxml, 'html.parser')
                 items += bs.find_all('item')
                 itemcount = len(items)
@@ -149,6 +156,9 @@ class AmazonExtractor(BaseExtractor):
         
         count_added = 0
         for item in newitems:
+            
+            """ do not discover parts that are not available """
+            if int(item.offers.totaloffers.string) < 1: continue
             
             component = self._populate_component(item, existing if update_existing else self._init_component())
             if not component: continue
@@ -161,13 +171,69 @@ class AmazonExtractor(BaseExtractor):
             db.session().add(component)
             count_added += 1
         
+        db.session().flush()
         db.session().commit()
+        
+    def _findupdate(self, component_list):
+        
+        for comp in component_list:
+            
+            if not comp.asin: continue
+            
+            iteminfo = self.fetch_3p_item_info(comp.asin)
+            
+            if not iteminfo: continue
+            
+            iteminforaw = iteminfo.rawdata
+            
+            if not iteminfo:
+                """ this would happen if the item no longer exists or is available """
+                """ for now I guess we can skip """
+                continue
+            
+            
+            """ delete all prices for this component from amazon """
+            for cprice in comp.prices:
+                if not cprice.retailer or cprice.retailer.name.lower() == 'amazon':
+                    db.session().delete(cprice)
+            
+            """
+            now extract pricing information and create/update pricing records
+            """
+            offerinfolist = iteminforaw.find_all('offer')
+            
+            if len(offerinfolist) < 1:
+                comp.available = False
+                db.session().add(comp)
+                db.session().flush()
+                db.session().commit()
+                continue
+            
+            offerinfo = offerinfolist[0]
+            
+            compprice = ComponentPrice()
+            compprice.auto_populated = True
+            compprice.component = comp
+            compprice.foreign_id = comp.asin
+            compprice.link = iteminforaw.detailpageurl.string
+            compprice.price = int(offerinfo.offerlisting.price.amount.string)
+            compprice.formatted_price = offerinfo.offerlisting.price.formattedprice.string
+            compprice.retailer = dataaccess.get_retailer_by_name('amazon')
+            compprice.use_status = comp.use_status
+            
+            comp.available = True
+            
+            db.session().add(compprice)
+            db.session().flush()
+            db.session().commit()
+            
+            
         
         
 class AmazonGPUExtractor(AmazonExtractor):
     
-    def _product_type_name(self):
-        return 'VIDEO_CARD'
+    def _product_type_names(self):
+        return ['VIDEO_CARD']
     
     def _init_component(self):
         return GPUComponent()
@@ -184,14 +250,11 @@ class AmazonGPUExtractor(AmazonExtractor):
 
 class AmazonMotherboardExtractor(AmazonExtractor):
     
-    def _product_type_name(self):
-        return 'MOTHERBOARD'
+    def _product_type_names(self):
+        return ['MOTHERBOARD']
     
     def _init_component(self):
         return MotherboardComponent()
-    
-    def _matches_existing(self, existing_component, item):
-        pass
     
     def _get_attribute_mapping(self):
         return {
@@ -203,11 +266,66 @@ class AmazonMotherboardExtractor(AmazonExtractor):
     def _extract_addl_attributes(self, item, component):
         pass      
         
+class AmazonMemoryExtractor(AmazonExtractor):
+    
+    def _product_type_names(self):
+        return ['RAM_MEMORY', 'COMPUTER_COMPONENT']
+    
+    def _init_component(self):
+        return MemoryComponent()
+    
+    def _item_type_further_confirmation(self, item):
+        titlestr = item.title.string
+        if 'sodimm' in titlestr.lower(): return False
+        if 'so-dimm' in titlestr.lower(): return False
+        
+        """ confirm other required params are available """
+        
+        if retaildata_utils.sticks_and_capacity(titlestr) and retaildata_utils.memtype(titlestr) and retaildata_utils.memory_frequency(titlestr):
+            return True
+        else:
+            'skipping ' + titlestr
+            
+        return False
+    
+    def _get_attribute_mapping(self):
+        return {
+                'brand' : 'brand_name',
+                'manufacturer' : 'vendor',
+                'model' : 'model_number',
+                'title' : 'display_name'
+                }
+    
+    def _extract_addl_attributes(self, item, component):
+        titlestr = item.title.string
+        sticksandcap = retaildata_utils.sticks_and_capacity(titlestr)
+        component.memory_capacity = sticksandcap[0] * sticksandcap[1]
+        component.dimms = sticksandcap[0]
+        component.memory_frequency = retaildata_utils.memory_frequency(titlestr)
+        component.memory_spec = retaildata_utils.memtype(titlestr)
 
 class SearchCriteria:
     pass
 
-def get_3p_prices():
+def sync_prices():
+    
+    
+    complists = [dataaccess.get_all_cpus(False, None),
+                 dataaccess.get_all_gpus(False, None),
+                 dataaccess.get_all_mobos(False, None),
+                 dataaccess.get_all_memory(False, None),
+                 dataaccess.get_all_displays(False, None),
+                 dataaccess.get_all_chassis(False, None),
+                 dataaccess.get_all_power(False, None),
+                 dataaccess.get_all_storage(False, None)]
+    
+    for complist in complists:
+        LOG.info('Running sync prices on {} components'.format(len(complist)))
+        AmazonExtractor().find_and_update_offers(complist)
+        
+    
+
+def run_discovery():
     """
     will call all retailer APIs and do the following:
     - get any updates on pricing for existing products
@@ -232,16 +350,27 @@ def get_3p_prices():
     """
     motherboards - no discovery since we already have actual parts in DB
     """
-    mobos = dataaccess.get_all_mobos()
-    count=0
-    for mobo in mobos:
-        count+=1
-        sc = SearchCriteria()
-        sc.keywords = mobo.brand_name
-        AmazonMotherboardExtractor().discover_components(sc, 1, mobo, True)
-        
-        if count % 10 == 0: print 'Discovery Process: Completed {}/{}'.format(count, len(mobos))
-        
+    #mobos = dataaccess.get_all_mobos()
+    #count=0
+    #for mobo in mobos:
+    #    count+=1
+    #    sc = SearchCriteria()
+    #    sc.keywords = mobo.brand_name
+    #    AmazonMotherboardExtractor().discover_components(sc, 1, mobo, True)
+    #    
+    #    if count % 10 == 0: print 'Discovery Process: Completed {}/{}'.format(count, len(mobos))
+    
+    
+    
+    #sc = SearchCriteria()
+    #sc.keywords = 'Memory'
+    #AmazonMemoryExtractor().discover_components(sc, 500)
+    #c.keywords = 'RAM'
+    #AmazonMemoryExtractor().discover_components(sc, 500)
+    #sc.keywords = 'DDR3'
+    #AmazonMemoryExtractor().discover_components(sc, 500)
+    #sc.keywords = 'DDR4'
+    #AmazonMemoryExtractor().discover_components(sc, 500)
     
     
     

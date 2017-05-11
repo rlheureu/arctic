@@ -47,6 +47,8 @@ class BaseComponent(Base):
     sort_order = Column('sort_order', Integer)
     msrp = Column('msrp', Float)
     
+    dimms = Column('dimms', Integer)
+    
     type = Column('data_type_discriminator', String(45))
 
     __mapper_args__ = {
@@ -195,6 +197,21 @@ class PowerComponent(BaseComponent):
     def get_type_str(self):
         return 'Power Supply'
 
+class HeatSinkComponent(BaseComponent):
+    
+    """
+    
+    NOTE: NOT USED YET!!
+    
+    """
+    
+    __mapper_args__ = {
+        'polymorphic_identity' : 'HEATSINK'
+    }
+    
+    def get_type_str(self):
+        return 'Heat Sink'
+
 class MemoryComponent(BaseComponent):
     
     memory_capacity = Column('memory_capacity', String(500))
@@ -222,7 +239,6 @@ class MotherboardComponent(BaseComponent):
     mpcie = Column('mpcie', String(500))
     ####unlocked = Column('unlocked', Boolean)
     
-    dimms = Column('dimms', Integer)
     
     __mapper_args__ = {
         'polymorphic_identity' : 'MOTHERBOARD'
@@ -388,7 +404,7 @@ class ComponentPrice(Base):
     auto_populated = Column('auto_populated', Boolean)
     use_status = Column('use_status', String(30))
     retailer_id = Column('retailer_id', Integer, ForeignKey('arctic_retailer.arctic_retailer_id'))
-    component = relationship('Retailer', foreign_keys='ComponentPrice.retailer_id', backref='prices')
+    retailer = relationship('Retailer', foreign_keys='ComponentPrice.retailer_id', backref='prices')
     price = Column('price', Integer)
     formatted_price = Column('formatted_price', String(30))
     link = Column('link', String(2048))
