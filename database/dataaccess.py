@@ -51,10 +51,11 @@ def superadmin_save_components(user, savelist):
 def get_rig_presets():
     return db.session().query(models.Rig).filter(models.Rig.rig_preset == True).order_by(models.Rig.rig_preset_sort_order.desc()).all()
 
-def get_all_cpus(active_only=True, use_status = BaseComponent.Status.APPROVED):
+def get_all_cpus(active_only=True, use_status = BaseComponent.Status.APPROVED, available=None):
     q = db.session().query(models.CPUComponent)
     if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
     if active_only: q = q.filter(models.CPUComponent.active == True)
+    if available != None: q = q.filter(models.BaseComponent.available == available)
     return q.all()
 
 def get_all_gpus(return_query=False, active_only=True, use_status = BaseComponent.Status.APPROVED):
@@ -108,8 +109,9 @@ def get_all_displays(return_query=False,active_only=True, use_status = BaseCompo
     else:
         return q.all()
 
-def get_all_memory(active_only=True, use_status = BaseComponent.Status.APPROVED):
+def get_all_memory(active_only=True, use_status = BaseComponent.Status.APPROVED, available=None):
     q = db.session().query(models.MemoryComponent)
+    if available != None: q.filter(models.BaseComponent.available == available)
     if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
     if active_only: q = q.filter(models.MemoryComponent.active == True)
     return q.all()
@@ -142,7 +144,7 @@ def get_retailer_by_name(retailername):
     
     return db.session().query(models.Retailer).filter(models.Retailer.name == retailername).first()
 
-def get_cpus_by_chipset(chipsets, active_only=True):
+def get_cpus_by_chipset(chipsets, active_only=True, use_status = BaseComponent.Status.APPROVED, available=None):
     
     """
     chipsets is a list
@@ -153,7 +155,9 @@ def get_cpus_by_chipset(chipsets, active_only=True):
         for i in range(1, len(chipsets)):
             q.union(db.session().query(models.CPUComponent).filter(models.CPUComponent.chipset_name.like('%' + chipsets[i] + '%')))
     
-    if active_only: q.filter(models.CPUComponent.active == True)
+    if available != None: q = q.filter(models.BaseComponent.available == available)
+    if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
+    if active_only: q = q.filter(models.CPUComponent.active == True)
     return q.all()
 
 def get_rig(rig_id):
@@ -455,7 +459,7 @@ def get_compatible_parts(target=None,
     else:
         return []
 
-def get_compatible_mobo_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, return_query=False):
+def get_compatible_mobo_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, return_query=False, available=None,use_status=None):
     """
     MOBO constraints:
     - CPU YES
@@ -488,6 +492,10 @@ def get_compatible_mobo_map(motherboard_id=None, gpu_id=None, memory_id=None, di
         print 'compat sockets {}'.format(compatsockets)
         compat_q = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.socket.in_(compatsockets), models.MotherboardComponent.active == True)
     
+    """ additional filters """
+    if available != None: compat_q = compat_q.filter(models.MotherboardComponent.available == available)
+    if use_status: compat_q = compat_q.filter(models.MotherboardComponent.use_status == use_status)
+    
     """
     return map of compatible and incompatible components
     """
@@ -502,7 +510,7 @@ def get_compatible_mobo_map(motherboard_id=None, gpu_id=None, memory_id=None, di
         else:
             return db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.active == True).all()
     
-def get_compatible_memory_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, return_query=False):
+def get_compatible_memory_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, return_query=False, available=None,use_status=None):
     """
     Memory constraints:
     - CPU
@@ -528,6 +536,10 @@ def get_compatible_memory_map(motherboard_id=None, gpu_id=None, memory_id=None, 
         print supported_mem
         
         compat_q = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.memory_spec.in_(supported_mem), models.MemoryComponent.active == True)
+    
+    """ additional filters """
+    if available != None: compat_q = compat_q.filter(models.MemoryComponent.available == available)
+    if use_status: compat_q = compat_q.filter(models.MemoryComponent.use_status == use_status)
     
     """
     return map of compatible and incompatible components

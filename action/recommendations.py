@@ -7,8 +7,15 @@ Created on May 3, 2017
 recommendations service
 
 '''
-from database import dataaccess
 
+from collections import defaultdict
+import logging
+
+from database import dataaccess
+from models.models import BaseComponent
+
+
+LOG = logging.getLogger('app')
 
 class RecInputs:
     pass
@@ -22,109 +29,71 @@ def recommend_cpu(recinput):
 def determine_cheapest_comp(comps):
     cheapest = None
     for comp in comps:
-        
-        if not comp.msrp: continue
+        price = lowest_price(comp.prices)
+        if not price: continue
+        comp.price=price
         
         if not cheapest: cheapest = comp
-        elif comp.msrp < cheapest.msrp: cheapest = comp
+        elif comp.price.price < cheapest.price.pirce: cheapest = comp
         
     return cheapest
 
-def determine_cheapest_mem(mems, capacity_target, dimms=4):
-    """
-    based on list of memory items passed in will determine the cheapest combination of memory
-    """
-    
-    cheapest = None
-    
-    for mem in mems:
+def generate_memory_config_recommendations(memlist):
+    recommendmap = {}
+    for mem in memlist:
+        price = lowest_price(mem.prices)
+        if not price: continue
+        mem.price = price
         
-        if not mem.msrp: continue
+        memcfgs = [2]
+        if mem.dimms > 2: memcfgs.append(4)
         
-        """ if mem does not meet cap requirement increment until it does """
-        qty = 1
-        if mem.memory_capacity < capacity_target:
+        memspec = mem.memory_spec if mem.memory_spec in ['DDR3', 'DDR4'] else None
+        if not memspec: continue
+        
+        memcap = mem.memory_capacity
+        capcfgs = ['4GB']
+        if memcap < 4: continue
+        if memcap >= 8: capcfgs.append('8GB')
+        
+        for dimmcfg in memcfgs:
+            for capcfg in capcfgs:
+                mkey = '{}-{}-{}'.format(memspec,dimmcfg,capcfg)
+                val = recommendmap.get(mkey)
+                if not val: recommendmap[mkey] = mem
+                elif price.price < val.price.price: recommendmap[mkey] = mem
             
-            if mem.memory_capacity * dimms < capacity_target:
-                """ there are not enough dimms to reach cap target """
-                continue
-            
-            qty = capacity_target/mem.memory_capacity + capacity_target%mem.memory_capacity
-            
-        mem.platform_price = mem.msrp * qty
-        mem.platform_qty = qty
-        
-        if not cheapest: cheapest = mem
-        elif mem.platform_price < cheapest.platform_price: cheapest = mem
+            mkey = '{}-{}-$/GB'.format(memspec,dimmcfg)
+            val = recommendmap.get(mkey)
+            if not val: recommendmap[mkey] = mem
+            elif int(mem.price.price) / int(memcap) < int(val.price.price)/int(val.memory_capacity): recommendmap[mkey] = mem
     
-    return cheapest
-        
-            
-    
-
-def determine_platform_costs(cpus):
-    """
-    Will determine the platform cost for each of the CPUs passed in and
-    return a list of CPUs with the cheapest memory and motherboard populated.
-    """
-    
-    retcpus = []
-    
-    for cpu in cpus:
-        
-        if not cpu.msrp or not cpu.available: continue
-        
-        mobos = dataaccess.get_compatible_mobo_map(cpu_id=cpu.id)
-        cheapest_mobo = determine_cheapest_comp(mobos)
-        if not cheapest_mobo: continue
-        
-        mems = dataaccess.get_compatible_memory_map(cpu_id=cpu.id)
-        cheapest_mem = determine_cheapest_mem(mems, 4) # note: for now this is 4GB and 4 slots
-        if not cheapest_mem: continue
-        
-        cpu.platform_memory = cheapest_mem
-        cpu.platform_mobo = cheapest_mobo
-        cpu.platform_total_cost = cpu.msrp + cheapest_mem.msrp + cheapest_mobo.msrp
-        
-        retcpus.append(cpu)
-    
-    return retcpus
-
-def lowest_platform_cost(cpus):
-    
-    popcpus = determine_platform_costs(cpus)
-    cheapest = None
-    for cpu in popcpus:
-        
-        if not cheapest: cheapest = cpu
-        elif cpu.platform_total_cost < cheapest.platform_total_cost: cheapest = cpu
-        
-    return cheapest
+    return recommendmap
 
 def determine_cpu_fps_tier(cpu_comp, genres):
+    """ will return the numerical performance tier and the lowest average FPS across the genres passed in """
     
     bygenre = {}
-    
+    lowest_average = None
     for datapoint in cpu_comp.fps_data:
         """ we only want to look at the first-person shooter data """
         genre = str(datapoint.benchmark_type)
         
+        if not lowest_average or datapoint.fps_average < lowest_average: lowest_average = datapoint.fps_average
+        
         if datapoint.fps_average >= 144: bygenre[genre] = 6
-        elif datapoint.fps_average >= 120: bygenre[genre] = 5 
+        elif datapoint.fps_average >= 120: bygenre[genre] = 5
         elif datapoint.fps_one >= 60: bygenre[genre] = 4
         elif datapoint.fps_average >= 60: bygenre[genre] = 3
         elif datapoint.fps_one >= 30: bygenre[genre] = 2
         elif datapoint.fps_average >= 30: bygenre[genre] = 1
     
-    if len(bygenre.values()) == 0: return 0
+    if len(bygenre.values()) == 0: return 0 # NO DATA
     
     """ if the same set of genres are not being compared then return 0 (i.e. data is incomplete) """
-    print 'comparing comp genres with actual ' + str(genres) + ' actual ' + str(set(bygenre.keys()))
-    if len(set(genres).intersection(set(bygenre.keys()))) != len(set(genres)):
-        print 'returning 0'
-        return 0
+    if len(set(genres).intersection(set(bygenre.keys()))) != len(set(genres)): return 0, None
     
-    return min(bygenre.values())
+    return min(bygenre.values()), lowest_average
 
 def get_fps_per_dollar_gains(oldcpu, newcpu, upgrade_cost):
     
@@ -142,56 +111,101 @@ def get_fps_per_dollar_gains(oldcpu, newcpu, upgrade_cost):
     if not oldfps or not newfps: return 0
     else: return float(newfps - oldfps) / float(upgrade_cost)        
 
-def recommend_a_cpu(input_cpu):
+def lowest_price(prices):
+    lowest = None
+    for price in prices:
+        if not lowest or price.price < lowest: lowest = price
+    return lowest
+
+def recommend_same_chipset_cpu(chipsets, tier, comp_genres):
+    """
+    args:
+    - list of chipsets (strings), e.g. ['H170','Z270'],
+    - the numerical performance tier,
+    - the genre set to compare against
+    
+    """
+    
+    same_cs_cpus = dataaccess.get_cpus_by_chipset(chipsets, available=True)
+    
+    LOG.info('Generating CPU recommendation for chipsets {} got {} cpus'.format(chipsets, len(same_cs_cpus)))
+    
+    """ the cheapest available CPU for each tier """
+    tiertocpus = {}
+    topperforming = None
+    lowestdollarfps = None
+    for cpu in same_cs_cpus:
+        ptier, lowestfps = determine_cpu_fps_tier(cpu, set(comp_genres))[0]
+        if ptier <= tier: continue
+        
+        """ cheapest by tier """
+        price = lowest_price(cpu.prices)
+        if not tiertocpus.get(ptier) or price.price < tiertocpus.get(ptier).price: tiertocpus[ptier] = price
+        
+        """ top performance """
+        cpu.lowestfps = lowestfps
+        cpu.price = price
+        if not topperforming: topperforming = cpu
+        elif topperforming.lowestfps < lowestfps or (topperforming.lowestfps == lowestfps and price.price < topperforming.price.price):
+            """ higher performing or if same then keep the cheaper one """
+            topperforming = cpu
+        
+        """ lowest dollar per fps """
+        dollarfps = price.price/lowestfps
+        if not lowestdollarfps: lowestdollarfps = cpu
+        elif dollarfps < cpu.price.price/cpu.lowest: dollarfps = cpu
+    
+    return tiertocpus, topperforming, lowestdollarfps 
+         
+    
+def recommend_newplatform_cpu(currchipsets, tier, comp_genres):
+    all_cpus = dataaccess.get_all_cpus()
+    
+    othercpus = []
+    for cpu in all_cpus:
+        """ only proceed with CPUs compatible with different chipsets """
+        if not cpu.chipset_name: continue
+        chipsetsoverlap = len(set(cpu.chipset_name.split(',')).intersection(currchipsets)) > 0
+        if chipsetsoverlap: continue
+        if determine_cpu_fps_tier(cpu, comp_genres) > tier: othercpus.append(cpu)
+    
+    memrecs = generate_memory_config_recommendations(dataaccess.get_all_memory(available=True))
+    lowestbytier = {}
+    for cpu in othercpus:
+        
+        price = lowest_price(cpu.prices)
+        if not price: continue
+        
+        mobos = dataaccess.get_compatible_mobo_map(cpu.id, available=True, use_status=BaseComponent.Status.APPROVED)
+        cheapestmobo = determine_cheapest_comp(mobos)
+        cheapestmem = memrecs.get("{}-{}-{}".format(cheapestmobo.memory_spec, cheapestmobo.dimms, "4GB"))
+        
+        cpu.platform_price = cpu.price.price + cheapestmem.price.price + cheapestmobo.price.price
+        
+        tier = determine_cpu_fps_tier(cpu, comp_genres)
+        val = lowestbytier.get(tier)
+        if not val: lowestbytier[tier] = cpu
+        elif cpu.platform_price < val.platform_price: lowestbytier[tier] = cpu
+    
+    return lowestbytier
+    
+
+def recommend_a_cpu(input_cpu, genres=None):
     """
     returns a recommended CPU based on the inputs provided
     """
     
     """ first which tier does this CPU fall into? """
-    comp_genres = []
+    comp_genres = genres if genres else []
     for dp in input_cpu.fps_data: comp_genres.append(str(dp.benchmark_type))
-    tier = determine_cpu_fps_tier(input_cpu, set(comp_genres))
+    tier = determine_cpu_fps_tier(input_cpu, set(comp_genres))[0]
     
-    print 'the tier is ' + str(tier)
+    LOG.info('the tier is ' + str(tier))
     
     """ there is no better part to recommend """
     if tier == 6: return None
     
-    """
-    at this point there can be two different types of recommendations
-    - same chipset
-    - new platform
-    """
-    
-    """
-    --------------
-    SAME chipset
-    --------------
-    """
-    same_cs_cpus = dataaccess.get_cpus_by_chipset(input_cpu.chipset_name.split(','))
-    
-    print 'cps list ' + str(same_cs_cpus)
-    
-    """ 
-    look at the next highest tier to recommend a CPU
-    iterate through all CPUs and find a part that is just one tier higher and costs the least amount
-    """
-    same_chipset_results = {}
-    tiercounter = tier + 1
-    while True:
-        if tiercounter > 6: break
-        
-        lowest_msrp_same_cs = None
-        
-        for cpu in same_cs_cpus:
-            if not cpu.msrp: continue
-            
-            if determine_cpu_fps_tier(cpu, set(comp_genres)) == (tiercounter) and (not lowest_msrp_same_cs or cpu.msrp < lowest_msrp_same_cs.msrp):
-                lowest_msrp_same_cs = cpu
-        
-        same_chipset_results[tiercounter] = lowest_msrp_same_cs
-        
-        tiercounter += 1
+    scs_recs, scs_top, scs_dollarfps = recommend_same_chipset_cpu(input_cpu.chipset_name.split(','), tier, comp_genres)
     
     
     """
@@ -211,7 +225,7 @@ def recommend_a_cpu(input_cpu):
         for cpu in all_cpus:
             if not cpu.chipset_name or not input_cpu.chipset_name: continue
             
-            if len(set(cpu.chipset_name.split(',')).intersection(input_cpu.chipset_name.split(','))) == 0 and determine_cpu_fps_tier(cpu, comp_genres) == tiercounter:
+            if len(set(cpu.chipset_name.split(',')).intersection(input_cpu.chipset_name.split(','))) == 0 and determine_cpu_fps_tier(cpu, comp_genres)[0] == tiercounter:
                 """ this means this is a new option """
                 other_cpus.append(cpu)
         
