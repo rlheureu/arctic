@@ -1,27 +1,533 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
 
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="/static/recommendations/css/materialize.min.css"  media="screen,projection"/>
+    <!--Import stylesheet.css -->
+    <link href="/static/recommendations/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<h2>Input: {{results.input_cpu.adjusted_display_name()}}</h2>
-<h3>Your current tier: {{results.current_tier}}</h3>
+    <!--Import Fjalla One -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600|Fjalla+One" rel="stylesheet" type="text/css">
+  </head>
 
-<h4>Same Socket Upgrade</h4>
-<hr>
-<br>
+  <body>
 
-{% for key, value in results.same_socket_upgrades.items() %}
-  <b>Tier: {{key}}</b> {% if value %}{{ value.adjusted_display_name() }}{% endif %}
-  <br>
-{% endfor %}
+    <nav class="white" role="navigation">
+      <div class="nav-wrapper container">
+        <a id="logo-container" href="#" class="brand-logo"><img style="padding-top: 8px;width:175px;" src="static/images/logo-small.png"></a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="#">Build</a></li>
+          <li class="active"><a href="#">Upgrade</a></li>
+          <li><a href="#">Compare</a></li>
+          <li><a href="#">Showcase</a></li>
+          <li><a href="#">Track</a></li>
+          <li><a href="#"><i class="material-icons">account_circle</i></a></li>
+        </ul>
 
+        <ul id="nav-mobile" class="side-nav">
+          <li><a href="#">Build</a></li>
+          <li class="active"><a href="#">Upgrade</a></li>
+          <li><a href="#">Compare</a></li>
+          <li><a href="#">Showcase</a></li>
+          <li><a href="#">Track</a></li>
+        </ul>
+        <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+      </div>
+    </nav>
 
-<br><br>
+    <!-- User Configuration of CPU Upgrades -->
+    <div class="container">
+      <div class="section">
+        <div class="row">
+          <div class="col s4 m2 l3">
+            <h5>CPU Upgrader</h5>
+            <h6>Tell us a CPU, new or old, and we'll tell you the next best upgrades, including CPU, memory, and motherboard cost.</h6>
+          </div> 
+          <div class="col s8 l5">
+            <div class="input-field">
+              <input placeholder="Type a CPU" id="base_cpu" type="text" class="validate active autocomplete">
+              <label for="autocomplete-input">CPU to Upgrade</label>
+            </div>
+          </div>
+          <div class="col l4 hide-on-med-and-down">
+            <div class="card white" id="current-cpu-card">
+              <div class="card-content">
+                  <span class="card-title activator" id="current-cpu-title">Intel Core i5-2500k</span>
+                  <b>How it performs today</b>
+                  <p style="line-height:20px;" id="current-cpu-tierinfo">99% of frames better than 30 fps across all game types</p>
+              </div>
 
-<h4>New Platform Upgrades</h4>
-<hr>
-<br>
-{% for key, value in results.new_platform_upgrades.items() %}
-  <b>Tier: {{key}}</b> {% if value %}{{ value.adjusted_display_name() }}{% endif %}
-  <br>
-{% endfor %}
+              
+<!--               <div class="card-action blue white-text"> -->
+<!--                 <a href="#">I own this part</a> -->
+<!--               </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <div class="container">
+      <div class="row teal first-selection-section">
+        <div class="col s3 m2">
+          <i class="large material-icons icon-white prefix">arrow_downward</i>
+        </div>
+        <div class="col s9">
+          <h5 class="white-text">Select an Upgrade Path</h5>
+          <h6 class="teal-text text-lighten-3">The two paths available are (1) to buy a better processor that fits with your motherboard and memory or (2) buy an entirely new platform. Better processors for older platforms may not always be available new.</h6>
+        </div>
+        <div class="col s12 teal darken-2">
+          <h6 class="teal-text text-lighten-3">Prices are based on Amazon data. Prices for new platform include new motherboard and compliant memory.</h6>
+        </div>
+      </div>
 
+      <!-- Output type for same socket. This recommends a single component. -->
+      <div class="row first-selection-section">
+        <div class="col s12" id="table">
+            <h5 class="teal-text">CPU Only Upgrades</h5>
+            <h6>These do not require a new motherboard or memory. Drop in the new CPU and apply new thermal paste.</h6>
+        </div>
+        <div class="col s12" id="table">
+          <div id="detail">
+            <table class="highlight centered">
+              <thead>
+                <tr>
+                  <th>Price</th>
+                  <th>New CPU</th>
+                  <th>Parts to Buy</th>
+                  <th>System Benefit</th>
+                  <th>Minimum FPS Gain</th>
+                </tr>
+              </thead>
+
+              <tbody id="scs-cpu-table">
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Output type for new platform. This recommends multiple components. -->
+      <div class="row first-selection-section">
+        <div class="col s12" id="table">
+            <h5 class="teal-text">New Platforms</h5>
+            <h6>These are the latest platforms and processors available. They usually require a new motherboard and memory, which is included in the price calculations.</h6>
+        </div>
+        <div class="col s12" id="table">
+          <div id="detail">
+            <table class="highlight centered">
+              <thead>
+                <tr>
+                  <th>Price</th>
+                  <th>New CPU</th>
+                  <th>Parts to Buy</th>
+                  <th>System Benefit</th>
+                  <th>Minimum FPS Gain</th>
+                </tr>
+              </thead>
+
+              <tbody id="np-cpu-table">
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected CPU -->
+      <div class="col s12 your-selected-processor" id=""><h5 class="grey-text">Your Selected Processor</h5></div>
+      <div class="col s12 your-selected-processor">
+        <div id="detail">
+          <table class="highlight centered">
+            <thead></thead>
+            <tbody id="your-selected-processor-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- For New Platform, after selecting a CPU. -->
+      <div class="row teal mobo-selection-section">
+        <div class="col s3 m2">
+          <i class="large material-icons icon-white prefix">arrow_downward</i>
+        </div>
+        <div class="col s9">
+          <h5 class="white-text">Next, choose a motherboard</h5>
+          <h6 class="teal-text text-lighten-3">Sort by price + formfactor<i class="tiny material-icons icon-white">details</i></h6>
+        </div>
+        <div class="col s12 teal darken-2">
+          <h6 class="teal-text text-lighten-3">Prices are based on Amazon data. Best prices include best priced motherboards and memory.</h6>
+        </div>
+      </div>
+      <div class="row mobo-selection-section">
+        <div class="col s12" id="table">
+            <h5 class="teal-text">H270 Motherboards</h5>
+            <h6>This class of motherboard offers essential features for gamers at the lowest prices.</h6>
+        </div>
+        <div class="col s12" id="table">
+          <div id="detail">
+            <table class="highlight centered">
+              <thead>
+                <th>Price</th>
+                <th>Name</th>
+                <th>Form Factor</th>
+                <th>Memory Slots</th>
+                <th>Fastest Memory (MHz)</th>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td><ul><li class="green-text">$80</li><li>Amazon</li></ul></td>
+                  <td>MSI H270 Gaming Pro Carbon</td>
+                  <td>Micro ATX</td>
+                  <td>4</td>
+                  <td>3000</td>
+                </tr>
+                <tr>
+                  <td><ul><li class="green-text">$60</li><li>Amazon</li></ul></td>
+                  <td>MSI Z270 Gaming Pro Carbon</td>
+                  <td>Micro ATX</td>
+                  <td>4</td>
+                  <td>3000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row mobo-selection-section">
+        <div class="col s12" id="table">
+            <h5 class="teal-text">Z270 Motherboards</h5>
+            <h6>This class of motherboard offers an expansive set of features for gamers, including the ability to overclock Intel processors. "Z" boards usually offer more storage and configuration options than "H" boards.</h6>
+        </div>
+        <div class="col s12" id="table">
+          <div id="detail">
+            <table class="highlight centered">
+              <thead>
+                <th>Price</th>
+                <th>Name</th>
+                <th>Form Factor</th>
+                <th>Memory Slots</th>
+                <th>Fastest Memory (MHz)</th>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td><ul><li class="green-text">$80</li><li>Amazon</li></ul></td>
+                  <td>MSI HZ70 Gaming Pro Carbon</td>
+                  <td>Micro ATX</td>
+                  <td>4</td>
+                  <td>3000</td>
+                </tr>
+                <tr>
+                  <td><ul><li class="green-text">$60</li><li>Amazon</li></ul></td>
+                  <td>MSI Z270 Gaming Pro Carbon</td>
+                  <td>Micro ATX</td>
+                  <td>4</td>
+                  <td>3000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Memory Selection. For New Platform, after selecting a CPU and Motherboard. -->
+      <div class="row third-selection-section">
+        <div class="col s12" id="table">
+            <h5 class="grey-text">Your Selected Motherboard</h5>
+        </div>
+        <div class="col s12">
+          <div id="detail">
+            <table class="highlight centered">
+              <thead></thead>
+              <tbody>
+                <tr>
+                  <td><ul><li class="green-text">$120</li><li>Amazon</li></ul></td>
+                  <td>MSI Z270 Gaming Pro Carbon</td>
+                  <td>
+                    <ul>
+                      <li>Motherboard</li>
+                    </ul>
+                  </td>
+                  <td>Micro ATX</td>
+                  <td>4 DIMMs</td>
+                  <td>Up to 3000 MHz</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row teal third-selection-section">
+        <div class="col s3 m2">
+          <i class="large material-icons icon-white prefix">arrow_downward</i>
+        </div>
+        <div class="col s9">
+          <h5 class="white-text">Next, choose your memory</h5>
+          <h6 class="teal-text text-lighten-3">Sorted by price + capacity<i class="tiny material-icons icon-white">details</i></h6>
+        </div>
+        <div class="col s12 teal darken-2">
+          <h6 class="teal-text text-lighten-3">Prices are based on Amazon data. Best prices include best priced motherboards and memory.</h6>
+        </div>
+      </div>
+      
+      <!-- Cheapest 4GB of RAM -->
+      <div class="row third-selection-section">
+        <div class="col s12" id="table">
+            <h5 class="teal-text">Best Priced 4 GB</h5>
+            <h6>4 GB of RAM will get you into most PC games. While some games will run better with more, this is still the baseline for PC gaming in 2017.</h6>
+        </div>
+        <div class="col s12" id="table">
+          <div id="detail">
+            <table class="highlight centered">
+              <thead>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td><ul><li class="green-text">$40</li><li>Amazon</li></ul></td>
+                  <td>Super Cheap Memory</td>
+                  <td>DDR3</td>
+                  <td>4 GB</td>
+                  <td>2 DIMMs</td>
+                  <td>1066 MHz</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Best GB/$ -->
+      <div class="row third-selection-section">
+        <div class="col s12" id="table">
+            <h5 class="teal-text">Best Value in Memory</h5>
+            <h6>This memory is currently the best capacity per dollar available.</h6>
+        </div>
+        <div class="col s12" id="table">
+          <div id="detail">
+            <table class="highlight centered">
+              <thead>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td><ul><li class="green-text">$40</li><li>Amazon</li></ul></td>
+                  <td>Super Valuable Memory</td>
+                  <td>DDR3</td>
+                  <td>8 GB</td>
+                  <td>2 DIMMs</td>
+                  <td>2044 MHz</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cheapest 8 GB -->
+      <div class="row third-selection-section">
+        <div class="col s12" id="table">
+            <h5 class="teal-text">Best Priced 8 GB</h5>
+            <h6>The best price available for 8 GB of memory for your board.</h6>
+        </div>
+        <div class="col s12" id="table">
+          <div id="detail">
+            <table class="highlight centered">
+              <thead>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td><ul><li class="green-text">$50</li><li>Amazon</li></ul></td>
+                  <td>8 GB Memory</td>
+                  <td>DDR3</td>
+                  <td>8 GB</td>
+                  <td>2 DIMMs</td>
+                  <td>2044 MHz</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cheapest 16 GB -->
+      <div class="row third-selection-section">
+        <div class="col s12" id="table">
+            <h5 class="teal-text">Best Priced 16 GB</h5>
+            <h6>The best price available for 16 GB of memory for your board.</h6>
+        </div>
+        <div class="col s12" id="table">
+          <div id="detail">
+            <table class="highlight centered">
+              <thead>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td><ul><li class="green-text">$80</li><li>Amazon</li></ul></td>
+                  <td>16 GB Memory</td>
+                  <td>DDR3</td>
+                  <td>8 GB</td>
+                  <td>2 DIMMs</td>
+                  <td>2044 MHz</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Final Purchase -->
+
+      <!-- Selected Memory -->
+      <div class="col s12 memory-selection-section" id="table">
+            <h5 class="grey-text">Your Selected Memory</h5>
+      </div>
+      <div class="col s12 memory-selection-section">
+        <div id="detail">
+          <table class="highlight centered">
+            <thead></thead>
+            <tbody>
+              <tr>
+                <td><ul><li class="green-text">$40</li><li>Amazon</li></ul></td>
+                <td>Super Cheap Memory</td>
+                <td>DDR3</td>
+                <td>4 GB</td>
+                <td>2 DIMMs</td>
+                <td>1066 MHz</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="row teal buy-selection-section">
+        <div class="col s3 m2">
+          <i class="large material-icons icon-white prefix">arrow_downward</i>
+        </div>
+        <div class="col s9">
+          <h5 class="white-text">Buy your Upgrade</h5>
+          <h6 class="teal-text text-lighten-3">Amazon will calculate taxes + shipping costs</h6>
+        </div>
+      </div>
+      <div class="col s12 buy-selection-section">
+        <h5 class="teal-text text-lighten-3">Buy with <b>Amazon</b><a class="waves-effect waves-light btn right">$400</a></h5>
+      </div>
+    </div>
+
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="/static/recommendations/js/materialize.min.js"></script>
+    <script src="/static/recommendations/js/init.js"></script>
+    
+    <script type="text/javascript">
+    	$(function(){
+    		
+    		//
+    		// hide all selctions
+    		$('.first-selection-section').hide();
+    		$('.mobo-selection-section').hide();
+    		$('.third-selection-section').hide();
+    		$('.memory-selection-section').hide();
+    		$('.buy-selection-section').hide();
+    		$('.your-selected-processor').hide();
+    		$('#current-cpu-card').hide();
+    		
+        	function constructItemHtml(cpuComp, selectionType, componentsToPurchaseStr){
+    			var itemHtml = '<tr class="select-cpu" data-cpuid="' + cpuComp.id + '" data-selectiontype="'+selectionType+'">';
+    			itemHtml += '<td><ul><li class="green-text">' + cpuComp.formattedprice + '</li><li><a href="' + cpuComp.buyurl + '">Amazon</a></li></ul></td>';
+    			itemHtml += '<td>' + cpuComp.display_name + '</td>';
+    			itemHtml += '<td>' + componentsToPurchaseStr + '</td>';
+    			itemHtml += '<td>' + cpuComp.tier_explain + '</td>';
+    			itemHtml += '<td>'+cpuComp.fpsgain+' FPS ($'+cpuComp.dollarfps+'/FPS)</td></tr>';
+    			return itemHtml;
+        	}
+        	
+        	function renderNextSection(){
+        		
+        	}
+    		
+    		$.getJSON( "getparts", {'target' : 'cpu'}).success(function(data) {
+    			
+    			var partsList = JSON.parse(data.parts);
+    			var acdata = {};
+    			var namesToIds = {};
+            	for (part in partsList) {
+            		var component = partsList[part];
+            		acdata[component.display_name] = null;
+            		namesToIds[component.display_name] = component.id;
+            	}
+    			
+            	console.log(acdata);
+            	
+
+            	
+    			$('#base_cpu').autocomplete({
+        		    data: acdata,
+        		    limit: 8,
+        		    onAutocomplete: function(val) {
+        		    	//
+        		    	// fetch the recommendations data for this part
+        		    	var cpuId = namesToIds[val];
+        		    	$.getJSON('/recommendcpu/json', {'id' : cpuId}).success(function(resp){
+        		    		$('#current-cpu-title').text(resp.input_cpu.display_name);
+        		    		$('#current-cpu-tierinfo').text(resp.input_cpu.tier_explain);
+        		    		$('#current-cpu-card').show();
+        		    		$('.first-selection-section').show();
+        		    		
+        		    		for (var perfTier in resp.scsbytier) {
+        		    			var comp = resp.scsbytier[perfTier];
+        		    			$('#scs-cpu-table').append(constructItemHtml(comp, 'SCS', 'CPU'));	
+        		    		}
+        		    		
+        		    		for (var perfTier in resp.npbytier) {
+        		    			var comp = resp.npbytier[perfTier];
+        		    			$('#np-cpu-table').append(constructItemHtml(comp, 'NP', 'CPU, Motherboard, Memory'));	
+        		    		}
+        		    		
+        		    		$('.select-cpu').click(function(){
+        	    				// cpu selected
+        	    				
+        	    				var selectionType = $(this).data('selectiontype');
+        	    				
+        	    				$('.first-selection-section').slideUp();
+        	    				$('.your-selected-processor').show();
+        	    				$('#your-selected-processor-table').append(this);
+        	    				
+        	    				if (selectionType == 'SCS') {
+        	    					// show buy option
+        	    					$('.buy-selection-section').show();
+        	    				} else {
+        	    					// show mobo selection
+        	    					$('.mobo-selection-section').show();
+        	    				}
+        	    				
+        	    				
+        	    			});
+        		    		
+        		    	});
+        		    },
+        		    minLength: 2, 
+      		  	});
+    			
+    			
+    		});
+    		
+    	});
+    </script>
+    
+    
+  </body>
+</html>
+      

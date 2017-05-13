@@ -492,23 +492,19 @@ def get_compatible_mobo_map(motherboard_id=None, gpu_id=None, memory_id=None, di
         print 'compat sockets {}'.format(compatsockets)
         compat_q = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.socket.in_(compatsockets), models.MotherboardComponent.active == True)
     
+    """
+    return map of compatible and incompatible components
+    """
+    if not compat_q: compat_q = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.active == True)
+        
     """ additional filters """
     if available != None: compat_q = compat_q.filter(models.MotherboardComponent.available == available)
     if use_status: compat_q = compat_q.filter(models.MotherboardComponent.use_status == use_status)
     
-    """
-    return map of compatible and incompatible components
-    """
-    if compat_q:
-        if return_query:
-            return compat_q
-        else:
-            return compat_q.all()
+    if return_query:
+        return compat_q
     else:
-        if return_query:
-            return db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.active == True)
-        else:
-            return db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.active == True).all()
+        return compat_q.all()
     
 def get_compatible_memory_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, return_query=False, available=None,use_status=None):
     """
@@ -537,23 +533,20 @@ def get_compatible_memory_map(motherboard_id=None, gpu_id=None, memory_id=None, 
         
         compat_q = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.memory_spec.in_(supported_mem), models.MemoryComponent.active == True)
     
+    """
+    return map of compatible and incompatible components
+    """
+    if not compat_q: compat_q = db.session().query(models.MemoryComponent).filter(models.MemoryComponent.active == True)
+    
     """ additional filters """
     if available != None: compat_q = compat_q.filter(models.MemoryComponent.available == available)
     if use_status: compat_q = compat_q.filter(models.MemoryComponent.use_status == use_status)
     
-    """
-    return map of compatible and incompatible components
-    """
-    if compat_q:
-        if return_query:
-            return compat_q
-        else:
-            return compat_q.all()
+    if return_query:
+        return compat_q
     else:
-        if return_query:
-            return db.session().query(models.MemoryComponent).filter(models.MemoryComponent.active == True)
-        else:
-            return db.session().query(models.MemoryComponent).filter(models.MemoryComponent.active == True).all()
+        return compat_q.all()
+    
 
 def get_compatible_cpu_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, return_query=False):
     """

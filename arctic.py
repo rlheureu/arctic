@@ -687,17 +687,25 @@ def claimpost():
 
     return render_template('claimacct.html', **context)
 
-
 @app.route("/recommendcpu", methods=['GET'])
 @super_admin_login_required
 def recommendcpu():
+    
+    return render_template('recommendations.html')
+
+@app.route("/recommendcpu/json", methods=['GET'])
+@super_admin_login_required
+def recommendcpujson():
     context = {}
 
     cpu_id = request.args.get('id', None)
+    cpu = dataaccess.get_component(cpu_id)
+    results = recommendations.recommend_a_cpu(cpu)
+    results['input_cpu'] = cpu
     
-    context['results'] = recommendations.recommend_a_cpu(dataaccess.get_component(cpu_id))
+    resultstr = json.dumps(results, cls=jsonify_sql_alchemy_model(), check_circular=False)
     
-    return render_template('recommendations.html', **context)  
+    return resultstr, 200, {'Content-Type': 'application/json'}
 
 @app.route("/fetchprices", methods=['GET'])
 @super_admin_login_required
