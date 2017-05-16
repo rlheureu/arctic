@@ -176,6 +176,8 @@ def populate_memory_config(cpu, mobo, memrecs):
 def recommend_newplatform_cpu(input_cpu, currchipsets, tier, comp_genres):
     all_cpus = dataaccess.get_all_cpus()
     
+    inputlowestfps = determine_cpu_fps_tier(input_cpu, comp_genres)[1]
+    
     othercpus = []
     for cpu in all_cpus:
         """ only proceed with CPUs compatible with different chipsets """
@@ -210,6 +212,7 @@ def recommend_newplatform_cpu(input_cpu, currchipsets, tier, comp_genres):
         """ cheapest by tier """
         ptier, lowestfps = determine_cpu_fps_tier(cpu, comp_genres)
         if not ptier or not lowestfps: continue
+        if lowestfps < inputlowestfps: continue
         if ptier > tier:
             val = lowestbytier.get(ptier)
             if not val: lowestbytier[ptier] = cpu
