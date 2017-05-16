@@ -52,9 +52,10 @@ def generate_memory_config_recommendations(memlist):
         try: memcap = int(mem.memory_capacity)
         except: continue
         
-        capcfgs = ['4GB']
+        capcfgs = []
         if memcap < 4: continue
-        if memcap >= 8: capcfgs.append('8GB')
+        if memcap == 4: capcfgs.append('4GB')
+        elif memcap >= 8: capcfgs.append('8GB')
         
         for dimmcfg in memcfgs:
             for capcfg in capcfgs:
@@ -155,13 +156,21 @@ def populate_memory_config(cpu, mobo, memrecs):
         """ this mobo has 4 dimms, so pick cheapest of the 2 or 4 stick options """
         option4gb2 = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 2, "4GB"))
         option4gb4 = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 4, "4GB"))
-        cpu.recommendedmemory4gb = option4gb2 if option4gb2.price.price < option4gb4.price.price else option4gb4
+        if option4gb2 and not option4gb4: cpu.recommendedmemory4gb = option4gb2
+        elif not option4gb2 and option4gb4: cpu.recommendedmemory4gb = option4gb4
+        elif option4gb2 and option4gb4: cpu.recommendedmemory4gb = option4gb2 if option4gb2.price.price < option4gb4.price.price else option4gb4
+        
         option8gb2 = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 2, "8GB"))
         option8gb4 = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 4, "8GB"))
-        cpu.recommendedmemory8gb = option8gb2 if option8gb2.price.price < option8gb4.price.price else option8gb4
+        if option8gb2 and not option8gb4: cpu.recommendedmemory8gb = option8gb2
+        elif not option8gb2 and option8gb4: cpu.recommendedmemory8gb = option8gb4
+        elif option8gb2 and option8gb4: cpu.recommendedmemory8gb = option8gb2 if option8gb2.price.price < option8gb4.price.price else option8gb4
+        
     else:
-        cpu.recommendedmemory4gb = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 2, "4GB"))
-        cpu.recommendedmemory8gb = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 2, "8GB"))
+        option4gb2 = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 2, "4GB"))
+        if option4gb2: cpu.recommendedmemory4gb = option4gb2
+        option8gb2 = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 2, "8GB"))
+        if option8gb2: cpu.recommendedmemory8gb = option8gb2
     
     
 def recommend_newplatform_cpu(input_cpu, currchipsets, tier, comp_genres):
