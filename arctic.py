@@ -703,7 +703,8 @@ def recommendcpujson():
     results = recommendations.recommend_a_cpu(cpu)
     results['input_cpu'] = cpu
     
-    resultstr = json.dumps(results, cls=jsonify_sql_alchemy_model(), check_circular=False)
+    expandfields = ['recommendedmobo', 'recommendedmemory4gb', 'recommendedmemory8gb', 'memrecs', 'fpsgains']
+    resultstr = json.dumps(results, cls=jsonify_sql_alchemy_model(fields_to_expand=expandfields), check_circular=False)
     
     return resultstr, 200, {'Content-Type': 'application/json'}
 

@@ -48,7 +48,10 @@ def generate_memory_config_recommendations(memlist):
         memspec = mem.memory_spec if mem.memory_spec in ['DDR3', 'DDR4'] else None
         if not memspec: continue
         
-        memcap = mem.memory_capacity
+        if not mem.memory_capacity: continue
+        try: memcap = int(mem.memory_capacity)
+        except: continue
+        
         capcfgs = ['4GB']
         if memcap < 4: continue
         if memcap >= 8: capcfgs.append('8GB')
@@ -140,7 +143,24 @@ def recommend_same_chipset_cpu(chipsets, tier, comp_genres):
         elif dollarfps < cpu.price.price/cpu.lowestfps: dollarfps = cpu
     
     return tiertocpus, topperforming, lowestdollarfps 
-         
+
+def populate_memory_config(cpu, mobo, memrecs):         
+    """
+    if mobo has 4 slots it can use the cheaper option of the two
+    """
+    
+    if mobo.dimms > 2:
+        """ this mobo has 4 dimms, so pick cheapest of the 2 or 4 stick options """
+        option4gb2 = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 2, "4GB"))
+        option4gb4 = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 4, "4GB"))
+        cpu.recommendedmemory4gb = option4gb2 if option4gb2.price.price < option4gb4.price.price else option4gb4
+        option8gb2 = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 2, "8GB"))
+        option8gb4 = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 4, "8GB"))
+        cpu.recommendedmemory8gb = option8gb2 if option8gb2.price.price < option8gb4.price.price else option8gb4
+    else:
+        cpu.recommendedmemory4gb = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 2, "4GB"))
+        cpu.recommendedmemory8gb = memrecs.get("{}-{}-{}".format(mobo.memory_spec, 2, "8GB"))
+    
     
 def recommend_newplatform_cpu(currchipsets, tier, comp_genres):
     all_cpus = dataaccess.get_all_cpus()
@@ -162,11 +182,13 @@ def recommend_newplatform_cpu(currchipsets, tier, comp_genres):
         price = lowest_price(cpu.prices)
         if not price: continue
         
-        mobos = dataaccess.get_compatible_mobo_map(cpu.id, available=True, use_status=BaseComponent.Status.APPROVED)
+        mobos = dataaccess.get_mobos_by_chipset(cpu.chipset_name.split(','), available=True, use_status=BaseComponent.Status.APPROVED)
         cheapestmobo = determine_cheapest_comp(mobos)
-        cheapestmem = memrecs.get("{}-{}-{}".format(cheapestmobo.memory_spec, cheapestmobo.dimms, "4GB"))
+        if not cheapestmobo: continue
+        
         cpu.recommendedmobo = cheapestmobo
-        cpu.recommendedmemory = cheapestmem
+        populate_memory_config(cpu, cheapestmobo, memrecs)
+        cheapestmem = cpu.recommendedmemory4gb if cpu.recommendedmemory4gb.price.price < cpu.recommendedmemory8gb.price.price else cpu.recommendedmemory8gb
         
         cpu.price = price
         cpu.platform_price = cpu.price.price + cheapestmem.price.price + cheapestmobo.price.price
@@ -194,7 +216,7 @@ def recommend_newplatform_cpu(currchipsets, tier, comp_genres):
         elif dollarfps < cpu.platform_price/cpu.lowestfps: dollarfps = cpu        
         
     
-    return lowestbytier, topperforming, lowestdollarfps
+    return lowestbytier, topperforming, lowestdollarfps, memrecs
 
 def populate_fps_gains(currcpu, comps, genres):
 
@@ -237,7 +259,7 @@ def recommend_a_cpu(input_cpu, genres=[]):
     if tier == 6: return None
     
     scs_recs, scs_top, scs_dollarfps = recommend_same_chipset_cpu(input_cpu.chipset_name.split(','), tier, comp_genres)
-    np_recs, np_top, np_dollarfps = recommend_newplatform_cpu(input_cpu.chipset_name.split(','), tier, comp_genres)
+    np_recs, np_top, np_dollarfps, memrecs = recommend_newplatform_cpu(input_cpu.chipset_name.split(','), tier, comp_genres)
     
     populate_fps_gains(input_cpu, scs_recs.values() + np_recs.values() + [scs_top,scs_dollarfps,np_top,np_dollarfps], comp_genres)
     
@@ -248,6 +270,53 @@ def recommend_a_cpu(input_cpu, genres=[]):
     res['npbytier'] = np_recs
     res['nptop'] = np_top
     res['npbv'] = np_dollarfps
+    res['memrecs'] = memrecs
+    
+    reccpus = scs_recs.values() + [scs_top] + [scs_dollarfps] + np_recs.values() + [np_top] + [np_dollarfps]
+    res['fpsgains'] = performance_gains(input_cpu, reccpus)
     
     return res
 
+def performance_gains(input_cpu, recommended_cpus):
+    """
+    will return a table for each cpu passed in showing performance data across genres and gains
+    {
+        "input":{},
+        "recs" : {
+            657 : {
+                "FPS": {
+                    "gains" : 5,
+                    "dollarfps" : 10
+                
+                }
+            }
+        }
+    }
+    """
+    
+    retdata = {}
+    recs = {}
+    retdata['recs'] = recs
+    retdata['input'] = input_cpu.fps_data
+    
+    ifps = {}
+    for dp in input_cpu.fps_data: ifps[dp.benchmark_type] = dp.fps_average
+    
+    for rcpu in recommended_cpus:
+        for dp in rcpu.fps_data:
+            """
+            calculate what the fps gain and the dollar per fps is
+            """
+            gains = int(dp.fps_average - ifps[dp.benchmark_type])
+            if gains < 1: dollarfps = 'N/A'
+            else:
+                if hasattr(rcpu, 'platform_price'): dollarfps = rcpu.platform_price / 100 / gains
+                else: dollarfps = rcpu.price.price / 100 / gains
+            
+            val = recs.get(rcpu.id)
+            if not val: recs[rcpu.id] = {}
+            recs[rcpu.id][dp.benchmark_type] = {'gains' : gains, 'dollarfps' : dollarfps}
+    
+    return retdata
+        
+    

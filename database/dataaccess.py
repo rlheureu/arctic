@@ -149,15 +149,23 @@ def get_cpus_by_chipset(chipsets, active_only=True, use_status = BaseComponent.S
     """
     chipsets is a list
     """
-    q = db.session().query(models.CPUComponent).filter(models.CPUComponent.chipset_name.like('%' + chipsets[0] + '%'))
-    
-    if len(chipsets) > 1:
-        for i in range(1, len(chipsets)):
-            q.union(db.session().query(models.CPUComponent).filter(models.CPUComponent.chipset_name.like('%' + chipsets[i] + '%')))
+    q = db.session().query(models.CPUComponent).filter(or_(models.CPUComponent.chipset_name.like('%' + csname + '%') for csname in chipsets))
     
     if available != None: q = q.filter(models.BaseComponent.available == available)
     if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
     if active_only: q = q.filter(models.CPUComponent.active == True)
+    return q.all()
+
+def get_mobos_by_chipset(chipsets, active_only=True, use_status = BaseComponent.Status.APPROVED, available=None):
+    
+    """
+    chipsets is a list
+    """
+    q = db.session().query(models.MotherboardComponent).filter(or_(models.MotherboardComponent.chipset_name.like(csname) for csname in chipsets))
+    
+    if available != None: q = q.filter(models.BaseComponent.available == available)
+    if use_status: q = q.filter(or_(models.BaseComponent.use_status == use_status, models.BaseComponent.use_status == None))
+    if active_only: q = q.filter(models.BaseComponent.active == True)
     return q.all()
 
 def get_rig(rig_id):

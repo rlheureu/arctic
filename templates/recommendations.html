@@ -51,19 +51,52 @@
             <h5>CPU Upgrader</h5>
             <h6>Tell us a CPU, new or old, and we'll tell you the next best upgrades, including CPU, memory, and motherboard cost.</h6>
           </div> 
-          <div class="col s8 l5">
+          <div class="col s8 l4">
             <div class="input-field">
               <input placeholder="Type a CPU" id="base_cpu" type="text" class="validate active autocomplete">
               <label for="autocomplete-input">CPU to Upgrade</label>
             </div>
           </div>
-          <div class="col l4 hide-on-med-and-down">
+          <div class="col l5 hide-on-med-and-down">
             <div class="card white" id="current-cpu-card">
               <div class="card-content">
-                  <span class="card-title activator" id="current-cpu-title">Intel Core i5-2500k</span>
+                  <span class="card-title activator" id="current-cpu-title">Intel Core i5-2500k <i class="material-icons right">more_vert</i></span>
                   <b>How it performs today</b>
                   <p style="line-height:20px;" id="current-cpu-tierinfo">99% of frames better than 30 fps across all game types</p>
+                  <br><br><br><br>
               </div>
+              <div class="card-reveal">
+                  <span class="card-title grey-text text-darken-4"><i class="material-icons right">close</i></span>
+                    <div id="detail">
+                      <table class="striped centered responsive-table">
+                        <thead>
+                          <tr>
+                              <th>Game Type</th>
+                              <th>Game</th>
+                              <th>Average FPS</th>
+                              <th>99% FPS</th>
+                              <th>Source</th>
+                          </tr>
+                        </thead>
+                        <tbody id="input-cpu-fps-table">
+                          <tr>
+                            <td>Open World</td>
+                            <td>Watch Dogs 2</td>
+                            <td>58.5</td>
+                            <td>43.3</td>
+                            <td><a href="#">Gamers Nexus</td>
+                          </tr>
+                          <tr>
+                            <td>FPS</td>
+                            <td>Battlefield 1</td>
+                            <td>115.3</td>
+                            <td>78.5</td>
+                            <td><a href="#">Gamers Nexus</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
 
               
 <!--               <div class="card-action blue white-text"> -->
@@ -104,7 +137,18 @@
                   <th>New CPU</th>
                   <th>Parts to Buy</th>
                   <th>System Benefit</th>
-                  <th>Minimum FPS Gain</th>
+                  <th>
+                    <table class="lead">
+                      <thead></thead>
+                      <tbody>
+                        <tr>
+                          <td>Game Type</td>
+                          <td>FPS Gain</td>
+                          <td>$/FPS</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </th>
                 </tr>
               </thead>
 
@@ -131,7 +175,18 @@
                   <th>New CPU</th>
                   <th>Parts to Buy</th>
                   <th>System Benefit</th>
-                  <th>Minimum FPS Gain</th>
+                  <th>
+                    <table class="lead">
+                      <thead></thead>
+                      <tbody>
+                        <tr>
+                          <td>Game Type</td>
+                          <td>FPS Gain</td>
+                          <td>$/FPS</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </th>
                 </tr>
               </thead>
 
@@ -169,105 +224,45 @@
       </div>
       <div class="row mobo-selection-section">
         <div class="col s12" id="table">
-            <h5 class="teal-text">H270 Motherboards</h5>
+            <h5 class="teal-text">Cheapest Compatible Motherboard</h5>
             <h6>This class of motherboard offers essential features for gamers at the lowest prices.</h6>
         </div>
         <div class="col s12" id="table">
           <div id="detail">
             <table class="highlight centered">
               <thead>
-                <th>Price</th>
-                <th>Name</th>
-                <th>Form Factor</th>
-                <th>Memory Slots</th>
-                <th>Fastest Memory (MHz)</th>
+                <tr>
+                  <th>Price</th>
+                  <th>Name</th>
+                  <th>Form Factor</th>
+                  <th>Memory Slots</th>
+<!--                   <th>Fastest Memory (MHz)</th> -->
+                </tr>
               </thead>
 
-              <tbody>
-                <tr>
-                  <td><ul><li class="green-text">$80</li><li>Amazon</li></ul></td>
-                  <td>MSI H270 Gaming Pro Carbon</td>
-                  <td>Micro ATX</td>
-                  <td>4</td>
-                  <td>3000</td>
-                </tr>
-                <tr>
-                  <td><ul><li class="green-text">$60</li><li>Amazon</li></ul></td>
-                  <td>MSI Z270 Gaming Pro Carbon</td>
-                  <td>Micro ATX</td>
-                  <td>4</td>
-                  <td>3000</td>
-                </tr>
-              </tbody>
+              <tbody id="recommended-mobo-table"></tbody>
+              
             </table>
           </div>
         </div>
       </div>
-      <div class="row mobo-selection-section">
-        <div class="col s12" id="table">
-            <h5 class="teal-text">Z270 Motherboards</h5>
-            <h6>This class of motherboard offers an expansive set of features for gamers, including the ability to overclock Intel processors. "Z" boards usually offer more storage and configuration options than "H" boards.</h6>
-        </div>
-        <div class="col s12" id="table">
-          <div id="detail">
-            <table class="highlight centered">
-              <thead>
-                <th>Price</th>
-                <th>Name</th>
-                <th>Form Factor</th>
-                <th>Memory Slots</th>
-                <th>Fastest Memory (MHz)</th>
-              </thead>
-
-              <tbody>
-                <tr>
-                  <td><ul><li class="green-text">$80</li><li>Amazon</li></ul></td>
-                  <td>MSI HZ70 Gaming Pro Carbon</td>
-                  <td>Micro ATX</td>
-                  <td>4</td>
-                  <td>3000</td>
-                </tr>
-                <tr>
-                  <td><ul><li class="green-text">$60</li><li>Amazon</li></ul></td>
-                  <td>MSI Z270 Gaming Pro Carbon</td>
-                  <td>Micro ATX</td>
-                  <td>4</td>
-                  <td>3000</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      
 
       <!-- Memory Selection. For New Platform, after selecting a CPU and Motherboard. -->
-      <div class="row third-selection-section">
-        <div class="col s12" id="table">
+      <div class="row your-selected-motherboard">
+        <div class="col s12">
             <h5 class="grey-text">Your Selected Motherboard</h5>
         </div>
         <div class="col s12">
           <div id="detail">
             <table class="highlight centered">
               <thead></thead>
-              <tbody>
-                <tr>
-                  <td><ul><li class="green-text">$120</li><li>Amazon</li></ul></td>
-                  <td>MSI Z270 Gaming Pro Carbon</td>
-                  <td>
-                    <ul>
-                      <li>Motherboard</li>
-                    </ul>
-                  </td>
-                  <td>Micro ATX</td>
-                  <td>4 DIMMs</td>
-                  <td>Up to 3000 MHz</td>
-                </tr>
-              </tbody>
+              <tbody id="your-selected-motherboard-table"></tbody>
             </table>
           </div>
         </div>
       </div>
-      <div class="row teal third-selection-section">
+      <div class="row teal memory-selection-section">
         <div class="col s3 m2">
           <i class="large material-icons icon-white prefix">arrow_downward</i>
         </div>
@@ -281,7 +276,7 @@
       </div>
       
       <!-- Cheapest 4GB of RAM -->
-      <div class="row third-selection-section">
+      <div class="row memory-selection-section">
         <div class="col s12" id="table">
             <h5 class="teal-text">Best Priced 4 GB</h5>
             <h6>4 GB of RAM will get you into most PC games. While some games will run better with more, this is still the baseline for PC gaming in 2017.</h6>
@@ -292,50 +287,14 @@
               <thead>
               </thead>
 
-              <tbody>
-                <tr>
-                  <td><ul><li class="green-text">$40</li><li>Amazon</li></ul></td>
-                  <td>Super Cheap Memory</td>
-                  <td>DDR3</td>
-                  <td>4 GB</td>
-                  <td>2 DIMMs</td>
-                  <td>1066 MHz</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Best GB/$ -->
-      <div class="row third-selection-section">
-        <div class="col s12" id="table">
-            <h5 class="teal-text">Best Value in Memory</h5>
-            <h6>This memory is currently the best capacity per dollar available.</h6>
-        </div>
-        <div class="col s12" id="table">
-          <div id="detail">
-            <table class="highlight centered">
-              <thead>
-              </thead>
-
-              <tbody>
-                <tr>
-                  <td><ul><li class="green-text">$40</li><li>Amazon</li></ul></td>
-                  <td>Super Valuable Memory</td>
-                  <td>DDR3</td>
-                  <td>8 GB</td>
-                  <td>2 DIMMs</td>
-                  <td>2044 MHz</td>
-                </tr>
-              </tbody>
+              <tbody id="recommended-memory-table-4g"></tbody>
             </table>
           </div>
         </div>
       </div>
 
       <!-- Cheapest 8 GB -->
-      <div class="row third-selection-section">
+      <div class="row memory-selection-section">
         <div class="col s12" id="table">
             <h5 class="teal-text">Best Priced 8 GB</h5>
             <h6>The best price available for 8 GB of memory for your board.</h6>
@@ -346,43 +305,7 @@
               <thead>
               </thead>
 
-              <tbody>
-                <tr>
-                  <td><ul><li class="green-text">$50</li><li>Amazon</li></ul></td>
-                  <td>8 GB Memory</td>
-                  <td>DDR3</td>
-                  <td>8 GB</td>
-                  <td>2 DIMMs</td>
-                  <td>2044 MHz</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Cheapest 16 GB -->
-      <div class="row third-selection-section">
-        <div class="col s12" id="table">
-            <h5 class="teal-text">Best Priced 16 GB</h5>
-            <h6>The best price available for 16 GB of memory for your board.</h6>
-        </div>
-        <div class="col s12" id="table">
-          <div id="detail">
-            <table class="highlight centered">
-              <thead>
-              </thead>
-
-              <tbody>
-                <tr>
-                  <td><ul><li class="green-text">$80</li><li>Amazon</li></ul></td>
-                  <td>16 GB Memory</td>
-                  <td>DDR3</td>
-                  <td>8 GB</td>
-                  <td>2 DIMMs</td>
-                  <td>2044 MHz</td>
-                </tr>
-              </tbody>
+              <tbody id="recommended-memory-table-8g"></tbody>
             </table>
           </div>
         </div>
@@ -391,22 +314,14 @@
       <!-- Final Purchase -->
 
       <!-- Selected Memory -->
-      <div class="col s12 memory-selection-section" id="table">
+      <div class="col s12 your-selected-memory">
             <h5 class="grey-text">Your Selected Memory</h5>
       </div>
-      <div class="col s12 memory-selection-section">
+      <div class="col s12 your-selected-memory">
         <div id="detail">
           <table class="highlight centered">
             <thead></thead>
-            <tbody>
-              <tr>
-                <td><ul><li class="green-text">$40</li><li>Amazon</li></ul></td>
-                <td>Super Cheap Memory</td>
-                <td>DDR3</td>
-                <td>4 GB</td>
-                <td>2 DIMMs</td>
-                <td>1066 MHz</td>
-              </tr>
+            <tbody id="your-selected-memory-table">
             </tbody>
           </table>
         </div>
@@ -442,22 +357,70 @@
     		$('.memory-selection-section').hide();
     		$('.buy-selection-section').hide();
     		$('.your-selected-processor').hide();
+    		$('.your-selected-motherboard').hide();
+    		$('.your-selected-memory').hide();
     		$('#current-cpu-card').hide();
     		
-        	function constructItemHtml(cpuComp, selectionType, componentsToPurchaseStr){
-    			var itemHtml = '<tr class="select-cpu" data-cpuid="' + cpuComp.id + '" data-selectiontype="'+selectionType+'">';
+    		function constructMoboHtml(moboComp){
+    			var itemHtml = '<tr class="select-mobo" data-compid="' + moboComp.id + '">';
+    			itemHtml += '<td><ul><li class="green-text">' + moboComp.formattedprice + '</li><li><a href="' + moboComp.buyurl + '">Amazon</a></li></ul></td>';
+    			itemHtml += '<td>' + moboComp.display_name + '</td>';
+    			itemHtml += '<td>' + moboComp.form_factor + '</td>';
+    			itemHtml += '<td>' + moboComp.dimms + '</td></tr>';
+    			//itemHtml += '<td>' + moboComp.memory_frequency + '</td>';
+    			return itemHtml;
+        	}
+    		
+    		function constructFpsGainsTableHtml(fpsGains) {
+    			var html = '<table class="bordered embed"><thead></thead>';
+    			for (bType in fpsGains) {
+    				var fpsData = fpsGains[bType];
+    				html += '<tr><td>' + bType + '</td><td>+' + fpsData.gains + '</td><td>$' + fpsData.dollarfps + '</td></tr>';
+    			}
+    			html += '</table>';
+    			return html;
+    		}
+    		
+        	function constructItemHtml(cpuComp, selectionType, componentsToPurchaseStr, fpsGains){
+    			var itemHtml = '<tr class="select-cpu" data-compid="' + cpuComp.id + '" data-selectiontype="'+selectionType+'">';
     			itemHtml += '<td><ul><li class="green-text">' + cpuComp.formattedprice + '</li><li><a href="' + cpuComp.buyurl + '">Amazon</a></li></ul></td>';
     			itemHtml += '<td>' + cpuComp.display_name + '</td>';
     			itemHtml += '<td>' + componentsToPurchaseStr + '</td>';
     			itemHtml += '<td>' + cpuComp.tier_explain + '</td>';
-    			itemHtml += '<td>'+cpuComp.fpsgain+' FPS ($'+cpuComp.dollarfps+'/FPS)</td></tr>';
+    			itemHtml += '<td>' + constructFpsGainsTableHtml(fpsGains) + '</td></tr>';
     			return itemHtml;
         	}
         	
-        	function renderNextSection(){
+        	function constructMemoryHtml(memComp){
         		
+        		var itemHtml = '<tr class="select-memory" data-compid="' + memComp.id + '">';
+    			itemHtml += '<td><ul><li class="green-text">' + memComp.formattedprice + '</li><li><a href="' + memComp.buyurl + '">Amazon</a></li></ul></td>';
+    			itemHtml += '<td>' + memComp.display_name + '</td>';
+    			itemHtml += '<td>' + memComp.memory_spec + '</td>';
+    			itemHtml += '<td>' + memComp.memory_capacity + ' GB</td>';
+    			itemHtml += '<td>' + memComp.dimms + ' DIMMs</td>';
+    			itemHtml += '<td>' + memComp.memory_frequency + ' MHz</td></tr>';
+    			return itemHtml;
+        	}
+        	
+			function constructFpsDataHtml(fpsdp){
+        		
+        		var itemHtml = '<tr>';
+    			itemHtml += '<td>' + fpsdp.benchmark_type + '</td>';
+    			itemHtml += '<td>' + fpsdp.benchmark_name + '</td>';
+    			itemHtml += '<td>' + fpsdp.fps_average + '</td>';
+    			itemHtml += '<td>' + fpsdp.fps_one + '</td>';
+    			if (fpsdp.source_url) {
+    				itemHtml += '<td><a href="' + fpsdp.source_url + '">' + fpsdp.source_description + '</a></td>';
+    			} else {
+    				itemHtml += '<td>' + fpsdp.source_description + '</td>';
+    			}
+    			itemHtml += '</tr>';
+    			return itemHtml;
         	}
     		
+        	var selectedComponents = {};
+        	
     		$.getJSON( "getparts", {'target' : 'cpu'}).success(function(data) {
     			
     			var partsList = JSON.parse(data.parts);
@@ -471,7 +434,6 @@
     			
             	console.log(acdata);
             	
-
             	
     			$('#base_cpu').autocomplete({
         		    data: acdata,
@@ -479,27 +441,49 @@
         		    onAutocomplete: function(val) {
         		    	//
         		    	// fetch the recommendations data for this part
-        		    	var cpuId = namesToIds[val];
-        		    	$.getJSON('/recommendcpu/json', {'id' : cpuId}).success(function(resp){
+        		    	var compid = namesToIds[val];
+        		    	$.getJSON('/recommendcpu/json', {'id' : compid}).success(function(resp){
         		    		$('#current-cpu-title').text(resp.input_cpu.display_name);
         		    		$('#current-cpu-tierinfo').text(resp.input_cpu.tier_explain);
         		    		$('#current-cpu-card').show();
         		    		$('.first-selection-section').show();
         		    		
+        		    		var compIdsToRecs = {};
+        		    		compIdsToRecs[resp.scsbv.id] = resp.scsbv;
+        		    		compIdsToRecs[resp.scstop.id] = resp.scstop;
         		    		for (var perfTier in resp.scsbytier) {
         		    			var comp = resp.scsbytier[perfTier];
-        		    			$('#scs-cpu-table').append(constructItemHtml(comp, 'SCS', 'CPU'));	
+        		    			$('#scs-cpu-table').append(constructItemHtml(comp, 'SCS', 'CPU', resp.fpsgains.recs[comp.id]));
+        		    			compIdsToRecs[comp.id] = comp;
         		    		}
+        		    		$('#scs-cpu-table').append(constructItemHtml(resp.scsbv, 'SCS', 'CPU', resp.fpsgains.recs[resp.scsbv.id]));
+        		    		$('#scs-cpu-table').append(constructItemHtml(resp.scstop, 'SCS', 'CPU', resp.fpsgains.recs[resp.scstop.id]));
         		    		
+        		    		compIdsToRecs[resp.npbv.id] = resp.npbv;
+        		    		compIdsToRecs[resp.nptop.id] = resp.nptop;
         		    		for (var perfTier in resp.npbytier) {
         		    			var comp = resp.npbytier[perfTier];
-        		    			$('#np-cpu-table').append(constructItemHtml(comp, 'NP', 'CPU, Motherboard, Memory'));	
+        		    			$('#np-cpu-table').append(constructItemHtml(comp, 'NP', 'CPU, Motherboard, Memory', resp.fpsgains.recs[comp.id]));
+        		    			compIdsToRecs[comp.id] = comp;
+        		    		}
+        		    		$('#np-cpu-table').append(constructItemHtml(resp.npbv, 'NP', 'CPU, Motherboard, Memory', resp.fpsgains.recs[resp.npbv.id]));
+        		    		$('#np-cpu-table').append(constructItemHtml(resp.nptop, 'NP', 'CPU, Motherboard, Memory', resp.fpsgains.recs[resp.nptop.id]));
+        		    		
+        		    		///
+        		    		/// populate input cpu table
+        		    		for (var i=0;i<resp.fpsgains.input.length;i++) {
+        		    			$('#input-cpu-fps-table').append(constructFpsDataHtml(resp.fpsgains.input[i]));
         		    		}
         		    		
         		    		$('.select-cpu').click(function(){
         	    				// cpu selected
         	    				
         	    				var selectionType = $(this).data('selectiontype');
+        	    				
+        	    				var selectionId = $(this).data('compid');
+        	    				
+        	    				var selectedCpu = compIdsToRecs[selectionId];
+        	    				selectedComponents.cpu = selectedCpu;
         	    				
         	    				$('.first-selection-section').slideUp();
         	    				$('.your-selected-processor').show();
@@ -509,8 +493,41 @@
         	    					// show buy option
         	    					$('.buy-selection-section').show();
         	    				} else {
+        	    					
+        	    					// populate recommended motherboard
+        	    					
+        	    					var moboComp = selectedCpu.recommendedmobo;
+        	    					$('#recommended-mobo-table').append(constructMoboHtml(moboComp));
+        	    					
         	    					// show mobo selection
         	    					$('.mobo-selection-section').show();
+        	    					
+        	    					//
+        	    					// TODO TODO bind what happens when a mobo is selected
+        	    					$('.select-mobo').click(function(){
+        	    						var selectedMoboId = $(this).data('compid');
+        	    						selectedComponents.mobo = compIdsToRecs[selectionId];
+        	    						$('.your-selected-motherboard').show(this);
+        	    						$('#your-selected-motherboard-table').append(this);
+        	    						
+        	    						// populate memory options
+        	    						$('#recommended-memory-table-4g').append(constructMemoryHtml(selectedCpu.recommendedmemory4gb));
+        	    						$('#recommended-memory-table-8g').append(constructMemoryHtml(selectedCpu.recommendedmemory8gb));
+        	    						
+        	    						// show memory section
+        	    						$('.memory-selection-section').show();
+        	    						$('.mobo-selection-section').slideUp();
+        	    						
+        	    						$('.select-memory').click(function(){
+        	    							
+        	    							//
+        	    							$('.your-selected-memory').show(this);
+        	    							$('#your-selected-memory-table').append(this);
+        	    							$('.memory-selection-section').slideUp();
+        	    							
+        	    						});
+        	    						
+        	    					});
         	    				}
         	    				
         	    				

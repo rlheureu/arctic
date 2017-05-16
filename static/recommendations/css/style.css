@@ -127,3 +127,11 @@ i.icon-white {
 .select-cpu{
   cursor: pointer;	
 }
+
+.select-memory{
+  cursor: pointer;	
+}
+
+.select-mobo{
+  cursor: pointer;	
+}
