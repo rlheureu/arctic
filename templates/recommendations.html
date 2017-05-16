@@ -11,9 +11,6 @@
     <!--Import stylesheet.css -->
     <link href="/static/recommendations/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
     <!--Import Fjalla One -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600|Fjalla+One" rel="stylesheet" type="text/css">
   </head>
@@ -448,26 +445,36 @@
         		    		$('#current-cpu-card').show();
         		    		$('.first-selection-section').show();
         		    		
-        		    		var compIdsToRecs = {};
-        		    		compIdsToRecs[resp.scsbv.id] = resp.scsbv;
-        		    		compIdsToRecs[resp.scstop.id] = resp.scstop;
+        		    		var cpuRecsHtml = {'scs-cpu-table':{}, 'np-cpu-table': {}};
         		    		for (var perfTier in resp.scsbytier) {
-        		    			var comp = resp.scsbytier[perfTier];
-        		    			$('#scs-cpu-table').append(constructItemHtml(comp, 'SCS', 'CPU', resp.fpsgains.recs[comp.id]));
-        		    			compIdsToRecs[comp.id] = comp;
+        		    			cpuRecsHtml['scs-cpu-table'][resp.scsbytier[perfTier].id] = resp.scsbytier[perfTier];
         		    		}
-        		    		$('#scs-cpu-table').append(constructItemHtml(resp.scsbv, 'SCS', 'CPU', resp.fpsgains.recs[resp.scsbv.id]));
-        		    		$('#scs-cpu-table').append(constructItemHtml(resp.scstop, 'SCS', 'CPU', resp.fpsgains.recs[resp.scstop.id]));
+        		    		if (resp.scsbv) cpuRecsHtml['scs-cpu-table'][resp.scsbv.id] = resp.scsbv;
+        		    		if (resp.scstop) cpuRecsHtml['scs-cpu-table'][resp.scstop.id] = resp.scstop;
         		    		
-        		    		compIdsToRecs[resp.npbv.id] = resp.npbv;
-        		    		compIdsToRecs[resp.nptop.id] = resp.nptop;
         		    		for (var perfTier in resp.npbytier) {
-        		    			var comp = resp.npbytier[perfTier];
-        		    			$('#np-cpu-table').append(constructItemHtml(comp, 'NP', 'CPU, Motherboard, Memory', resp.fpsgains.recs[comp.id]));
-        		    			compIdsToRecs[comp.id] = comp;
+        		    			cpuRecsHtml['np-cpu-table'][resp.npbytier[perfTier].id] = resp.npbytier[perfTier]
         		    		}
-        		    		$('#np-cpu-table').append(constructItemHtml(resp.npbv, 'NP', 'CPU, Motherboard, Memory', resp.fpsgains.recs[resp.npbv.id]));
-        		    		$('#np-cpu-table').append(constructItemHtml(resp.nptop, 'NP', 'CPU, Motherboard, Memory', resp.fpsgains.recs[resp.nptop.id]));
+        		    		if (resp.npbv) cpuRecsHtml['np-cpu-table'][resp.npbv.id] = resp.npbv;
+        		    		if (resp.nptop) cpuRecsHtml['np-cpu-table'][resp.nptop.id] = resp.nptop;
+        		    		
+        		    		console.log(cpuRecsHtml);
+        		    		var compIdsToRecs = {};
+        		    		// render table
+        		    		for (cpuTableId in cpuRecsHtml) {
+        		    			var itemHtmls = Object.values(cpuRecsHtml[cpuTableId]);
+        		    			itemHtmls.sort(function(a, b) {
+        		    				if (a.platform_price) return a.platform_price - b.platform_price;
+        		    				else return a.price.price - b.price.price;
+        		    			});
+        		    			for (var i=0;i<itemHtmls.length;i++) {
+        		    				// ensures that a component is only rendered once
+        		    				var comp = itemHtmls[i];
+        		    				if (cpuTableId === 'np-cpu-table') $('#' + cpuTableId).append(constructItemHtml(comp, 'NP', 'CPU, Motherboard, Memory', resp.fpsgains.recs[comp.id]));
+        		    				else $('#' + cpuTableId).append(constructItemHtml(comp, 'SCS', 'CPU', resp.fpsgains.recs[comp.id]));
+        		    				compIdsToRecs[comp.id] = comp;
+        		    			}
+        		    		}
         		    		
         		    		///
         		    		/// populate input cpu table
