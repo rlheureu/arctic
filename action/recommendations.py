@@ -111,6 +111,8 @@ def recommend_same_chipset_cpu(input_cpu, chipsets, tier, comp_genres):
     
     """
     
+    inputlowestfps = determine_cpu_fps_tier(input_cpu, comp_genres)[1]
+    
     same_cs_cpus = dataaccess.get_cpus_by_chipset(chipsets, available=True)
     
     LOG.info('Generating CPU recommendation for chipsets {} got {} cpus'.format(chipsets, len(same_cs_cpus)))
@@ -126,8 +128,11 @@ def recommend_same_chipset_cpu(input_cpu, chipsets, tier, comp_genres):
         price = lowest_price(cpu.prices)
         if not price: continue
         
+        if lowestfps <= inputlowestfps: continue
+        
         """ cheapest by HIGHER tier """
-        if ptier > tier and (not tiertocpus.get(ptier) or price.price < tiertocpus.get(ptier).price): tiertocpus[ptier] = cpu
+        if ptier > tier and (not tiertocpus.get(ptier) or price.price < tiertocpus.get(ptier).price):
+            tiertocpus[ptier] = cpu
         
         cpu.buyurl = price.link
         cpu.formattedprice = price.formatted_price
@@ -212,7 +217,7 @@ def recommend_newplatform_cpu(input_cpu, currchipsets, tier, comp_genres):
         """ cheapest by tier """
         ptier, lowestfps = determine_cpu_fps_tier(cpu, comp_genres)
         if not ptier or not lowestfps: continue
-        if lowestfps < inputlowestfps: continue
+        if lowestfps <= inputlowestfps: continue
         if ptier > tier:
             val = lowestbytier.get(ptier)
             if not val: lowestbytier[ptier] = cpu
@@ -262,13 +267,13 @@ def populate_fps_gains(currcpu, comps, genres):
         comp.tier_explain = tierblurbs[comptier]
         
 
-def recommend_a_cpu(input_cpu, genres=[]):
+def recommend_a_cpu(input_cpu, genres=None):
     """
     returns a recommended CPU based on the inputs provided
     """
     
     """ first which tier does this CPU fall into? """
-    comp_genres = genres
+    comp_genres = genres if genres else []
     for dp in input_cpu.fps_data: comp_genres.append(str(dp.benchmark_type))
     tier = determine_cpu_fps_tier(input_cpu, set(comp_genres))[0]
     

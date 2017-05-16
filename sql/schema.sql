@@ -188,6 +188,7 @@ CREATE TABLE `arctic_component_price` (
   `formatted_price` varchar(30) DEFAULT NULL,
   `link` varchar(2048) DEFAULT NULL,
   `foreign_id` varchar(128) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`arctic_component_price_id`),
   KEY `price_retailer` (`retailer_id`),
   KEY `price_component` (`component_id`),

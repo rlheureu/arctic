@@ -409,4 +409,5 @@ class ComponentPrice(Base):
     formatted_price = Column('formatted_price', String(30))
     link = Column('link', String(2048))
     foreign_id = Column('foreign_id', String(128))
+    updated_at = Column('updated_at', DateTime)
 

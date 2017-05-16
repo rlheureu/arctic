@@ -14,7 +14,7 @@ from database.database import db
 from models.models import BaseComponent, GPUComponent, MotherboardComponent, \
     ComponentPrice, MemoryComponent
 from utils import retry_util, retaildata_utils
-
+from datetime import datetime
 
 LOG = logging.getLogger('app')
 
@@ -220,6 +220,7 @@ class AmazonExtractor(BaseExtractor):
             compprice.formatted_price = offerinfo.offerlisting.price.formattedprice.string
             compprice.retailer = dataaccess.get_retailer_by_name('amazon')
             compprice.use_status = comp.use_status
+            compprice.updated_at = datetime.now()
             
             comp.available = True
             
