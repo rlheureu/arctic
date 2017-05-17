@@ -568,6 +568,10 @@
         		    				compIdsToRecs[comp.id] = comp;
         		    			}
         		    		}
+        		    		if (Object.values(cpuRecsHtml['scs-cpu-table']).length === 0)
+        		    			$('#scs-cpu-table').append('<tr><td colspan=5><b>No upgrade available for existing platform.</b></td></tr>');
+    		    			if (Object.values(cpuRecsHtml['np-cpu-table']).length === 0)
+    		    				$('#np-cpu-table').append('<tr><td colspan=5><b>No upgrade available on any other platform.</b></td></tr>');
         		    		
         		    		///
         		    		/// populate input cpu table

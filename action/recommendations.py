@@ -13,6 +13,7 @@ import logging
 from database import dataaccess
 from models.models import BaseComponent
 from utils import retaildata_utils
+import math
 
 
 LOG = logging.getLogger('app')
@@ -89,12 +90,14 @@ def determine_cpu_fps_tier(cpu_comp, genres):
         elif datapoint.fps_one >= 30: bygenre[genre] = 2
         elif datapoint.fps_average >= 30: bygenre[genre] = 1
     
-    if len(bygenre.values()) == 0: return 0,None # NO DATA
+    if len(bygenre.values()) == 0: return 0,None, None # NO DATA
     
     """ if the same set of genres are not being compared then return 0 (i.e. data is incomplete) """
-    if len(set(genres).intersection(set(bygenre.keys()))) != len(set(genres)): return 0, None
+    if len(set(genres).intersection(set(bygenre.keys()))) != len(set(genres)): return 0, None, None
     
-    return min(bygenre.values()), lowest_average     
+    vals=bygenre.values()
+    mean = sum(vals)/len(vals)
+    return min(vals), lowest_average, mean     
 
 def lowest_price(prices):
     lowest = None
@@ -111,7 +114,7 @@ def recommend_same_chipset_cpu(input_cpu, chipsets, tier, comp_genres):
     
     """
     
-    inputlowestfps = determine_cpu_fps_tier(input_cpu, comp_genres)[1]
+    tier, inputlowestfps, imean = determine_cpu_fps_tier(input_cpu, comp_genres)
     
     same_cs_cpus = dataaccess.get_cpus_by_chipset(chipsets, available=True)
     
@@ -123,12 +126,12 @@ def recommend_same_chipset_cpu(input_cpu, chipsets, tier, comp_genres):
     lowestdollarfps = None
     for cpu in same_cs_cpus:
         if cpu.id == input_cpu.id: continue
-        ptier, lowestfps = determine_cpu_fps_tier(cpu, set(comp_genres))
+        ptier, lowestfps, mean = determine_cpu_fps_tier(cpu, set(comp_genres))
         if ptier < tier: continue
         price = lowest_price(cpu.prices)
         if not price: continue
         
-        if lowestfps <= inputlowestfps: continue
+        if lowestfps <= inputlowestfps or mean < imean: continue
         
         """ cheapest by HIGHER tier """
         if ptier > tier and (not tiertocpus.get(ptier) or price.price < tiertocpus.get(ptier).price):
@@ -181,7 +184,7 @@ def populate_memory_config(cpu, mobo, memrecs):
 def recommend_newplatform_cpu(input_cpu, currchipsets, tier, comp_genres):
     all_cpus = dataaccess.get_all_cpus()
     
-    inputlowestfps = determine_cpu_fps_tier(input_cpu, comp_genres)[1]
+    tier, inputlowestfps, imean = determine_cpu_fps_tier(input_cpu, comp_genres)
     
     othercpus = []
     for cpu in all_cpus:
@@ -215,9 +218,9 @@ def recommend_newplatform_cpu(input_cpu, currchipsets, tier, comp_genres):
         cpu.formattedprice = price.formatted_price
         
         """ cheapest by tier """
-        ptier, lowestfps = determine_cpu_fps_tier(cpu, comp_genres)
+        ptier, lowestfps, mean = determine_cpu_fps_tier(cpu, comp_genres)
         if not ptier or not lowestfps: continue
-        if lowestfps <= inputlowestfps: continue
+        if lowestfps <= inputlowestfps or mean <= imean: continue
         if ptier > tier:
             val = lowestbytier.get(ptier)
             if not val: lowestbytier[ptier] = cpu
@@ -248,14 +251,14 @@ def populate_fps_gains(currcpu, comps, genres):
                   5 :'Gets at least 120 FPS on average',
                   6 :'Gets at least 144 FPS on average'}
     
-    tier, lowestfps = determine_cpu_fps_tier(currcpu, genres)
+    tier, lowestfps, imean = determine_cpu_fps_tier(currcpu, genres)
     
     currcpu.tier = tier
     currcpu.tier_explain = tierblurbs[tier]
     
     for comp in comps:
         if not comp: continue
-        comptier, complowestfps = determine_cpu_fps_tier(comp, genres)
+        comptier, complowestfps, mean = determine_cpu_fps_tier(comp, genres)
         if not comptier or not complowestfps: continue
         gains = int(complowestfps - lowestfps)
         comp.fpsgain = gains
