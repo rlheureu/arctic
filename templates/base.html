@@ -469,46 +469,27 @@
       <div class="container">
         <div class="row">
           <div class="col-md-3">
-            <a href="{% if current_user.is_authenticated %}/showcase{% else %}/{% endif %}"><img style="padding-top: 8px;width:175px;" src="{{ url_for('static', filename='images/logo-small.png') }}"/></a>
+            <a href="/"><img style="padding-top: 8px;width:175px;" src="{{ url_for('static', filename='images/logo-small.png') }}"/></a>
           </div>
-          <div class="col-md-6 align-text-center">
-            {% block navleft %}
-              {% if current_user.is_authenticated %}
-              {% elif show_get_started %}
-              <div class="nav-items">
-                <ul>
-                  <li><a href="#performance-tiers" class="smoothscroll-link">Performance Tiers</a></li>
-                  <li><a href="#how-it-works" class="smoothscroll-link">How it works</a></li>
-                  <li><a href="#showcase" class="smoothscroll-link">Showcase your rig</a></li>
-                </ul>
-              </div>
-              {% endif %}
-            {% endblock %}
-          </div>
-          <div class="col-md-3 align-text-right ">
+          <div class="col-md-9 align-text-right ">
             {% block navright %}
-              {% if current_user.is_authenticated %}
+              
               <div class="nav-items">
                 <ul>
+                  {% if current_user.is_authenticated %}<li {% if currpagenav == 'showcase' %}class="active"{% endif %}><a href="/showcase">Showcase</a></li>{% endif %}
+                  <li {% if currpagenav == 'build' %}class="active"{% endif %}><a href="/bench">Build</a></li>
+                  <li {% if currpagenav == 'upgrade' %}class="active"{% endif %}><a href="/recommendcpu">Upgrade</a></li>
                   <li {% if currpagenav == 'faq' %}class="active"{% endif %}><a href="/faq">FAQ</a></li>
+                  <li><a href="https://medium.com/@amdahlcube">Blog</a></li>
+                  {% if current_user.is_authenticated %}
                   <li {% if currpagenav == 'account' %}class="active"{% endif %}><a href="/account">Account</a></li>
                   <li><a href="/logoutuser">Logout</a></li>
+                  {% else %}
+                  <li><a href="#" id="navloginbutton">Login</a></li>
+                  {% endif %}
                 </ul>
               </div>
-              {% elif show_get_started %}
-              <div class="nav-btns">
-                <ul>
-                  <li><a href="/preset" class="blue-link" style="position:relative;top:-5px;">Create Your Cube</a></li>
-                  <li><a href="#" class="blue-link" style="position:relative;top:-5px;" id="navloginbutton">Login</a></li>
-                </ul>
-              </div>
-              {% else %}
-              <div class="nav-items">
-                <ul>
-                  <li {% if currpagenav == 'faq' %}class="active"{% endif %}><a href="/faq">FAQ</a></li>
-                </ul>
-              </div>
-              {% endif %}
+              
             {% endblock %}
           </div>
         </div>

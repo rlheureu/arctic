@@ -398,32 +398,10 @@
   </style>
 {% endblock %}
 
-{% block navleft %}
-{% if current_user.is_authenticated %}
-{{ super() }}
-{% else %}
-
-  {% if my_rig or not rig %}
-  <h3 class="navbar-page-title">
-    Finish building your Cube  
-  </h3>
-  {% else %}
-  {% endif %}
-
-{% endif %}
-{% endblock %}
-
 
 {% block content %}
   {% if not rig %}
-  <div style="width:100%; border-bottom: 3px #2a263f solid; text-align: center;" class="wizard-steps-breadcrumbs">
-    <ul>
-      <li>CONFIGURE</li>
-      <li>NAME</li>
-      <li class="active">BUILD & FINISH</li>
-    </ul>
-  </div>
-  <br>
+  
   {% endif %}
   <br>
 

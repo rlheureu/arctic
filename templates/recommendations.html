@@ -29,20 +29,33 @@
       <div class="nav-wrapper container">
         <a id="logo-container" href="/" class="brand-logo"><img style="padding-top: 8px;width:175px;" src="static/images/logo-small.png"></a>
         <ul class="right hide-on-med-and-down">
+        
+          {% if current_user.is_authenticated %}<li ><a href="/showcase">Showcase</a></li>{% endif %}
           <li><a href="/preset">Build</a></li>
-          <li class="active"><a href="#">Upgrade</a></li>
-<!--           <li><a href="#">Compare</a></li> -->
-          <li><a href="/showcase">Showcase</a></li>
-<!--           <li><a href="#">Track</a></li> -->
+          <li class="active"><a href="/recommendcpu">Upgrade</a></li>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="https://medium.com/@amdahlcube">Blog</a></li>
+          {% if current_user.is_authenticated %}
+          <li><a href="/logoutuser">Logout</a></li>
           <li><a href="/account"><i class="material-icons">account_circle</i></a></li>
+          {% else %}
+          <li><a href="/">Login</a></li>
+          {% endif %}
+          
         </ul>
 
         <ul id="nav-mobile" class="side-nav">
+          {% if current_user.is_authenticated %}<li ><a href="/showcase">Showcase</a></li>{% endif %}
           <li><a href="/preset">Build</a></li>
-          <li class="active"><a href="#">Upgrade</a></li>
-<!--           <li><a href="#">Compare</a></li> -->
-          <li><a href="/showcase">Showcase</a></li>
-<!--           <li><a href="#">Track</a></li> -->
+          <li class="active"><a href="/recommendcpu">Upgrade</a></li>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="https://medium.com/@amdahlcube">Blog</a></li>
+          {% if current_user.is_authenticated %}
+          <li><a href="/logoutuser">Logout</a></li>
+          <li><a href="/account"><i class="material-icons">account_circle</i></a></li>
+          {% else %}
+          <li><a href="#" id="navloginbutton">Login</a></li>
+          {% endif %}
         </ul>
         <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
       </div>

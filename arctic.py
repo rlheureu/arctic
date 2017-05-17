@@ -272,7 +272,7 @@ def preset():
     rig_presets = dataaccess.get_rig_presets()
     
     context = {'rig_presets' : rig_presets, 
-               'currpagenav':'bench'}
+               'currpagenav':'build'}
     
     if request.args.get('use', None): context['use'] = request.args.get('use')
     
@@ -346,7 +346,7 @@ def resetpassword():
 def bench():
     
     context = {}
-    context['currpagenav'] = 'bench'
+    context['currpagenav'] = 'build'
     
     """
     If a RIG is being requested it will take precedence over other
@@ -448,7 +448,7 @@ def showcasenew():
 @app.route("/namecube", methods=['GET'])
 def namecube():
     
-    context = {'currpagenav':'bench'}
+    context = {'currpagenav':'build'}
     
     if request.args.get('preset', None): context['preset'] = request.args.get('preset')
     if request.args.get('use', None): context['use'] = request.args.get('use')
