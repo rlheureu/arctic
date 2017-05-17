@@ -29,22 +29,22 @@
       <div class="nav-wrapper container">
         <a id="logo-container" href="/" class="brand-logo"><img style="padding-top: 8px;width:175px;" src="static/images/logo-small.png"></a>
         <ul class="right hide-on-med-and-down">
-<!--           <li><a href="#">Build</a></li> -->
-<!--           <li class="active"><a href="#">Upgrade</a></li> -->
+          <li><a href="/preset">Build</a></li>
+          <li class="active"><a href="#">Upgrade</a></li>
 <!--           <li><a href="#">Compare</a></li> -->
-<!--           <li><a href="#">Showcase</a></li> -->
+          <li><a href="/showcase">Showcase</a></li>
 <!--           <li><a href="#">Track</a></li> -->
-<!--           <li><a href="#"><i class="material-icons">account_circle</i></a></li> -->
+          <li><a href="/account"><i class="material-icons">account_circle</i></a></li>
         </ul>
 
         <ul id="nav-mobile" class="side-nav">
-<!--           <li><a href="#">Build</a></li> -->
-<!--           <li class="active"><a href="#">Upgrade</a></li> -->
+          <li><a href="/preset">Build</a></li>
+          <li class="active"><a href="#">Upgrade</a></li>
 <!--           <li><a href="#">Compare</a></li> -->
-<!--           <li><a href="#">Showcase</a></li> -->
+          <li><a href="/showcase">Showcase</a></li>
 <!--           <li><a href="#">Track</a></li> -->
         </ul>
-<!--         <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a> -->
+        <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
       </div>
     </nav>
 
@@ -72,7 +72,7 @@
               </div>
               <div class="card-reveal">
                   <span class="card-title grey-text text-darken-4"><i class="material-icons right">close</i></span>
-                    <div id="detail">
+                    <div >
                       <table class="striped centered responsive-table">
                         <thead>
                           <tr>
@@ -151,13 +151,14 @@
       </div>
 
       <!-- Output type for same socket. This recommends a single component. -->
+      
       <div class="row first-selection-section">
-        <div class="col s12" id="table">
+        <div class="col s12 table">
             <h5 class="teal-text">CPU Only Upgrades</h5>
             <h6>These do not require a new motherboard or memory. Drop in the new CPU and apply new thermal paste.</h6>
         </div>
-        <div class="col s12" id="table">
-          <div id="detail">
+        <div class="col s12 table">
+          <div class="horizontal-scrollable">
             <table class="highlight centered">
               <thead>
                 <tr>
@@ -188,14 +189,15 @@
         </div>
       </div>
       
+      
       <!-- Output type for new platform. This recommends multiple components. -->
       <div class="row first-selection-section">
-        <div class="col s12" id="table">
+        <div class="col s12 table">
             <h5 class="teal-text">New Platforms</h5>
             <h6>These are the latest platforms and processors available. They usually require a new motherboard and memory, which is included in the price calculations.</h6>
         </div>
-        <div class="col s12" id="table">
-          <div id="detail">
+        <div class="col s12 table">
+          <div class="horizontal-scrollable">
             <table class="highlight centered">
               <thead>
                 <tr>
@@ -242,12 +244,12 @@
         </div>
       </div>
       <div class="row mobo-selection-section">
-        <div class="col s12" id="table">
+        <div class="col s12 table">
             <h5 class="teal-text">Cheapest Compatible Motherboard</h5>
             <h6>This class of motherboard offers essential features for gamers at the lowest prices.</h6>
         </div>
-        <div class="col s12" id="table">
-          <div id="detail">
+        <div class="col s12 table">
+          <div class="horizontal-scrollable">
             <table class="highlight centered">
               <thead>
                 <tr>
@@ -255,7 +257,6 @@
                   <th>Name</th>
                   <th>Form Factor</th>
                   <th>Memory Slots</th>
-<!--                   <th>Fastest Memory (MHz)</th> -->
                 </tr>
               </thead>
 
@@ -281,12 +282,12 @@
       
       <!-- Cheapest 4GB of RAM -->
       <div class="row memory-selection-section">
-        <div class="col s12" id="table">
+        <div class="col s12 table">
             <h5 class="teal-text">Best Priced 4 GB</h5>
             <h6>4 GB of RAM will get you into most PC games. While some games will run better with more, this is still the baseline for PC gaming in 2017.</h6>
         </div>
-        <div class="col s12" id="table">
-          <div id="detail">
+        <div class="col s12 table">
+          <div class="horizontal-scrollable">
             <table class="highlight centered">
               <thead>
               </thead>
@@ -299,12 +300,12 @@
 
       <!-- Cheapest 8 GB -->
       <div class="row memory-selection-section">
-        <div class="col s12" id="table">
+        <div class="col s12 table">
             <h5 class="teal-text">Best Priced 8 GB</h5>
             <h6>The best price available for 8 GB of memory for your board.</h6>
         </div>
-        <div class="col s12" id="table">
-          <div id="detail">
+        <div class="col s12 table">
+          <div class="horizontal-scrollable">
             <table class="highlight centered">
               <thead>
               </thead>

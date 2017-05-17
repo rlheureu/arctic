@@ -113,7 +113,7 @@ i.icon-white {
     color: white;
 }
 
-#table{
+.table{
   padding-left: 10px;
   padding-right: 10px;
   margin-top: 0px;
@@ -140,3 +140,7 @@ i.icon-white {
   cursor: pointer;
 }
 
+.horizontal-scrollable {
+  overflow: scroll;
+  overflow-y:hidden;
+}
