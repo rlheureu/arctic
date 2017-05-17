@@ -523,7 +523,7 @@ def get_parts():
         ids = reqdict.get('ids')
         
         for cid in ids.split(','):
-            comp = dataaccess.get_component(cid)
+            comp = dataaccess.get_component(cid, active=None)
             if comp: render_parts.append(comp)
         
     else:

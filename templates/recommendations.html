@@ -10,13 +10,14 @@
     <link type="text/css" rel="stylesheet" href="/static/recommendations/css/materialize.min.css"  media="screen,projection"/>
     <!--Import stylesheet.css -->
     <link href="/static/recommendations/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="/static/recommendations/css/loading.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 
     <!--Import Fjalla One -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600|Fjalla+One" rel="stylesheet" type="text/css">
   </head>
 
   <body>
-
+    <div class="loading" id="loading-spinner">Loading&#8230;</div>
     <nav class="white" role="navigation">
       <div class="nav-wrapper container">
         <a id="logo-container" href="#" class="brand-logo"><img style="padding-top: 8px;width:175px;" src="static/images/logo-small.png"></a>
@@ -106,6 +107,42 @@
     </div>
 
     <div class="container">
+      <!-- ---------------------- -->
+      <!-- Selected Items Section -->
+      
+      <!-- Selected CPU -->
+      <div class="row your-selected-processor">
+        <div class="col l12">
+          <h5 class="grey-text">Your Selected Processor <i class="material-icons right clickable" id="cancel-cpu-selection">close</i></h5>
+        </div>
+      </div>
+      <div class="row your-selected-processor">
+        <div class="col l12" id="your-selected-processor-display"></div>
+      </div>
+      
+      <!-- Memory Selection. For New Platform, after selecting a CPU and Motherboard. -->
+      <div class="row your-selected-motherboard">
+        <div class="col l12">
+            <h5 class="grey-text">Your Selected Motherboard <i class="material-icons right clickable" id="cancel-mobo-selection">close</i></h5>
+        </div>
+      </div>
+      <div class="row your-selected-motherboard">
+        <div class="col l12"  id="your-selected-motherboard-display"></div>
+      </div>
+      
+      <!-- Selected Memory -->
+      <div class="row your-selected-memory">
+        <div class="col l12">
+            <h5 class="grey-text">Your Selected Memory <i class="material-icons right clickable" id="cancel-memory-selection">close</i></h5>
+         </div>
+      </div>
+      <div class="row your-selected-memory">
+        <div class="col l12" id="your-selected-memory-display"></div>
+      </div>
+      <!-- ---------------------- -->
+      <!-- ---------------------- -->
+    
+    
       <div class="row teal first-selection-section">
         <div class="col s3 m2">
           <i class="large material-icons icon-white prefix">arrow_downward</i>
@@ -195,16 +232,7 @@
         </div>
       </div>
 
-      <!-- Selected CPU -->
-      <div class="col s12 your-selected-processor" id=""><h5 class="grey-text">Your Selected Processor</h5></div>
-      <div class="col s12 your-selected-processor">
-        <div id="detail">
-          <table class="highlight centered">
-            <thead></thead>
-            <tbody id="your-selected-processor-table"></tbody>
-          </table>
-        </div>
-      </div>
+      
 
       <!-- For New Platform, after selecting a CPU. -->
       <div class="row teal mobo-selection-section">
@@ -244,21 +272,6 @@
         </div>
       </div>
       
-
-      <!-- Memory Selection. For New Platform, after selecting a CPU and Motherboard. -->
-      <div class="row your-selected-motherboard">
-        <div class="col s12">
-            <h5 class="grey-text">Your Selected Motherboard</h5>
-        </div>
-        <div class="col s12">
-          <div id="detail">
-            <table class="highlight centered">
-              <thead></thead>
-              <tbody id="your-selected-motherboard-table"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
       <div class="row teal memory-selection-section">
         <div class="col s3 m2">
           <i class="large material-icons icon-white prefix">arrow_downward</i>
@@ -308,34 +321,7 @@
         </div>
       </div>
 
-      <!-- Final Purchase -->
 
-      <!-- Selected Memory -->
-      <div class="col s12 your-selected-memory">
-            <h5 class="grey-text">Your Selected Memory</h5>
-      </div>
-      <div class="col s12 your-selected-memory">
-        <div id="detail">
-          <table class="highlight centered">
-            <thead></thead>
-            <tbody id="your-selected-memory-table">
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="row teal buy-selection-section">
-        <div class="col s3 m2">
-          <i class="large material-icons icon-white prefix">arrow_downward</i>
-        </div>
-        <div class="col s9">
-          <h5 class="white-text">Buy your Upgrade</h5>
-          <h6 class="teal-text text-lighten-3">Amazon will calculate taxes + shipping costs</h6>
-        </div>
-      </div>
-      <div class="col s12 buy-selection-section">
-        <h5 class="teal-text text-lighten-3">Buy with <b>Amazon</b><a class="waves-effect waves-light btn right">$400</a></h5>
-      </div>
     </div>
 
     <!--Import jQuery before materialize.js-->
@@ -346,17 +332,85 @@
     <script type="text/javascript">
     	$(function(){
     		
-    		//
-    		// hide all selctions
-    		$('.first-selection-section').hide();
-    		$('.mobo-selection-section').hide();
-    		$('.third-selection-section').hide();
-    		$('.memory-selection-section').hide();
-    		$('.buy-selection-section').hide();
-    		$('.your-selected-processor').hide();
-    		$('.your-selected-motherboard').hide();
-    		$('.your-selected-memory').hide();
-    		$('#current-cpu-card').hide();
+    		$('#loading-spinner').hide();
+    		
+    		function emptyAndHideSelection(cpuSelection, moboSelection, memSelection){
+    			cpuSelection = cpuSelection || false;
+    			moboSelection = moboSelection || false;
+    			memSelection = memSelection || false;
+    			
+    			if (cpuSelection) {
+        			$('.your-selected-processor').hide();
+        			$('#your-selected-processor-display').empty();
+    			}
+    			if (moboSelection) {
+            		$('.your-selected-motherboard').hide();
+    	    		$('#your-selected-motherboard-display').empty();
+    			}
+	    		if (memSelection) {
+    	    		$('.your-selected-memory').hide();
+    	    		$('#your-selected-memory-display').empty();
+	    		}
+    		}
+    		
+    		function hideAllOptionSections() {
+    			$('.first-selection-section').hide();
+        		$('.mobo-selection-section').hide();
+        		$('.third-selection-section').hide();
+        		$('.memory-selection-section').hide();
+    		}
+    		
+    		function emptyMoboOptions(){
+    			$('#recommended-mobo-table').empty();
+    		}
+    		
+    		function emptyMemoryOptions(){
+    			$('#recommended-memory-table-4g').empty();
+	    		$('#recommended-memory-table-8g').empty();
+    		}
+    		
+    		function resetUI(){
+    			hideAllOptionSections();
+    			emptyMoboOptions();
+    			emptyMemoryOptions();
+    			
+        		$('#current-cpu-card').hide();
+        		
+        		$('#current-cpu-title').text('');
+	    		$('#current-cpu-tierinfo').text('');
+	    		
+	    		$('#scs-cpu-table').empty();
+	    		$('#np-cpu-table').empty();
+	    		$('#input-cpu-fps-table').empty();
+	    		
+	    		emptyAndHideSelection(true,true,true);
+    		}
+    		
+    		$('#cancel-cpu-selection').click(function(){
+        		// empty out all selected parts and show the cpu options
+        		emptyAndHideSelection(true,true,true);
+        		hideAllOptionSections();
+        		emptyMoboOptions();
+    			emptyMemoryOptions();
+        		$('.first-selection-section').slideDown();
+        	});
+        	
+        	$('#cancel-mobo-selection').click(function(){
+        		// empty out all selected parts and show the cpu options
+        		emptyAndHideSelection(false,true,true);
+        		hideAllOptionSections();
+    			emptyMemoryOptions();
+    			$('.mobo-selection-section').slideDown();
+        	});
+        	
+        	$('#cancel-memory-selection').click(function(){
+        		// empty out all selected parts and show the cpu options
+        		emptyAndHideSelection(false,false,true);
+        		hideAllOptionSections();
+    			$('.memory-selection-section').slideDown();
+        	});
+    		
+    		resetUI();
     		
     		function constructMoboHtml(moboComp){
     			var itemHtml = '<tr class="select-mobo" data-compid="' + moboComp.id + '">';
@@ -378,9 +432,10 @@
     			return html;
     		}
     		
-        	function constructItemHtml(cpuComp, selectionType, componentsToPurchaseStr, fpsGains){
+        	function constructItemHtml(cpuComp, selectionType, componentsToPurchaseStr, fpsGains, price){
+        		price = price || cpuComp.formattedprice;
     			var itemHtml = '<tr class="select-cpu" data-compid="' + cpuComp.id + '" data-selectiontype="'+selectionType+'">';
-    			itemHtml += '<td><ul><li class="green-text">' + cpuComp.formattedprice + '</li><li><a href="' + cpuComp.buyurl + '">Amazon</a></li></ul></td>';
+    			itemHtml += '<td><ul><li class="green-text">' + price + '</li><li><a href="' + cpuComp.buyurl + '">Amazon</a></li></ul></td>';
     			itemHtml += '<td>' + cpuComp.display_name + '</td>';
     			itemHtml += '<td>' + componentsToPurchaseStr + '</td>';
     			itemHtml += '<td>' + cpuComp.tier_explain + '</td>';
@@ -415,6 +470,16 @@
     			itemHtml += '</tr>';
     			return itemHtml;
         	}
+			
+        	function constructItemBuyHtml(comp){
+        		
+        		var itemHtml = '<div class="row">';
+    			itemHtml += '<div class="col l2"><ul><li class="green-text">' + comp.formattedprice + '</li><li><a href="' + comp.buyurl + '">Amazon</a></li></ul></div>';
+    			itemHtml += '<div class="col l7">' + comp.display_name + '</div>';
+    			itemHtml += '<div class="col l3"><a target="_blank" href="' + comp.buyurl + '" class="waves-effect waves-light btn">BUY on Amazon</a></td></div>';
+    			itemHtml += '</div>';
+    			return itemHtml;
+        	}
     		
         	var selectedComponents = {};
         	
@@ -436,10 +501,17 @@
         		    data: acdata,
         		    limit: 8,
         		    onAutocomplete: function(val) {
+        		    	
+        		    	resetUI();
+        		    	$('#loading-spinner').show();
+        		    	
         		    	//
         		    	// fetch the recommendations data for this part
         		    	var compid = namesToIds[val];
         		    	$.getJSON('/recommendcpu/json', {'id' : compid}).success(function(resp){
+        		    		
+        		    		$('#loading-spinner').hide();
+        		    		
         		    		$('#current-cpu-title').text(resp.input_cpu.display_name);
         		    		$('#current-cpu-tierinfo').text(resp.input_cpu.tier_explain);
         		    		$('#current-cpu-card').show();
@@ -470,7 +542,9 @@
         		    			for (var i=0;i<itemHtmls.length;i++) {
         		    				// ensures that a component is only rendered once
         		    				var comp = itemHtmls[i];
-        		    				if (cpuTableId === 'np-cpu-table') $('#' + cpuTableId).append(constructItemHtml(comp, 'NP', 'CPU, Motherboard, Memory', resp.fpsgains.recs[comp.id]));
+        		    				console.log('formatted price: ' + comp.formattedplatformprice);
+        		    				if (cpuTableId === 'np-cpu-table') $('#' + cpuTableId).append(
+        		    						constructItemHtml(comp, 'NP', 'CPU, Motherboard, Memory', resp.fpsgains.recs[comp.id], comp.formattedplatformprice));
         		    				else $('#' + cpuTableId).append(constructItemHtml(comp, 'SCS', 'CPU', resp.fpsgains.recs[comp.id]));
         		    				compIdsToRecs[comp.id] = comp;
         		    			}
@@ -494,16 +568,17 @@
         	    				
         	    				$('.first-selection-section').slideUp();
         	    				$('.your-selected-processor').show();
-        	    				$('#your-selected-processor-table').append(this);
+        	    				$('#your-selected-processor-display').append(constructItemBuyHtml(selectedCpu));
         	    				
         	    				if (selectionType == 'SCS') {
         	    					// show buy option
-        	    					$('.buy-selection-section').show();
+        	    					
         	    				} else {
         	    					
         	    					// populate recommended motherboard
         	    					
         	    					var moboComp = selectedCpu.recommendedmobo;
+        	    					compIdsToRecs[moboComp.id] = moboComp;
         	    					$('#recommended-mobo-table').append(constructMoboHtml(moboComp));
         	    					
         	    					// show mobo selection
@@ -513,23 +588,26 @@
         	    					// TODO TODO bind what happens when a mobo is selected
         	    					$('.select-mobo').click(function(){
         	    						var selectedMoboId = $(this).data('compid');
-        	    						selectedComponents.mobo = compIdsToRecs[selectionId];
+        	    						selectedComponents.mobo = compIdsToRecs[selectedMoboId];
         	    						$('.your-selected-motherboard').show(this);
-        	    						$('#your-selected-motherboard-table').append(this);
+        	    						$('#your-selected-motherboard-display').append(constructItemBuyHtml(compIdsToRecs[selectedMoboId]));
         	    						
         	    						// populate memory options
         	    						$('#recommended-memory-table-4g').append(constructMemoryHtml(selectedCpu.recommendedmemory4gb));
         	    						$('#recommended-memory-table-8g').append(constructMemoryHtml(selectedCpu.recommendedmemory8gb));
+        	    						compIdsToRecs[selectedCpu.recommendedmemory4gb.id] = selectedCpu.recommendedmemory4gb; 
+        	    						compIdsToRecs[selectedCpu.recommendedmemory8gb.id] = selectedCpu.recommendedmemory8gb; 
+        	    						
         	    						
         	    						// show memory section
         	    						$('.memory-selection-section').show();
         	    						$('.mobo-selection-section').slideUp();
         	    						
         	    						$('.select-memory').click(function(){
-        	    							
+        	    							var selectedMemId = $(this).data('compid');
         	    							//
-        	    							$('.your-selected-memory').show(this);
-        	    							$('#your-selected-memory-table').append(this);
+        	    							$('.your-selected-memory').show();
+        	    							$('#your-selected-memory-display').append(constructItemBuyHtml(compIdsToRecs[selectedMemId]));
         	    							$('.memory-selection-section').slideUp();
         	    							
         	    						});

@@ -134,9 +134,11 @@ def get_component_by_asin(asin, return_query=False, active_only=True):
     else:
         return q.first()
 
-def get_component(component_id):
+def get_component(component_id, active=True):
     if component_id:
-        return db.session().query(models.BaseComponent).filter(models.BaseComponent.id == component_id).filter(models.BaseComponent.active == True).first()
+        q = db.session().query(models.BaseComponent).filter(models.BaseComponent.id == component_id)
+        if active != None: q = q.filter(models.BaseComponent.active == active)
+        return q.first()
     else:
         return None
 
