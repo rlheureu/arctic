@@ -77,7 +77,11 @@ class AmazonExtractor(BaseExtractor):
     
     def fetch_3p_item_info(self, item3pid):
         
-        rawxml = retry_util.retry_func(3, 2, self.amazon.ItemLookup, ItemId=item3pid, ResponseGroup='ItemAttributes,Offers')
+        try:
+            rawxml = retry_util.retry_func(10, 5, self.amazon.ItemLookup, ItemId=item3pid, ResponseGroup='ItemAttributes,Offers')
+        except:
+            LOG.warn('Failed to fetch item information for item {}'.format(item3pid))
+            return None
         
         bs = BeautifulSoup(rawxml, 'html.parser')
         
@@ -309,7 +313,6 @@ class SearchCriteria:
     pass
 
 def sync_prices():
-    
     
     complists = [dataaccess.get_all_cpus(False, None),
                  dataaccess.get_all_gpus(False, None),
