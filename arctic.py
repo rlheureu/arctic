@@ -688,13 +688,11 @@ def claimpost():
     return render_template('claimacct.html', **context)
 
 @app.route("/recommendcpu", methods=['GET'])
-@super_admin_login_required
 def recommendcpu():
     
     return render_template('recommendations.html')
 
 @app.route("/recommendcpu/json", methods=['GET'])
-@super_admin_login_required
 def recommendcpujson():
     context = {}
 
