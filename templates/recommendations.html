@@ -428,7 +428,9 @@
     			var html = '<table class="bordered embed"><thead></thead>';
     			for (bType in fpsGains) {
     				var fpsData = fpsGains[bType];
-    				html += '<tr><td>' + bType + '</td><td>+' + fpsData.gains + '</td><td>$' + fpsData.dollarfps + '</td></tr>';
+    				var prefix="";
+    				if (fpsData.gains > 0) prefix =  "+";
+    				html += '<tr><td>' + bType + '</td><td>' + prefix + fpsData.gains + '</td><td>$' + fpsData.dollarfps + '</td></tr>';
     			}
     			html += '</table>';
     			return html;
