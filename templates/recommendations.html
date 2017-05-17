@@ -324,6 +324,13 @@
     <script src="/static/recommendations/js/init.js"></script>
     
     <script type="text/javascript">
+        if(typeof(String.prototype.trim) === "undefined")
+        {
+            String.prototype.trim = function() 
+            {
+                return String(this).replace(/^\s+|\s+$/g, '');
+            };
+        }
     	$(function(){
     		
     		$('#loading-spinner').hide();
@@ -484,8 +491,10 @@
     			var namesToIds = {};
             	for (part in partsList) {
             		var component = partsList[part];
-            		acdata[component.display_name] = null;
-            		namesToIds[component.display_name] = component.id;
+            		if (component.display_name) {
+              			acdata[component.display_name.trim()] = null;
+              			namesToIds[component.display_name.trim()] = component.id;
+            		}
             	}
     			
             	console.log(acdata);

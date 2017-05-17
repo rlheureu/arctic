@@ -697,6 +697,7 @@ def recommendcpujson():
     context = {}
 
     cpu_id = request.args.get('id', None)
+    LOG.info('recommend CPU for input {}'.format(cpu_id))
     cpu = dataaccess.get_component(cpu_id)
     results = recommendations.recommend_a_cpu(cpu)
     results['input_cpu'] = cpu
