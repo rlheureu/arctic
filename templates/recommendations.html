@@ -562,8 +562,15 @@
         		    	.fail(function(){
         		    		$('#loading-spinner').hide();
         		    		$('#no-data-yet').show();
+        		    		
+        		    		// log this event
+        		    		mixpanel.track("No CPU Data - Recommendation Failed", {"cpu_id": compid});
+        		    		
     					})
         		    	.success(function(resp){
+        		    		
+        		    		// log this event
+        		    		mixpanel.track("CPU Recommendation", {"cpu_id": compid});
         		    		
         		    		$('#loading-spinner').hide();
         		    		
