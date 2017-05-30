@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!--     <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     
     <!-- Google Tag Manager -->
@@ -43,7 +43,12 @@
 
     {% block styling %}
     <!-- Bootstrap -->
-    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
+    
     
     <style type="text/css">
       hr{
@@ -129,7 +134,7 @@
         background-image: url("/static/images/bg-dark.jpg");
         background-repeat: no-repeat;
         background-size: cover; 
-        padding-top:70px; 
+        padding-top:58px; 
         font-family: 'Open Sans', sans-serif;
         font-size: 12px;
         color:#6c6974;
@@ -143,11 +148,6 @@
         font-family: 'Fjalla One', sans-serif;
         color:#ffffff;
         font-size: 50px;
-      }
-      .navbar-page-title{
-        font-weight: 300;
-        color:#19173f;
-        font-size:21px;
       }
       .wizard-steps-breadcrumbs ul{
         list-style:none;
@@ -171,49 +171,6 @@
       .wizard-steps-breadcrumbs li.active{
         border-bottom: #309cf4 4px solid;
         color:#ffffff;
-      }
-      .nav-items a{
-        text-decoration: none;
-        color:inherit;
-      }
-      .nav-items a:hover{
-        text-decoration: none;
-        color:#309cf4;
-      }
-      .nav-items ul{
-        list-style:none;
-        margin:0px;
-        padding:0px;
-      }
-      .nav-items ul li{
-        display: inline-block;
-        position: relative;
-        padding-left:15px;
-        padding-right:15px;
-        padding-bottom: 18px;
-        top: 21px;
-        margin-left: 1px;
-        margin-right: 1px;
-        color: #716b77;
-        font-weight: 600;
-        font-size:14px;
-      }
-      .nav-items li.active{
-        border-bottom: #309cf4 4px solid;
-        color: #333333;
-        font-weight: 700;
-      }
-      .nav-btns ul{
-        list-style:none;
-        margin:0px;
-      }
-      .nav-btns ul li{
-        display: inline-block;
-        position: relative;
-        padding-bottom: 24px;
-        top: 21px;
-        margin-left: 1px;
-        margin-right: 1px;
       }
       .h2-light{
         font-family: 'Open Sans', sans-serif;
@@ -338,7 +295,11 @@
         background-repeat: no-repeat;
         background-size: cover; 
         padding-top:0px;
-        height: 70px;
+        height: 58px;
+      }
+      .navbar-default{
+        background-color:transparent;
+        border:none;
       }
       .align-text-right{
         text-align:right;
@@ -365,13 +326,6 @@
       }
       a.blue-link:hover{
         color: #fff;
-      }
-      .navsteps{
-        color:#515151;
-        display: inline-block;
-        padding-top:17px;
-        text-decoration: none;
-        text-shadow: none;
       }
       .modal-content{
         background-image: url("/static/images/bg-white.jpg");
@@ -410,16 +364,11 @@
         background-color: #222222;
         padding: 10px;
       }
-      
-      
-      .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-        color: #8b8a97;
-        background-color: #111016;
-        border: 2px solid #787878;
-        border-bottom-color: transparent;
-        cursor: default;
+      @media (max-width: 800px) {
+        .navbar-collapse{
+          background-color:#ffffff;
+        }
       }
-      
     </style>
     {% endblock %}
     
@@ -465,33 +414,32 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
   
-    <nav class="navbar navbar-fixed-top">
+    <nav class="navbar navbar-fixed-top navbar-default">
       <div class="container">
-        <div class="row">
-          <div class="col-md-3">
-            <a href="/"><img style="padding-top: 8px;width:175px;" src="{{ url_for('static', filename='images/logo-small.png') }}"/></a>
-          </div>
-          <div class="col-md-9 align-text-right ">
-            {% block navright %}
-              
-              <div class="nav-items">
-                <ul>
-                  {% if current_user.is_authenticated %}<li {% if currpagenav == 'showcase' %}class="active"{% endif %}><a href="/showcase">Showcase</a></li>{% endif %}
-                  <li {% if currpagenav == 'build' %}class="active"{% endif %}><a href="/bench">Build</a></li>
-                  <li {% if currpagenav == 'upgrade' %}class="active"{% endif %}><a href="/recommendcpu">Upgrade</a></li>
-                  <li {% if currpagenav == 'faq' %}class="active"{% endif %}><a href="/faq">FAQ</a></li>
-                  <li><a href="https://medium.com/@amdahlcube">Blog</a></li>
-                  {% if current_user.is_authenticated %}
-                  <li {% if currpagenav == 'account' %}class="active"{% endif %}><a href="/account">Account</a></li>
-                  <li><a href="/logoutuser">Logout</a></li>
-                  {% else %}
-                  <li><a href="#" id="navloginbutton">Login</a></li>
-                  {% endif %}
-                </ul>
-              </div>
-              
-            {% endblock %}
-          </div>
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#ac-main-navbar-collapse" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/"><img style="width:145px;position:relative;top:-9px;" src="{{ url_for('static', filename='images/logo-small.png') }}"/></a>
+        </div>
+        
+        <div class="collapse navbar-collapse" id="ac-main-navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            {% if current_user.is_authenticated %}<li {% if currpagenav == 'showcase' %}class="active"{% endif %}><a href="/showcase">Showcase</a></li>{% endif %}
+            <li {% if currpagenav == 'build' %}class="active"{% endif %}><a href="/bench">Build</a></li>
+            <li {% if currpagenav == 'upgrade' %}class="active"{% endif %}><a href="/recommendcpu">Upgrade</a></li>
+            <li {% if currpagenav == 'faq' %}class="active"{% endif %}><a href="/faq">FAQ</a></li>
+            <li><a href="https://medium.com/@amdahlcube">Blog</a></li>
+            {% if current_user.is_authenticated %}
+            <li {% if currpagenav == 'account' %}class="active"{% endif %}><a href="/account">Account</a></li>
+            <li><a href="/logoutuser">Logout</a></li>
+            {% else %}
+            <li><a href="#" id="navloginbutton">Login</a></li>
+            {% endif %}
+          </ul>
         </div>
       </div>
     </nav>
@@ -649,7 +597,8 @@
     
     
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="/static/js/bootstrap.min.js"></script>
     
     <script type="text/javascript">
     var ArcticBasics = function(){
