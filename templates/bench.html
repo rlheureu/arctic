@@ -13,7 +13,7 @@
     margin-left: 2px;
   }
   .modal-color-icon{
-    height:90px;
+    
   }
   .benchtab{
     display: inline-block;
@@ -55,15 +55,11 @@
   #pick-part-modal{
   }
   .equip-part-item{
-    display: inline-block;
-    width: 462px;
-    height: 91px;
+    display: block;
     margin: 3px;
     text-align: left;
     cursor: pointer;
-    background-image: url("/static/images/border-normal.png");
-    background-repeat: no-repeat;
-    background-size: auto 90px;
+    border: #333 solid 1px;
   }
   .chart-part-list-item {
     padding: 4px;
@@ -74,15 +70,7 @@
     background-color: #232323;
   }
   .equip-part-item:hover{
-    background-color: #eee;
-  }
-  .equipped{
-    background-image: url("/static/images/border-equip.png") !important;
-    background-repeat: no-repeat;
-  }
-  .recommended-item{
-    background-image: url("/static/images/border-recommended.png");
-    background-repeat: no-repeat;
+    background-color: #333333;
   }
   .part-item-title{
     font-size: 13px;
@@ -103,7 +91,6 @@
     display:inline-block;
     vertical-align: top;
     padding-left:0px;
-    max-width:345px;
   }
   .part-item-icon{
     position: relative;
@@ -112,7 +99,24 @@
     top: 8px;
   }
   .part-icon-div{
-    display:inline-block;
+    padding-left:0px;
+  }
+  .ppm-label{
+    line-height: 2.5;
+    letter-spacing: 3px;
+    word-spacing: 10px;
+  }
+  .ppm-label-recommended{
+    background-color: #302b44;
+  }
+  .ppm-label-equipped{
+    background-color: #c3b8dd;
+    color: #333333;
+  }
+  .ppm-labels{
+    text-align: right;
+    position: relative;
+    bottom: 0px;
   }
   .bg-orange {
     background-color: #fede86;
@@ -226,22 +230,22 @@
     left: 503px;
     width: 162px;
   }
-  #ac-cubedisplay-gpu{
+  #ac-cubedisplay-gpu-fullscreen{
     position: absolute;
     top: -37px;
     left: 339px;
   }
-  #ac-cubedisplay-cpu{
+  #ac-cubedisplay-cpu-fullscreen{
     position: absolute;
     top: 87px;
     left: 488px;
   }
-  #ac-cubedisplay-memory{
+  #ac-cubedisplay-memory-fullscreen{
     position: absolute;
     top: 34px;
     left: 458px;
   }
-  #ac-cubedisplay-display{
+  #ac-cubedisplay-display-fullscreen{
     position: absolute;
     top: -86px;
     left: 494px;
@@ -495,77 +499,189 @@
     </div>
   </div>
   <br><br>
-  <div class="container" id="build-cube-div">
-    <div class="row">
-      <div class="col-sm-12" style="text-align:center;">
-        
-        <img src="/static/images/centered-cube-with-lines.png">
-        <div id="ac-cube-section-cpu" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
-          <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-cpu" class="equip-clickable small-cube-icon" />
-          <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Processor</span>
-          <span class="label label-edited">EDITED</span>
-          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
-          <div id="ac-cpu-section" class="equip-clickable item-slot-section"></div>
+  <div id="build-cube-div">
+    <div class="container visible-lg">
+      <!-- ------------------------------ -->
+      <!-- ------------------------------ -->
+      <!-- ------------------------------ -->
+      <!-- FULL-SIZE BENCH -------------- -->
+      <!-- ------------------------------ -->
+      <div class="row">
+        <div class="col-sm-12" style="text-align:center;">
+          
+          <img src="/static/images/centered-cube-with-lines.png">
+          <div id="ac-cube-section-cpu" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
+            <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-cpu-fullscreen" class="equip-clickable small-cube-icon ac-cubedisplay-cpu" />
+            <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Processor</span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="equip-clickable item-slot-section ac-cpu-section"></div>
+          </div>
+          
+          <div id="ac-cube-section-gpu" data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
+            <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-gpu-fullscreen" class="equip-clickable small-cube-icon ac-cubedisplay-gpu"/>
+            <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Graphics</span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="equip-clickable item-slot-section ac-gpu-section"></div>
+          </div>
+          
+          <div id="ac-cube-section-memory" data-equip-type="memory" data-equip-title="EQUIP MEMORY">
+            <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-memory-fullscreen" class="equip-clickable small-cube-icon ac-cubedisplay-memory" />
+            <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Memory</span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="equip-clickable item-slot-section ac-memory-section"></div>
+          </div>
+          
+          <div id="ac-cube-section-display" data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
+            <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-display-fullscreen" class="equip-clickable small-cube-icon ac-cubedisplay-display"/>
+            <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Display</span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="equip-clickable item-slot-section ac-display-section"></div>
+          </div>
+          
+          <!-- CUBE DISPLAY -->
+          <img src="/static/cube-images/ac-cube-middle-default.png" id="ac-cubedisplay-middle" />
+          <!--// Cube DISPLAY -->
+          
+          <div id="ac-cube-section-motherboard" data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
+            <span class="acbench-item-heading other-clickable" style="display:inline-block;">Motherboard <span class="other-component-note">*</span></span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="item-slot-section other-clickable ac-motherboard-section"></div>
+          </div>
+          <div id="ac-cube-section-storage" data-equip-type="storage" data-equip-title="EQUIP STORAGE">
+            <span class="acbench-item-heading other-clickable" style="display:inline-block;">Storage <span class="other-component-note">*</span></span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="item-slot-section other-clickable ac-storage-section"></div>
+          </div>
+          <div id="ac-cube-section-power" data-equip-type="power" data-equip-title="EQUIP A POWER SUPPLY">
+            <span class="acbench-item-heading other-clickable" style="display:inline-block;">Power Supply <span class="other-component-note">*</span></span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="item-slot-section other-clickable ac-power-section"></div>
+          </div>
+          <div id="ac-cube-section-chassis" data-equip-type="chassis" data-equip-title="EQUIP CHASSIS">
+            <span class="acbench-item-heading other-clickable" style="display:inline-block;">Chassis <span class="other-component-note">*</span></span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="item-slot-section other-clickable ac-chassis-section"></div>
+          </div>
+          
+          <br><br><br><br><br>
+          <span id="other-component-note-span" class="other-component-note">* Equip core items to fill in secondary stats</span>
+          <br><br><br><br><br>
         </div>
-        
-        <div id="ac-cube-section-gpu" data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
-          <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-gpu" class="equip-clickable small-cube-icon"/>
-          <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Graphics</span>
-          <span class="label label-edited">EDITED</span>
-          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
-          <div id="ac-gpu-section" class="equip-clickable item-slot-section"></div>
+      </div>   
+    </div>
+
+    <div class="container visible-xs visible-md visible-sm">
+      <!-- ------------------------------ -->
+      <!-- ------------------------------ -->
+      <!-- ------------------------------ -->
+      <!-- MOBILE BENCH ----------------- -->
+      <!-- ------------------------------ -->
+      <div class="row">
+        <div class="col-xs-8">
+          <div data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
+            <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Processor</span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="equip-clickable item-slot-section ac-cpu-section"></div>
+          </div>
         </div>
-        
-        <div id="ac-cube-section-memory" data-equip-type="memory" data-equip-title="EQUIP MEMORY">
-          <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-memory" class="equip-clickable small-cube-icon" />
-          <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Memory</span>
-          <span class="label label-edited">EDITED</span>
-          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
-          <div id="ac-memory-section" class="equip-clickable item-slot-section"></div>
+        <div class="col-xs-4" data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
+          <img src="/static/cube-images/ac-cube-small-default.png" class="equip-clickable small-cube-icon pull-right ac-cubedisplay-cpu" />
         </div>
-        
-        <div id="ac-cube-section-display" data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
-          <img src="/static/cube-images/ac-cube-small-default.png" id="ac-cubedisplay-display" class="equip-clickable small-cube-icon"/>
-          <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Display</span>
-          <span class="label label-edited">EDITED</span>
-          <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
-          <div id="ac-display-section" class="equip-clickable item-slot-section"></div>
-        </div>
-        
-        <!-- CUBE DISPLAY -->
-        <img src="/static/cube-images/ac-cube-middle-default.png" id="ac-cubedisplay-middle" />
-        <!--// Cube DISPLAY -->
-        
-        <div id="ac-cube-section-motherboard" data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
-          <span class="acbench-item-heading other-clickable" style="display:inline-block;">Motherboard <span class="other-component-note">*</span></span>
-          <span class="label label-edited">EDITED</span>
-          <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
-          <div id="ac-motherboard-section" class="item-slot-section other-clickable"></div>
-        </div>
-        <div id="ac-cube-section-storage" data-equip-type="storage" data-equip-title="EQUIP STORAGE">
-          <span class="acbench-item-heading other-clickable" style="display:inline-block;">Storage <span class="other-component-note">*</span></span>
-          <span class="label label-edited">EDITED</span>
-          <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
-          <div id="ac-storage-section" class="item-slot-section other-clickable"></div>
-        </div>
-        <div id="ac-cube-section-power" data-equip-type="power" data-equip-title="EQUIP A POWER SUPPLY">
-          <span class="acbench-item-heading other-clickable" style="display:inline-block;">Power Supply <span class="other-component-note">*</span></span>
-          <span class="label label-edited">EDITED</span>
-          <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
-          <div id="ac-power-section" class="item-slot-section other-clickable"></div>
-        </div>
-        <div id="ac-cube-section-chassis" data-equip-type="chassis" data-equip-title="EQUIP CHASSIS">
-          <span class="acbench-item-heading other-clickable" style="display:inline-block;">Chassis <span class="other-component-note">*</span></span>
-          <span class="label label-edited">EDITED</span>
-          <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
-          <div id="ac-chassis-section" class="item-slot-section other-clickable"></div>
-        </div>
-        
-        <br><br><br><br><br>
-        <span id="other-component-note-span" class="other-component-note">* Equip core items to fill in secondary stats</span>
-        <br><br><br><br><br>
       </div>
-    </div>   
+      <div class="row">
+        <div class="col-xs-8">
+          <div data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
+            <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Graphics</span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="equip-clickable item-slot-section ac-gpu-section"></div>
+          </div>
+        </div>
+        <div class="col-xs-4" data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
+          <img src="/static/cube-images/ac-cube-small-default.png" class="equip-clickable small-cube-icon pull-right ac-cubedisplay-gpu" />
+        </div>
+      </div>
+       <div class="row">
+        <div class="col-xs-8">   
+          <div data-equip-type="memory" data-equip-title="EQUIP MEMORY">
+            <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Memory</span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="equip-clickable item-slot-section ac-memory-section"></div>
+          </div>
+        </div>
+        <div class="col-xs-4" data-equip-type="memory" data-equip-title="EQUIP MEMORY">
+          <img src="/static/cube-images/ac-cube-small-default.png" class="equip-clickable small-cube-icon pull-right ac-cubedisplay-memory" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-8">  
+          <div data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
+            <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Display</span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn equipbutton" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="equip-clickable item-slot-section ac-display-section"></div>
+          </div>
+        </div>
+        <div class="col-xs-4" data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
+          <img src="/static/cube-images/ac-cube-small-default.png" class="equip-clickable small-cube-icon pull-right ac-cubedisplay-display" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-8">    
+          <div data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
+            <span class="acbench-item-heading other-clickable" style="display:inline-block;">Motherboard <span class="other-component-note">*</span></span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="item-slot-section other-clickable ac-motherboard-section"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-8">
+          <div data-equip-type="storage" data-equip-title="EQUIP STORAGE">
+            <span class="acbench-item-heading other-clickable" style="display:inline-block;">Storage <span class="other-component-note">*</span></span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="item-slot-section other-clickable ac-storage-section"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-8">
+          <div data-equip-type="power" data-equip-title="EQUIP A POWER SUPPLY">
+            <span class="acbench-item-heading other-clickable" style="display:inline-block;">Power Supply <span class="other-component-note">*</span></span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="item-slot-section other-clickable ac-power-section"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-8">
+          <div data-equip-type="chassis" data-equip-title="EQUIP CHASSIS">
+            <span class="acbench-item-heading other-clickable" style="display:inline-block;">Chassis <span class="other-component-note">*</span></span>
+            <span class="label label-edited">EDITED</span>
+            <button class="ac-btn other-clickable other-clickable-btn" style="display: block; margin-top: 5px;">Equip An Item</button>
+            <div class="item-slot-section other-clickable ac-chassis-section"></div>
+            
+            <br><br><br><br><br>
+            <span id="other-component-note-span" class="other-component-note">* Equip core items to fill in secondary stats</span>
+            <br><br><br><br><br>
+          </div>
+        </div>
+      </div>
+      
+    </div>
     
   </div>
   
@@ -692,36 +808,36 @@
         </div>
         <div class="modal-body">
           <div class="row">
-            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h3 style="color:#333;">4k@60</h3><h5>3840x2160 @ 60 fps</h5></div>
-            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-purple.png" class="small-cube-icon"></div>
+            <div class="col-xs-5 col-xs-offset-2" style="text-align: center;"><h3 style="color:#333;">4k@60</h3><h5>3840x2160 @ 60 fps</h5></div>
+            <div class="col-xs-4"><img src="/static/cube-images/ac-cube-small-purple.png" class="small-cube-icon"></div>
           </div>
           <div class="row">
-            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h3 style="color:#333;">VR</h3><h5>2160x1200 @ 90 fps</h5></div>
-            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-black.png" class="small-cube-icon"></div>
+            <div class="col-xs-5 col-xs-offset-2" style="text-align: center;"><h3 style="color:#333;">VR</h3><h5>2160x1200 @ 90 fps</h5></div>
+            <div class="col-xs-4"><img src="/static/cube-images/ac-cube-small-black.png" class="small-cube-icon"></div>
           </div>
           <div class="row">
-            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h3 style="color:#333;">1440p@60</h3><h5>2560x1440 @ 60 fps</h5></div>
-            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-orange.png" class="small-cube-icon"></div>
+            <div class="col-xs-5 col-xs-offset-2" style="text-align: center;"><h3 style="color:#333;">1440p@60</h3><h5>2560x1440 @ 60 fps</h5></div>
+            <div class="col-xs-4"><img src="/static/cube-images/ac-cube-small-orange.png" class="small-cube-icon"></div>
           </div>
           <div class="row">
-            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h3 style="color:#333;">1080p@60</h3><h5>1920x1080 @ 60 fps</h5></div>
-            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-blue.png" class="small-cube-icon"></div>
+            <div class="col-xs-5 col-xs-offset-2" style="text-align: center;"><h3 style="color:#333;">1080p@60</h3><h5>1920x1080 @ 60 fps</h5></div>
+            <div class="col-xs-4"><img src="/static/cube-images/ac-cube-small-blue.png" class="small-cube-icon"></div>
           </div>
           <div class="row">
-            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h3 style="color:#333;">1080p@30</h3><h5>1920x1080 @ 30 fps</h5></div>
-            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-green.png" class="small-cube-icon"></div>
+            <div class="col-xs-5 col-xs-offset-2" style="text-align: center;"><h3 style="color:#333;">1080p@30</h3><h5>1920x1080 @ 30 fps</h5></div>
+            <div class="col-xs-4"><img src="/static/cube-images/ac-cube-small-green.png" class="small-cube-icon"></div>
           </div>
           <div class="row">
-            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h3 style="color:#333;">720p@60</h3><h5>1280x720 @ 60 fps</h5></div>
-            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-gray.png" class="small-cube-icon"></div>
+            <div class="col-xs-5 col-xs-offset-2" style="text-align: center;"><h3 style="color:#333;">720p@60</h3><h5>1280x720 @ 60 fps</h5></div>
+            <div class="col-xs-4"><img src="/static/cube-images/ac-cube-small-gray.png" class="small-cube-icon"></div>
           </div>
           <div class="row">
-            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h3 style="color:#333;">900p@30</h3><h5>1600x900 @ 30 fps</h5></div>
-            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-gray.png" class="small-cube-icon"></div>
+            <div class="col-xs-5 col-xs-offset-2" style="text-align: center;"><h3 style="color:#333;">900p@30</h3><h5>1600x900 @ 30 fps</h5></div>
+            <div class="col-xs-4"><img src="/static/cube-images/ac-cube-small-gray.png" class="small-cube-icon"></div>
           </div>
           <div class="row">
-            <div class="col-md-5 col-md-offset-2" style="text-align: center;"><h3 style="color:#333;">720p@30</h3><h5>1280x720 @ 30 fps</h5></div>
-            <div class="col-md-4"><img src="/static/cube-images/ac-cube-small-gray.png" class="small-cube-icon"></div>
+            <div class="col-xs-5 col-xs-offset-2" style="text-align: center;"><h3 style="color:#333;">720p@30</h3><h5>1280x720 @ 30 fps</h5></div>
+            <div class="col-xs-4"><img src="/static/cube-images/ac-cube-small-gray.png" class="small-cube-icon"></div>
           </div>
         </div>
         <div class="modal-footer">
@@ -736,13 +852,13 @@
   <!-- PART PICKER MODAL -->
   <!-- --------------- -->
   <div id="pick-part-modal" class="modal fade">
-    <div class="modal-dialog" style="width:980px; height:100%;">
-        <div class="modal-content" style="height:85%; ">
+    <div class="modal-dialog modal-lg" style="height:100%;">
+        <div class="modal-content" style="height:87%;">
           <div style="text-align: center; padding:15px; border-bottom: solid 1px #c1c1c1;">
             <h3 class="modal-title" id="equip-modal-title"></h3>
             <div class="clearfix"></div>
           </div>
-          <div style="padding:15px; border-bottom: solid 1px #c1c1c1;">
+          <div style="padding:15px; border-bottom: solid 1px #c1c1c1;" class="hidden-xs hidden-sm">
              <div class="form-inline pull-left">
                &nbsp;&nbsp;
                <input placeholder="Search" id="search-parts-input" class="form-control ac-input-light" type="text"/>

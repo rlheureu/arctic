@@ -129,7 +129,7 @@ $(function(){
 				var partId = currentRig['parts'][comp + '_id'];
 				if( $.inArray(partId, AC_GLOBALS.unequippedParts) < 0) {
 					addingNewPart = true;
-					var text = $('#ac-' + comp + '-section').find('.part-item-title').text();
+					var text = $('.ac-' + comp + '-section').find('.part-item-title').text();
 					if (text && text !== '') $('#owned-parts-list').append('<div class="added-owned-part">' + text + '</div>');
 				}
 			}
@@ -307,7 +307,6 @@ $(function(){
         	renderFromPartsList(data, currentEquippedId);
         	
         	bindEquipListener();
-
         }).fail(function() {
             console.log( "error" );
         });
@@ -339,14 +338,20 @@ $(function(){
     		// add to parts cache (needed later)
     		partsCache[component.id] = component;
     		
-			var itemDiv = $('<div class="equip-part-item"></div>')
-			var contentDiv = $('<div class="part-item-content"></div>')
-			var iconDiv = $('<div class="part-icon-div"></div>')
+			var itemDiv = $('<div class="equip-part-item row"></div>')
+			var contentDiv = $('<div class="part-item-content col-xs-9 col-md-11"></div>')
+			var iconDiv = $('<div class="part-icon-div col-xs-3 col-md-1"></div>')
 			var titleSpan = $('<span class="part-item-title">' + constructDisplayName(component) + '</span>');
+			
+			var labels = $('<div class="ppm-labels clearfix"><span class="label ppm-label ppm-label-equipped">EQUIPPED</span>&nbsp;&nbsp;<span class="label ppm-label ppm-label-recommended">RECOMMENDED</span>&nbsp;&nbsp;&nbsp;&nbsp;</div>');
+			var equippedLabel = labels.find('.ppm-label-equipped').hide();
+			var recommendedLabel = labels.find('.ppm-label-recommended').hide();
 			
 			itemDiv.append(iconDiv);
 			itemDiv.append(contentDiv);
+			itemDiv.append(labels);
 			contentDiv.append(titleSpan);
+			
 			
 			//
 			// set component ID
@@ -355,9 +360,7 @@ $(function(){
 			
 			// style current equipped if exists
 			if (currentEquippedId === component.id) {
-				itemDiv.addClass('equipped');
-			} else {
-				itemDiv.addClass("not-equipped");
+				equippedLabel.show();
 			}
 			
 			if (component.compatible === true) {
@@ -368,7 +371,7 @@ $(function(){
 				// add any flags
     			// adding recommended to all for now
     			if (component.recommended === true ) {
-    				itemDiv.addClass('recommended-item');
+    				recommendedLabel.show();
     			}
 				
 				// make item clickable (equippable)
@@ -395,12 +398,9 @@ $(function(){
 		// remove equip styling from all components
 		
 		var listItem = $('.equippable-item').filter('[data-component-id="' + componentId + '"]');
-		console.log('got list item: ');
-		console.log(listItem);
 		
-		$('.equip-part-item').removeClass('equipped');
-		listItem.addClass('equipped');
-		listItem.removeClass('not-equipped');
+		$('.equip-part-item').find('.ppm-label-equipped').hide();
+		listItem.find('.ppm-label-equipped').show();
 		
 		toEquip = componentId;
 		console.log('the data: ' + toEquip);
@@ -529,7 +529,7 @@ $(function(){
 	
 	function renderCoreComponent(compType, partDetail){
 		// modify core view
-		var view = $('#ac-' + compType + '-section');
+		var view = $('.ac-' + compType + '-section');
 		view.prev().hide();// hide equip button
 		view.empty();
 		
@@ -542,13 +542,13 @@ $(function(){
 		view.append('<br><span>' + constructPerformanceNote(partDetail) + '</span>')
 		
 		// modify colors
-		$('#ac-cubedisplay-' + compType).attr('src',
+		$('.ac-cubedisplay-' + compType).attr('src',
 				'/static/cube-images/ac-cube-small-' + partDetail.perf_color + '.png');
 	}
 	
 	function renderOtherComponent(compType, partDetail){
 		// modify core view
-		var view = $('#ac-' + compType + '-section');
+		var view = $('.ac-' + compType + '-section');
 		view.prev().hide();// hide equip button
 		view.empty();
 		
@@ -562,7 +562,7 @@ $(function(){
 	
 	function renderEditedFlag(compType){
 		// modify core view
-		var view = $('#ac-' + compType + '-section');
+		var view = $('.ac-' + compType + '-section');
 		view.siblings('.label-edited').show();
 	}
 	
@@ -570,11 +570,11 @@ $(function(){
 		//
 		//
 		// RESET Cube positions
-		$('#ac-cubedisplay-middle').attr('src','/static/cube-images/ac-cube-middle-default.png');
-		$('#ac-cubedisplay-gpu').attr('src','/static/cube-images/ac-cube-small-default.png');
-		$('#ac-cubedisplay-cpu').attr('src','/static/cube-images/ac-cube-small-default.png');
-		$('#ac-cubedisplay-memory').attr('src','/static/cube-images/ac-cube-small-default.png');
-		$('#ac-cubedisplay-display').attr('src','/static/cube-images/ac-cube-small-default.png');
+		$('.ac-cubedisplay-middle').attr('src','/static/cube-images/ac-cube-middle-default.png');
+		$('.ac-cubedisplay-gpu').attr('src','/static/cube-images/ac-cube-small-default.png');
+		$('.ac-cubedisplay-cpu').attr('src','/static/cube-images/ac-cube-small-default.png');
+		$('.ac-cubedisplay-memory').attr('src','/static/cube-images/ac-cube-small-default.png');
+		$('.ac-cubedisplay-display').attr('src','/static/cube-images/ac-cube-small-default.png');
 		$('#bench-cube-title').removeClass();
 		$('#bench-cube-subtitle').empty();
 		$('#bench-upgrade-subtitle').empty();
