@@ -7,6 +7,9 @@
 
 {% block styling %}
   {{ super() }}
+  
+  <link rel="stylesheet" href="/static/css/loading.css">
+  
   <style type="text/css">
   .share-btn {
     margin-right: 2px;
@@ -416,6 +419,9 @@
     font-size: 15px;
     
   }
+  .mobile-bench-row{
+    margin-bottom:12px;
+  }
   </style>
 {% endblock %}
 
@@ -425,7 +431,9 @@
   
   {% endif %}
   <br>
-
+  
+  <div class="loading loading-spinner">Loading&#8230;</div>
+  
   <div class="container">
     <div class="row">
       <div class="col-md-6" style="color:#cccccc; font-size:14px;">
@@ -466,7 +474,7 @@
           {% if my_rig or not rig %}
           <button class="ac-btn " id="save-cube-button">Save Cube</button>
           {% else %}
-          <a href="/preset" class="ac-btn">Create a Cube</a>
+          <a href="/bench" class="ac-btn">Build Your Own</a>
           {% endif %}
           <button class="ac-btn" id="legendIconButton">
             <img src="/static/images/legend-icon.png" style="width:15px;" class="clickable">
@@ -612,7 +620,7 @@
       <!-- ------------------------------ -->
       <!-- MOBILE BENCH ----------------- -->
       <!-- ------------------------------ -->
-      <div class="row">
+      <div class="row mobile-bench-row">
         <div class="col-xs-8">
           <div data-equip-type="cpu" data-equip-title="EQUIP A PROCESSOR">
             <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Processor</span>
@@ -625,7 +633,7 @@
           <img src="/static/cube-images/ac-cube-small-default.png" class="equip-clickable small-cube-icon pull-right ac-cubedisplay-cpu" />
         </div>
       </div>
-      <div class="row">
+      <div class="row mobile-bench-row">
         <div class="col-xs-8">
           <div data-equip-type="gpu" data-equip-title="EQUIP A GRAPHICS CARD">
             <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Graphics</span>
@@ -638,7 +646,7 @@
           <img src="/static/cube-images/ac-cube-small-default.png" class="equip-clickable small-cube-icon pull-right ac-cubedisplay-gpu" />
         </div>
       </div>
-       <div class="row">
+      <div class="row mobile-bench-row">
         <div class="col-xs-8">   
           <div data-equip-type="memory" data-equip-title="EQUIP MEMORY">
             <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Memory</span>
@@ -651,7 +659,7 @@
           <img src="/static/cube-images/ac-cube-small-default.png" class="equip-clickable small-cube-icon pull-right ac-cubedisplay-memory" />
         </div>
       </div>
-      <div class="row">
+      <div class="row mobile-bench-row">
         <div class="col-xs-8">  
           <div data-equip-type="display" data-equip-title="EQUIP A DISPLAY">
             <span class="acbench-item-heading equip-clickable" style="display:inline-block;">Display</span>
@@ -664,7 +672,7 @@
           <img src="/static/cube-images/ac-cube-small-default.png" class="equip-clickable small-cube-icon pull-right ac-cubedisplay-display" />
         </div>
       </div>
-      <div class="row">
+      <div class="row mobile-bench-row">
         <div class="col-xs-8">    
           <div data-equip-type="motherboard" data-equip-title="EQUIP A MOTHERBOARD">
             <span class="acbench-item-heading other-clickable" style="display:inline-block;">Motherboard <span class="other-component-note">*</span></span>
@@ -674,7 +682,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row mobile-bench-row">
         <div class="col-xs-8">
           <div data-equip-type="storage" data-equip-title="EQUIP STORAGE">
             <span class="acbench-item-heading other-clickable" style="display:inline-block;">Storage <span class="other-component-note">*</span></span>
@@ -684,7 +692,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row mobile-bench-row">
         <div class="col-xs-8">
           <div data-equip-type="power" data-equip-title="EQUIP A POWER SUPPLY">
             <span class="acbench-item-heading other-clickable" style="display:inline-block;">Power Supply <span class="other-component-note">*</span></span>
@@ -694,7 +702,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row mobile-bench-row">
         <div class="col-xs-8">
           <div data-equip-type="chassis" data-equip-title="EQUIP CHASSIS">
             <span class="acbench-item-heading other-clickable" style="display:inline-block;">Chassis <span class="other-component-note">*</span></span>
@@ -881,6 +889,7 @@
   <!-- --------------- -->
   <div id="pick-part-modal" class="modal fade">
     <div class="modal-dialog modal-lg" style="height:100%;">
+        <div class="loading loading-spinner">Loading&#8230;</div>
         <div class="modal-content" style="height:87%;">
           <div style="text-align: center; padding:15px; border-bottom: solid 1px #c1c1c1;">
             <h3 class="modal-title" id="equip-modal-title"></h3>

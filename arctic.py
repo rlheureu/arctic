@@ -273,7 +273,7 @@ def preset():
     rig_presets = dataaccess.get_rig_presets()
     
     context = {'rig_presets' : rig_presets, 
-               'currpagenav':'build'}
+               'currpagenav':'recommendedrigs'}
     
     if request.args.get('use', None): context['use'] = request.args.get('use')
     

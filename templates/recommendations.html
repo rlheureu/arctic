@@ -46,14 +46,15 @@
   </head>
 
   <body>
-    <div class="loading" id="loading-spinner">Loading&#8230;</div>
+    <div class="loading loading-spinner">Loading&#8230;</div>
     <nav class="white" role="navigation">
       <div class="nav-wrapper container">
         <a id="logo-container" href="/" class="brand-logo"><img style="padding-top: 8px;width:175px;" src="static/images/logo-small.png"></a>
         <ul class="right hide-on-med-and-down">
         
           {% if current_user.is_authenticated %}<li ><a href="/showcase">Showcase</a></li>{% endif %}
-          <li><a href="/preset">Build</a></li>
+          <li><a href="/bench">Build</a></li>
+          <li><a href="/preset">Recommended Rigs</a></li>
           <li class="active"><a href="/recommendcpu">Upgrade</a></li>
           <li><a href="/faq">FAQ</a></li>
           <li><a href="https://medium.com/@amdahlcube">Blog</a></li>
@@ -68,7 +69,8 @@
 
         <ul id="nav-mobile" class="side-nav">
           {% if current_user.is_authenticated %}<li ><a href="/showcase">Showcase</a></li>{% endif %}
-          <li><a href="/preset">Build</a></li>
+          <li><a href="/bench">Build</a></li>
+          <li><a href="/preset">Recommended Rigs</a></li>
           <li class="active"><a href="/recommendcpu">Upgrade</a></li>
           <li><a href="/faq">FAQ</a></li>
           <li><a href="https://medium.com/@amdahlcube">Blog</a></li>
@@ -375,7 +377,7 @@
         }
     	$(function(){
     		
-    		$('#loading-spinner').hide();
+    		$('.loading-spinner').hide();
     		
     		function emptyAndHideSelection(cpuSelection, moboSelection, memSelection){
     			cpuSelection = cpuSelection || false;
@@ -532,7 +534,7 @@
         	
     		$.getJSON( "getparts", {'target' : 'cpu'}).success(function(data) {
     			
-    			var partsList = JSON.parse(data.parts);
+    			var partsList = data;
     			var acdata = {};
     			var namesToIds = {};
             	for (part in partsList) {
@@ -553,14 +555,14 @@
         		    	
         		    	resetUI();
         		    	$('#no-data-yet').hide();
-        		    	$('#loading-spinner').show();
+        		    	$('.loading-spinner').show();
         		    	
         		    	//
         		    	// fetch the recommendations data for this part
         		    	var compid = namesToIds[val];
         		    	$.getJSON('/recommendcpu/json', {'id' : compid})
         		    	.fail(function(){
-        		    		$('#loading-spinner').hide();
+        		    		$('.loading-spinner').hide();
         		    		$('#no-data-yet').show();
         		    		
         		    		// log this event
@@ -572,7 +574,7 @@
         		    		// log this event
         		    		mixpanel.track("CPU Recommendation", {"cpu_id": compid});
         		    		
-        		    		$('#loading-spinner').hide();
+        		    		$('.loading-spinner').hide();
         		    		
         		    		$('#current-cpu-title').text(resp.input_cpu.display_name);
         		    		$('#current-cpu-tierinfo').text(resp.input_cpu.tier_explain);

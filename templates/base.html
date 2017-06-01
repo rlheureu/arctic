@@ -416,6 +416,7 @@
           <ul class="nav navbar-nav navbar-right">
             {% if current_user.is_authenticated %}<li {% if currpagenav == 'showcase' %}class="active"{% endif %}><a href="/showcase">Showcase</a></li>{% endif %}
             <li {% if currpagenav == 'build' %}class="active"{% endif %}><a href="/bench">Build</a></li>
+            <li {% if currpagenav == 'recommendedrigs' %}class="active"{% endif %}><a href="/preset">Recommended Rigs</a></li>
             <li {% if currpagenav == 'upgrade' %}class="active"{% endif %}><a href="/recommendcpu">Upgrade</a></li>
             <li {% if currpagenav == 'faq' %}class="active"{% endif %}><a href="/faq">FAQ</a></li>
             <li><a href="https://medium.com/@amdahlcube">Blog</a></li>

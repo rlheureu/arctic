@@ -269,6 +269,9 @@ $(function(){
 	// Rendering PART PICKER MODAL
 	//
 	function renderPartPickerModal() {
+		
+		$('.loading-spinner').show();
+		
 		var eType = $(this).parent().data('equip-type');
 		equipType = eType;
 		
@@ -307,6 +310,8 @@ $(function(){
         	renderFromPartsList(data, currentEquippedId);
         	
         	bindEquipListener();
+        	
+        	$('.loading-spinner').hide();
         }).fail(function() {
             console.log( "error" );
         });
@@ -561,7 +566,7 @@ $(function(){
 				renderEditedFlag(comp);
 			}
 		}
-		
+		$('.loading-spinner').hide();
 	}
 	
 	function toRigUseString(useEnum){
@@ -610,7 +615,10 @@ $(function(){
 
 		view.append(displaySpan.clone());
 		if (partDetail.priceformatted) {
-			view.append('<br><span style="color:#0f9b3e;font-weight:bold;">' + partDetail.priceformatted + '</span> <a href="'+partDetail.buyurl+'">Buy on Amazon</a>');
+			view.append('<br><span style="color:#0f9b3e;font-weight:bold;">' + partDetail.priceformatted + '</span> <a class="bench-buy-url" target="_blank" href="'+partDetail.buyurl+'">Buy on Amazon</a>');
+			$('.bench-buy-url').on('click', function(event){
+			    event.stopPropagation();
+			});
 		}
 	}
 	
