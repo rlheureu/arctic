@@ -71,6 +71,23 @@ def format_int_price(intval):
         dollars = ','.join([dollars[i:i+3] for i in range(0, len(dollars), 3)])
         return "${}.{}".format(dollars, cents)
     
-    
-    
+def lowest_price(prices):
+    """
+    returns lowest price object or none if no prices
+    """
+    lowest = None
+    for price in prices:
+        if not lowest or price.price < lowest: lowest = price
+    return lowest   
+
+def populate_prices(partslist):
+    """
+    populates price for each part in the passed in list
+    """
+    for part in partslist:
+        lowestprice = lowest_price(part.prices) if part.available else None
+        if lowestprice:
+            part.priceformatted = lowestprice.formatted_price
+            part.priceraw = lowestprice.price
+            part.buyurl = lowestprice.link    
     

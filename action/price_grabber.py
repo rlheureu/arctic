@@ -184,17 +184,15 @@ class AmazonExtractor(BaseExtractor):
             
             if not comp.asin: continue
             
-            iteminfo = self.fetch_3p_item_info(comp.asin)
+            iteminfo = self.fetch_3p_item_info(comp.asin.strip())
             
-            if not iteminfo: continue
-            
-            iteminforaw = iteminfo.rawdata
-            
-            if not iteminfo:
-                """ this would happen if the item no longer exists or is available """
-                """ for now I guess we can skip """
+            if not iteminfo or not iteminfo.rawdata:
+                comp.available = False
+                db.session().add(comp)
+                db.session().commit()
                 continue
             
+            iteminforaw = iteminfo.rawdata
             
             """ delete all prices for this component from amazon """
             for cprice in comp.prices:
@@ -228,6 +226,7 @@ class AmazonExtractor(BaseExtractor):
             
             comp.available = True
             
+            db.session().add(comp)
             db.session().add(compprice)
             db.session().flush()
             db.session().commit()

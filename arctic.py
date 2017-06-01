@@ -2,6 +2,7 @@ import datetime
 from functools import wraps
 import json
 import logging
+from operator import attrgetter
 import os
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
@@ -18,15 +19,15 @@ from flask_mail import Mail
 from flask_security.core import Security
 from flask_security.datastore import SQLAlchemyUserDatastore
 
-from action import fbauth, arctic_auth, new_user, account_claims,\
+from action import fbauth, arctic_auth, new_user, account_claims, \
     recommendations, price_grabber, jobs
+from action.price_grabber import AmazonExtractor
 from database import dataaccess
 from database.database import db
 from models.models import User, Rig, BaseComponent
-from utils import perf_utils
+from utils import perf_utils, retaildata_utils, sort_utils
 from utils.exception import ClaimInvalidException
 from utils.gen_utils import jsonify_sql_alchemy_model
-from action.price_grabber import AmazonExtractor
 
 
 app = Flask(__name__)
@@ -500,14 +501,15 @@ def parts_search():
     if rank:
         render_parts = [part for part in render_parts if part.perf_color_coded == int(rank)]
     
+    retaildata_utils.populate_prices(render_parts)
+    
     """
     sort by sort order
     """
-    render_parts = sorted(render_parts, key=lambda part: part.sort_order, reverse=True)
-    
+    render_parts = sorted(render_parts, cmp=sort_utils.sort_by_available_and_recommended, reverse=True)
     render_parts = json.dumps(render_parts, cls=jsonify_sql_alchemy_model(), check_circular=False)
-    
-    return jsonify({'parts':render_parts}) 
+
+    return render_parts, 200, {'Content-Type': 'application/json'}    
 
 @app.route("/getparts", methods=['GET'])
 def get_parts():
@@ -566,13 +568,16 @@ def get_parts():
     perf_utils.set_performance_color_for_parts(render_parts)
     
     """
+    populate prices
+    """
+    retaildata_utils.populate_prices(render_parts)
+    
+    """
     sort by sort order
     """
-    render_parts = sorted(render_parts, key=lambda part: part.sort_order, reverse=True)
-    
+    render_parts = sorted(render_parts, cmp=sort_utils.sort_by_available_and_recommended, reverse=True)
     render_parts = json.dumps(render_parts, cls=jsonify_sql_alchemy_model(), check_circular=False)
-    
-    return jsonify({'parts':render_parts})    
+    return render_parts, 200, {'Content-Type': 'application/json'}
 
         
 

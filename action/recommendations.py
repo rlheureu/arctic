@@ -23,7 +23,7 @@ class RecResponse: pass
 def determine_cheapest_comp(comps):
     cheapest = None
     for comp in comps:
-        price = lowest_price(comp.prices)
+        price = retaildata_utils.lowest_price(comp.prices)
         if not price: continue
         comp.price=price
         comp.formattedprice = price.formatted_price
@@ -37,7 +37,7 @@ def determine_cheapest_comp(comps):
 def generate_memory_config_recommendations(memlist):
     recommendmap = {}
     for mem in memlist:
-        price = lowest_price(mem.prices)
+        price = retaildata_utils.lowest_price(mem.prices)
         if not price: continue
         mem.price = price
         mem.formattedprice = price.formatted_price
@@ -99,12 +99,6 @@ def determine_cpu_fps_tier(cpu_comp, genres):
     mean = sum(vals)/len(vals)
     return min(vals), lowest_average, mean     
 
-def lowest_price(prices):
-    lowest = None
-    for price in prices:
-        if not lowest or price.price < lowest: lowest = price
-    return lowest
-
 def recommend_same_chipset_cpu(input_cpu, chipsets, tier, comp_genres):
     """
     args:
@@ -128,7 +122,7 @@ def recommend_same_chipset_cpu(input_cpu, chipsets, tier, comp_genres):
         if cpu.id == input_cpu.id: continue
         ptier, lowestfps, mean = determine_cpu_fps_tier(cpu, set(comp_genres))
         if ptier < tier: continue
-        price = lowest_price(cpu.prices)
+        price = retaildata_utils.lowest_price(cpu.prices)
         if not price: continue
         
         if lowestfps <= inputlowestfps or mean < imean: continue
@@ -200,7 +194,7 @@ def recommend_newplatform_cpu(input_cpu, currchipsets, tier, comp_genres):
     lowestdollarfps = None
     for cpu in othercpus:
         if cpu.id == input_cpu.id: continue
-        price = lowest_price(cpu.prices)
+        price = retaildata_utils.lowest_price(cpu.prices)
         if not price: continue
         
         mobos = dataaccess.get_mobos_by_chipset(cpu.chipset_name.split(','), available=True, use_status=BaseComponent.Status.APPROVED)

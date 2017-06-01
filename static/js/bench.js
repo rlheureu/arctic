@@ -2,7 +2,7 @@
 var currentRig = {};
 currentRig['parts'] = currentRig['parts'] || {};
 $(function(){
-	
+		
 	// set cube name
 	currentRig['name'] = (AC_GLOBALS.cubeName !== null) ? AC_GLOBALS.cubeName : 'Cube Name';
 	
@@ -326,11 +326,40 @@ $(function(){
 		$('#pick-part-modal').modal('show');
 	}
 
+	function constructPartItemContentDiv(component){
+		
+		var contentDiv = $('<div class="row"></div>');
+		
+		// content on left
+		var contentLeft = $('<div class="col-xs-8 col-md-10"></div>');
+		var titleSpan = $('<span class="part-item-title">' + constructDisplayName(component) + '</span>');
+		contentLeft.append(titleSpan);
+		if (component.compatible === true) {
+			contentLeft.append('<span class="part-item-sub">' + constructPerformanceNote(component) + '</span>');
+			titleSpan.addClass('fg-' + component.perf_color);	// style title span
+		} else {
+			contentLeft.append('<span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>'); // incompatible text
+			titleSpan.addClass('fg-inc'); 	// title color
+		}
+		
+		// content on right
+		var contentRight = $('<div class="col-xs-4 col-md-2"></div>');
+		if (component.priceformatted) {
+			contentRight.append('<span class="part-item-price">' + component.priceformatted + '</span><br><small>On Amazon</small>');
+		} else {
+			contentRight.append('<span class="part-item-unavailable">Component not available</span>');
+		}
+		
+		// wrap up
+		contentDiv.append(contentLeft).append(contentRight);
+		return contentDiv;
+	}
+	
 	function renderFromPartsList(data, currentEquippedId) {
 		var itemListView = $('#part-item-list');
     	itemListView.empty();
     	
-		var partsList = JSON.parse(data.parts);
+		var partsList = data;
     	for (part in partsList) {	        		
     		var component = partsList[part];
     		
@@ -338,10 +367,10 @@ $(function(){
     		// add to parts cache (needed later)
     		partsCache[component.id] = component;
     		
-			var itemDiv = $('<div class="equip-part-item row"></div>')
-			var contentDiv = $('<div class="part-item-content col-xs-9 col-md-11"></div>')
-			var iconDiv = $('<div class="part-icon-div col-xs-3 col-md-1"></div>')
-			var titleSpan = $('<span class="part-item-title">' + constructDisplayName(component) + '</span>');
+			var itemDiv = $('<div class="equip-part-item row"></div>');
+			var contentDiv = $('<div class="part-item-content col-xs-9 col-md-11"></div>');
+			var iconDiv = $('<div class="part-icon-div col-xs-3 col-md-1"></div>');
+			contentDiv.append(constructPartItemContentDiv(component));
 			
 			var labels = $('<div class="ppm-labels clearfix"><span class="label ppm-label ppm-label-equipped">EQUIPPED</span>&nbsp;&nbsp;<span class="label ppm-label ppm-label-recommended">RECOMMENDED</span>&nbsp;&nbsp;&nbsp;&nbsp;</div>');
 			var equippedLabel = labels.find('.ppm-label-equipped').hide();
@@ -350,8 +379,6 @@ $(function(){
 			itemDiv.append(iconDiv);
 			itemDiv.append(contentDiv);
 			itemDiv.append(labels);
-			contentDiv.append(titleSpan);
-			
 			
 			//
 			// set component ID
@@ -365,23 +392,16 @@ $(function(){
 			
 			if (component.compatible === true) {
 				iconDiv.append('<img class="modal-color-icon" src="/static/images/modal-box-rarity-'+component.perf_color+'.png"/>') 	// color icon
-				titleSpan.addClass('fg-' + component.perf_color);											// style title span
-				contentDiv.append('<span class="part-item-sub">' + constructPerformanceNote(component) + '</span>');
-				
 				// add any flags
     			// adding recommended to all for now
     			if (component.recommended === true ) {
     				recommendedLabel.show();
     			}
-				
 				// make item clickable (equippable)
 				itemDiv.addClass('equippable-item');
-				
 			} else {        				
 				iconDiv.append('<img class="modal-color-icon" src="/static/images/modal-box-rarity-incompatible.png"/>') 	// append incompat icon
-				contentDiv.append('<span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>'); 			// incompatible text
-				titleSpan.addClass('fg-inc'); 															// title color
-				
+
 				// item cannot be equipped
 				itemDiv.removeClass('equippable-item');
 			}
@@ -417,6 +437,18 @@ $(function(){
 	}
 	
 	//
+	// Format price from int representation
+	//
+	function formatPriceFromInt(intPriceVal) {
+		intPriceVal = parseInt(intPriceVal);
+		var dollars = parseInt(intPriceVal / 100);
+		var cents = intPriceVal % 100;
+		cents = (cents < 10) ? ("0" + cents) : cents;
+		return String(dollars) + '.' + String(cents);
+	}
+	
+	
+	//
 	// Render Bench View
 	//
 	function renderRig() {
@@ -435,6 +467,7 @@ $(function(){
 		var coreComponentCount = 0;
 		var worstComponent = null;
 		var worstComponentDetail = null;
+		var totalCostRaw = 0;
 		
 		// render the current rig
 		for (comp in currentRig['parts']) {
@@ -449,7 +482,6 @@ $(function(){
 			
 			// comptype
 			var compType = comp.substr(0, comp.indexOf('_id'));
-			console.log('comp type: ' + compType);
 			
 			// modify view
 			if (isCoreComponent(compType)) {
@@ -471,6 +503,19 @@ $(function(){
 				renderOtherComponent(compType, partDetail);
 			}
 			
+			// add up total cost
+			if (partDetail.priceraw) {
+				totalCostRaw += partDetail.priceraw;
+			}
+			
+		}
+		
+		if (totalCostRaw > 0) {
+			$('.budget-total-cost').empty().text('$' + formatPriceFromInt(totalCostRaw));
+			$('.no-prices-span').hide();
+		} else {
+			$('.budget-total-cost').empty();
+			$('.no-prices-span').show();
 		}
 		
 		if (coreComponentCount == 4) {
@@ -541,6 +586,13 @@ $(function(){
 		view.append(displaySpan.clone());
 		view.append('<br><span>' + constructPerformanceNote(partDetail) + '</span>')
 		
+		if (partDetail.priceformatted) {
+			view.append('<br><span style="color:#0f9b3e;font-weight:bold;">' + partDetail.priceformatted + '</span> <a class="bench-buy-url" target="_blank" href="'+partDetail.buyurl+'">Buy on Amazon</a>');
+			$('.bench-buy-url').on('click', function(event){
+			    event.stopPropagation();
+			});
+		}
+		
 		// modify colors
 		$('.ac-cubedisplay-' + compType).attr('src',
 				'/static/cube-images/ac-cube-small-' + partDetail.perf_color + '.png');
@@ -557,7 +609,9 @@ $(function(){
 		displaySpan.addClass('part-item-title'); // styling
 
 		view.append(displaySpan.clone());
-		
+		if (partDetail.priceformatted) {
+			view.append('<br><span style="color:#0f9b3e;font-weight:bold;">' + partDetail.priceformatted + '</span> <a href="'+partDetail.buyurl+'">Buy on Amazon</a>');
+		}
 	}
 	
 	function renderEditedFlag(compType){
@@ -644,7 +698,7 @@ $(function(){
 		}
 		if (ids.length === 0) renderFunc();
 		$.getJSON( "getparts", {ids:ids}).success(function(data) {
-			var partsList = JSON.parse(data.parts);
+			var partsList = data;
         	for (part in partsList) {
         		var component = partsList[part];
         		partsCache[component.id] = component;
