@@ -28,6 +28,7 @@ from models.models import User, Rig, BaseComponent
 from utils import perf_utils, retaildata_utils, sort_utils
 from utils.exception import ClaimInvalidException
 from utils.gen_utils import jsonify_sql_alchemy_model
+import time
 
 
 app = Flask(__name__)
@@ -72,6 +73,10 @@ initialize jobs
 """
 jobs.start_scheduler()
 
+"""
+appstart time
+"""
+APPSTART_TIME = "{:.0f}".format(time.time())
 
 # This callback is used to reload the user object from the user id stored in the session.
 @login_manager.user_loader
@@ -377,7 +382,8 @@ def bench():
         context['upgrade'] = upgrade
         upgradeobj = dataaccess.get_rig(upgrade)
         if upgradeobj: context['upgrade_name'] = upgradeobj.name
-
+        
+    context['app_start_time'] = APPSTART_TIME
     return render_template('bench.html', **context)
 
 @app.route("/showcase", methods=['GET'])
@@ -418,6 +424,9 @@ def showcase():
         elif owned_part.component.type == 'MEMORY': owned_memory.append(owned_part)
         elif owned_part.component.type == 'MOTHERBOARD': owned_motherboard.append(owned_part)
         elif owned_part.component.type == 'DISPLAY': owned_display.append(owned_part)
+    
+    """ include datetime for usage on static files that should not be cached """
+    
     
     context = {'exp_rigs':exp_rigs, 'owned_rigs': owned_rigs,
                'currpagenav' : 'showcase',
