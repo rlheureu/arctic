@@ -523,15 +523,21 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12" style="background-color: #5c5a67; padding: 10px;">
-          <span style="color: #a2a2a2;">This cube belongs to: </span> <span style="font-weight: bold; color: #dcdcdc;">{{rig.user.profile_name}}</span>
-          <span class="pull-right" style="color: #a2a2a2;">
-            View a different cube: &nbsp;&nbsp;&nbsp;
-            <select id="change-cube-select">
-              {% for urig in rig.user.rigs %}
-                <option class="nav-onclick" data-location="/bench?rig={{urig.id}}" {% if urig.id == rig.id %}selected{% endif %}>{{urig.name}}</option>
-              {% endfor %}
-            </select>
-          </span>
+          <div class="row">
+            <div class="col-md-6">
+              <span style="color: #a2a2a2;">This cube belongs to: </span> <span style="font-weight: bold; color: #dcdcdc;">{{rig.user.profile_name}}</span>
+            </div>
+            <div class="col-md-6">
+              <span class="pull-right" style="color: #a2a2a2;">
+                View a different cube: &nbsp;&nbsp;&nbsp;
+                <select id="change-cube-select">
+                  {% for urig in rig.user.rigs %}
+                    <option class="nav-onclick" data-location="/bench?rig={{urig.id}}" {% if urig.id == rig.id %}selected{% endif %}>{{urig.name}}</option>
+                  {% endfor %}
+                </select>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
       <br>
