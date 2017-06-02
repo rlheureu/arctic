@@ -331,6 +331,35 @@ $(function(){
 		$('#pick-part-modal').modal('show');
 	}
 
+	function constructFpsTable(component){
+		//
+		if (component.fps_data_table === undefined || component.fps_data_table === null) {
+			return null;
+		}
+		var tableHtml = '<table>';
+		if (component.fps_data_table.column_headers) {
+			tableHtml += '<tr><td><b>Avg FPS</b></td>';
+			for (var i=0; i<component.fps_data_table.column_headers.length; i++) {
+				tableHtml += '<td class="fps-table-header">' + component.fps_data_table.column_headers[i] + '</td>';
+			}
+			tableHtml += '</tr>';
+		} else {
+			tableHtml = '<b>Avg FPS</b><br>' + tableHtml;
+		}
+		
+		for (var i=0; i<component.fps_data_table.values.length; i++) {
+			var tableRow = component.fps_data_table.values[i];
+			tableHtml += '<tr><td class="fps-table-row-title">' + tableRow.name + '</td>';
+			for (var j=0; j<tableRow.values.length;j++) {
+				tableHtml += '<td class="fps-table-row-value" style="color:'+tableRow.values[j].color+';">' + tableRow.values[j].text + '</td>';
+			}
+			tableHtml += '</tr>'
+		}
+		tableHtml += '</table>';
+		
+		return '<br>' + tableHtml;
+	}
+	
 	function constructPartItemContentDiv(component){
 		
 		var contentDiv = $('<div class="row"></div>');
@@ -346,6 +375,10 @@ $(function(){
 			contentLeft.append('<span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>'); // incompatible text
 			titleSpan.addClass('fg-inc'); 	// title color
 		}
+		var fpsTable = constructFpsTable(component);
+		if (fpsTable) {
+			contentLeft.append(fpsTable);
+		}
 		
 		// content on right
 		var contentRight = $('<div class="col-xs-4 col-md-2"></div>');
@@ -354,6 +387,8 @@ $(function(){
 		} else {
 			contentRight.append('<span class="part-item-unavailable">Component not available</span>');
 		}
+		var labels = $('<br><br><span class="label ppm-label ppm-label-equipped">EQUIPPED</span><br><br><span class="label ppm-label ppm-label-recommended">RECOMMENDED</span>&nbsp;&nbsp;&nbsp;&nbsp;</div>');
+		contentRight.append(labels);
 		
 		// wrap up
 		contentDiv.append(contentLeft).append(contentRight);
@@ -373,17 +408,13 @@ $(function(){
     		partsCache[component.id] = component;
     		
 			var itemDiv = $('<div class="equip-part-item row"></div>');
-			var contentDiv = $('<div class="part-item-content col-xs-9 col-md-11"></div>');
-			var iconDiv = $('<div class="part-icon-div col-xs-3 col-md-1"></div>');
+			var contentDiv = $('<div class="part-item-content col-xs-12"></div>');
 			contentDiv.append(constructPartItemContentDiv(component));
 			
-			var labels = $('<div class="ppm-labels clearfix"><span class="label ppm-label ppm-label-equipped">EQUIPPED</span>&nbsp;&nbsp;<span class="label ppm-label ppm-label-recommended">RECOMMENDED</span>&nbsp;&nbsp;&nbsp;&nbsp;</div>');
-			var equippedLabel = labels.find('.ppm-label-equipped').hide();
-			var recommendedLabel = labels.find('.ppm-label-recommended').hide();
+			var equippedLabel = contentDiv.find('.ppm-label-equipped').hide();
+			var recommendedLabel = contentDiv.find('.ppm-label-recommended').hide();
 			
-			itemDiv.append(iconDiv);
 			itemDiv.append(contentDiv);
-			itemDiv.append(labels);
 			
 			//
 			// set component ID
@@ -396,7 +427,7 @@ $(function(){
 			}
 			
 			if (component.compatible === true) {
-				iconDiv.append('<img class="modal-color-icon" src="/static/images/modal-box-rarity-'+component.perf_color+'.png"/>') 	// color icon
+				itemDiv.addClass('border-left-ppm-' + component.perf_color);
 				// add any flags
     			// adding recommended to all for now
     			if (component.recommended === true ) {
@@ -405,7 +436,7 @@ $(function(){
 				// make item clickable (equippable)
 				itemDiv.addClass('equippable-item');
 			} else {        				
-				iconDiv.append('<img class="modal-color-icon" src="/static/images/modal-box-rarity-incompatible.png"/>') 	// append incompat icon
+				itemDiv.addClass('border-left-ppm-gray');
 
 				// item cannot be equipped
 				itemDiv.removeClass('equippable-item');

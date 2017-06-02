@@ -4,6 +4,7 @@ Performance Utility
 
 
 """
+from models.models import CPUComponent, GPUComponent
 
 def to_datapoint_json(fd):
     rgbcolors = fd.component.get_rgb_colors()
@@ -246,6 +247,56 @@ def get_performance_color_coded(component):
     
     if component: return component.get_performance_color_coded()
     else: return 0
+
+def get_color_for_fps(fpsval):
+    if fpsval >= 60: return '#009104'
+    elif fpsval >= 30: return '#d5d02e'
+    else: return '#be0000'
+
+def format_fps_for_table(fpsval):
+    if not fpsval: return {'text': 'n/a', 'color' : '#6f6f6f'}
+    else: return {'text': "{:.0f}".format(fpsval), 'color' : get_color_for_fps(fpsval)}
     
+def populate_fps_display_table(component):
     
+    """ friendly genre names """
+    genredisplay = {'OPEN_WORLD':'Open world',
+                  'FPS':'First-person shooter',
+                  'RTS':'Real-time strategy',
+                  'ARPG':'Action role-playing'}
+    
+    fpstable ={}
+    comptype = None    
+    headers = None
+    if isinstance(component, CPUComponent):
+        comptype = 'cpu'
+        headers = None 
+    elif isinstance(component, GPUComponent):
+        comptype = 'gpu'
+        headers = ['1080p', '1440p', '2160p']
+    else:
+        return
+    
+    fpstable['comptype'] = comptype
+    fpstable['column_headers'] = headers
+    tablerows = []
+    
+    if not component.fps_data or len(component.fps_data) == 0: return
+    
+    for dp in component.fps_data:
+        genrename = genredisplay.get(dp.benchmark_type)
+        if not genrename: continue
+        
+        if comptype == 'cpu':
+            """ add only fps average """
+            tablerows.append({'name':genrename, 'values':[format_fps_for_table(dp.fps_average)]})
+        elif comptype == 'gpu':
+            tablerows.append({'name':genrename, 'values':[format_fps_for_table(dp.fps_average_1080p),
+                                                          format_fps_for_table(dp.fps_average_1440p),
+                                                          format_fps_for_table(dp.fps_average_2160p)]})
+    
+    fpstable['values'] = sorted(tablerows, key=lambda row: row['name'])
+    component.fps_data_table = fpstable
+        
+        
         

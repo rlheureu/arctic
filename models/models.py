@@ -373,6 +373,9 @@ class ComponentFps(Base):
     fps_point_one = Column('fps_point_one', Float)
     source_url = Column('source_url', String(512))
     source_description = Column('source_description', String(512))
+    fps_average_1080p =  Column('fps_average_1080p', Float)
+    fps_average_1440p =  Column('fps_average_1440p', Float)
+    fps_average_2160p =  Column('fps_average_2160p', Float)
     
 class AccountClaim(Base):
     __tablename__ = 'arctic_account_claim'

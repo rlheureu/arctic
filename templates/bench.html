@@ -63,7 +63,8 @@
     margin-bottom:10px;
     text-align: left;
     cursor: pointer;
-    border: #333 solid 1px;
+    border: #333333 solid 1px;
+    border-left: 12px solid #333333;
   }
   .chart-part-list-item {
     padding: 4px;
@@ -94,7 +95,6 @@
     padding:12px;
     display:inline-block;
     vertical-align: top;
-    padding-left:0px;
   }
   .part-item-icon{
     position: relative;
@@ -107,7 +107,7 @@
   }
   .ppm-label{
     line-height: 2.5;
-    letter-spacing: 3px;
+    letter-spacing: 1px;
     word-spacing: 10px;
   }
   .ppm-label-recommended{
@@ -116,11 +116,6 @@
   .ppm-label-equipped{
     background-color: #c3b8dd;
     color: #333333;
-  }
-  .ppm-labels{
-    text-align: right;
-    position: relative;
-    bottom: 0px;
   }
   .bg-orange {
     background-color: #fede86;
@@ -421,6 +416,44 @@
   }
   .mobile-bench-row{
     margin-bottom:12px;
+  }
+  .fps-table-row-title{
+    padding:3px;
+    color:#cccccc;
+    font-size: 11px;
+  }
+  .fps-table-row-value{
+    padding:3px;
+    padding-left:5px;
+    font-weight: bolder;
+    color: #009104;
+    font-size: 11px;
+  }
+  .fps-table-header{
+    font-weight: bold;
+    padding:5px;
+    font-size: 11px;
+  }
+  .border-left-ppm-orange{
+    border-left-color: #fede86;
+  }
+  .border-left-ppm-purple{
+    border-left-color: #fe4aea;
+  }
+  .border-left-ppm-blue{
+    border-left-color: #29a0de;
+  }
+  .border-left-ppm-gray{
+    border-left-color: #333333;
+  }
+  .border-left-ppm-black{
+    border-left-color: #000000;
+  }
+  .border-left-ppm-green{
+    border-left-color: #1ed311;
+  }
+  .border-left-ppm-default{
+    border-left-color: #cccccc;
   }
   </style>
 {% endblock %}

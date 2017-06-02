@@ -59,8 +59,8 @@
           <li><a href="/faq">FAQ</a></li>
           <li><a href="https://medium.com/@amdahlcube">Blog</a></li>
           {% if current_user.is_authenticated %}
+          <li><a href="/account">Account</a></li>
           <li><a href="/logoutuser">Logout</a></li>
-          <li><a href="/account"><i class="material-icons">account_circle</i></a></li>
           {% else %}
           <li><a href="/">Login</a></li>
           {% endif %}
@@ -75,8 +75,8 @@
           <li><a href="/faq">FAQ</a></li>
           <li><a href="https://medium.com/@amdahlcube">Blog</a></li>
           {% if current_user.is_authenticated %}
+          <li><a href="/account">Account</a></li>
           <li><a href="/logoutuser">Logout</a></li>
-          <li><a href="/account"><i class="material-icons">account_circle</i></a></li>
           {% else %}
           <li><a href="#" id="navloginbutton">Login</a></li>
           {% endif %}

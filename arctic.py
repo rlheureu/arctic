@@ -573,6 +573,11 @@ def get_parts():
     retaildata_utils.populate_prices(render_parts)
     
     """
+    populate fps table
+    """
+    [perf_utils.populate_fps_display_table(part) for part in render_parts]
+    
+    """
     sort by sort order
     """
     render_parts = sorted(render_parts, cmp=sort_utils.sort_by_available_and_recommended, reverse=True)
