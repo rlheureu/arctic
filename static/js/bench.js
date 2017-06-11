@@ -222,12 +222,30 @@ $(function(){
 	//
 	// Search when any serach input changes, hook up event listeners
 	//
-	$('#search-parts-input').keyup(function(){ searchPartsAndRenderResult(); });
+	var searchStrTimeout = null;
+	$('#search-parts-input').keyup(function(e){
+		
+		$('.ppm-loading-spinner').show();
+		
+		var inVal = $(this).val();
+		var keyCode = e.which;
+		
+		if (searchStrTimeout) clearTimeout(searchStrTimeout);
+		if (e.which == 13 || inVal.length == 0) {
+			// enter key, go ahead and search
+			searchPartsAndRenderResult();
+		} else if ((keyCode >= 48 && keyCode <= 90) || keyCode == 8) {
+			searchStrTimeout = setTimeout(searchPartsAndRenderResult, 750);
+		}
+	});
 	$('#search-show-only-compat-parts').change(function(){ searchPartsAndRenderResult(); });
 	$('#search-rank-select').change(function(){ searchPartsAndRenderResult(); });
 	$('#search-manufacturer-select').change(function(){ searchPartsAndRenderResult(); });
 
 	function searchPartsAndRenderResult() {
+		
+		$('.ppm-loading-spinner').show();
+		
 		var searchPartsParams = {};
 		searchPartsParams.target = equipType;
 		searchPartsParams.q = $('#search-parts-input').val();
@@ -246,6 +264,8 @@ $(function(){
         	renderFromPartsList(data, currentEquippedId);
         	
         	bindEquipListener();
+        	
+        	$('.ppm-loading-spinner').hide();
 
         }).fail(function() {
             console.log( "error" );
@@ -270,7 +290,7 @@ $(function(){
 	//
 	function renderPartPickerModal() {
 		
-		$('.loading-spinner').show();
+		$('.ppm-loading-spinner').show();
 		
 		var eType = $(this).parent().data('equip-type');
 		equipType = eType;
@@ -311,7 +331,7 @@ $(function(){
         	
         	bindEquipListener();
         	
-        	$('.loading-spinner').hide();
+        	$('.ppm-loading-spinner').hide();
         }).fail(function() {
             console.log( "error" );
         });

@@ -482,11 +482,12 @@ def parts_search():
     memory_id = request.args.get('memory_id')
     display_id = request.args.get('display_id')
     cpu_id = request.args.get('cpu_id')
+    chassis_id = request.args.get('chassis_id')
     compat_only = request.args.get('compat') == 'true'
     rank = request.args.get('rank')
     manufacturer = request.args.get('manufacturer')
 
-    compat_parts = dataaccess.search_parts(search_string, target, motherboard_id, gpu_id, memory_id, display_id, cpu_id, manufacturer)
+    compat_parts = dataaccess.search_parts(search_string, target, motherboard_id, gpu_id, memory_id, display_id, cpu_id, chassis_id, manufacturer)
 
     added = set()
     for part in compat_parts:
@@ -511,6 +512,11 @@ def parts_search():
         render_parts = [part for part in render_parts if part.perf_color_coded == int(rank)]
     
     retaildata_utils.populate_prices(render_parts)
+    
+    """
+    populate fps table
+    """
+    [perf_utils.populate_fps_display_table(part) for part in render_parts]
     
     """
     sort by sort order
@@ -539,7 +545,7 @@ def get_parts():
         
     else:
     
-        getpartsparams = ['motherboard_id', 'gpu_id', 'memory_id', 'display_id', 'cpu_id', 'target']
+        getpartsparams = ['motherboard_id', 'gpu_id', 'memory_id', 'display_id', 'cpu_id', 'target', 'chassis_id']
         for k in reqdict.keys():
             if k not in getpartsparams:
                 del reqdict[k]

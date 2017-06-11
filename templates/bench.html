@@ -455,6 +455,16 @@
   .border-left-ppm-default{
     border-left-color: #cccccc;
   }
+  .ppm-loading-spinner{
+    background-image: url("/static/images/loading-cube.gif");
+    background-position: 50% 30%;
+    background-repeat: no-repeat;
+    background-color: rgba(0,0,0,0.7);
+    z-index: 10000;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
   </style>
 {% endblock %}
 
@@ -928,7 +938,6 @@
   <!-- --------------- -->
   <div id="pick-part-modal" class="modal fade">
     <div class="modal-dialog modal-lg" style="height:100%;">
-        <div class="loading loading-spinner">Loading&#8230;</div>
         <div class="modal-content" style="height:87%;">
           <div style="text-align: center; padding:15px; border-bottom: solid 1px #c1c1c1;">
             <h3 class="modal-title" id="equip-modal-title"></h3>
@@ -958,6 +967,8 @@
             <div class="clearfix"></div>
           </div>
           
+          <div class="ppm-loading-spinner">&nbsp;</div>
+          
           <div id="part-picker-tabs" class="hidden-sm hidden-xs">
             <br>
             <ul class="nav nav-tabs" role="tablist" style="padding-left:20px;">
@@ -967,6 +978,7 @@
           </div>
           
           <div class="tab-content" style="height:80%;">
+          
             <!-- ITEM LIST -->
             <div role="tabpanel" class="tab-pane active modal-content-styling"  id="part-item-list"></div>
             <div role="tabpanel" class="tab-pane modal-content-styling" id="chart">

@@ -47,6 +47,8 @@ CREATE TABLE `arctic_component` (
   `use_status` varchar(30) DEFAULT NULL,
   `asin` varchar(128) DEFAULT NULL,
   `no_fhs` int(11) DEFAULT NULL,
+  `power_usage_watts` int(11) DEFAULT NULL,
+  `power_size_watts` int(11) DEFAULT NULL,
   PRIMARY KEY (`arctic_component_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=867 DEFAULT CHARSET=latin1;
 

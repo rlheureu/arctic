@@ -1,17 +1,17 @@
 
 
 from datetime import datetime
+import re
 
 from flask_login import current_user
-from sqlalchemy.sql.expression import or_
+from sqlalchemy.sql.expression import or_, and_
 
 from database import db
 from models import models
-from models.models import AccountClaim, OwnedPart, CPUComponent, GPUComponent,\
-    MemoryComponent, DisplayComponent, MotherboardComponent, ChassisComponent,\
+from models.models import AccountClaim, OwnedPart, CPUComponent, GPUComponent, \
+    MemoryComponent, DisplayComponent, MotherboardComponent, ChassisComponent, \
     PowerComponent, StorageComponent, ComponentFps, BaseComponent
 from utils.exception import InvalidInput
-
 
 
 def superadmin_save_components(user, savelist):
@@ -331,7 +331,7 @@ def get_manufacturers(target):
     manufacturers.sort()
     return manufacturers
 
-def search_parts(search_string, target, motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, manufacturer=None):
+def search_parts(search_string, target, motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, chassis_id=None, manufacturer=None):
     
     search_strings = search_string.split()
 
@@ -381,7 +381,7 @@ def search_parts(search_string, target, motherboard_id=None, gpu_id=None, memory
         return query.all()
 
     elif target == 'motherboard':
-        query = get_compatible_mobo_map(motherboard_id, gpu_id, memory_id, display_id, cpu_id, return_query=True)
+        query = get_compatible_mobo_map(motherboard_id, gpu_id, memory_id, display_id, cpu_id, chassis_id, return_query=True)
         if manufacturer:
             query = query.filter(models.MotherboardComponent.vendor == manufacturer)
         for search_string in search_strings:
@@ -396,7 +396,7 @@ def search_parts(search_string, target, motherboard_id=None, gpu_id=None, memory
         return query.all()
 
     elif target == 'chassis':
-        query = get_all_chassis(return_query=True)
+        query = get_compatible_chassis(motherboard_id, return_query=True)
         if manufacturer:
             query = query.filter(models.ChassisComponent.vendor == manufacturer)
         for search_string in search_strings:
@@ -407,7 +407,7 @@ def search_parts(search_string, target, motherboard_id=None, gpu_id=None, memory
         return query.all()
 
     elif target == 'power':
-        query = get_all_power(return_query=True)
+        query = get_compatible_power(gpu_id, return_query=True)
         if manufacturer:
             query = query.filter(models.PowerComponent.vendor == manufacturer)
         for search_string in search_strings:
@@ -436,7 +436,8 @@ def get_compatible_parts(target=None,
                          gpu_id=None,
                          memory_id=None,
                          display_id=None,
-                         cpu_id=None):
+                         cpu_id=None,
+                         chassis_id=None):
     
     if target == 'cpu':
         return get_compatible_cpu_map(motherboard_id, gpu_id, memory_id, display_id, cpu_id)
@@ -459,17 +460,99 @@ def get_compatible_parts(target=None,
         """
         check processor and memory
         """
-        return get_compatible_mobo_map(motherboard_id, gpu_id, memory_id, display_id, cpu_id)
+        return get_compatible_mobo_map(motherboard_id, gpu_id, memory_id, display_id, cpu_id, chassis_id)
     elif target == 'chassis':
-        return get_all_chassis()
+        return get_compatible_chassis(motherboard_id)
     elif target == 'power':
-        return get_all_power()
+        return get_compatible_power(gpu_id)
     elif target == 'storage':
         return get_all_storage()
     else:
         return []
 
-def get_compatible_mobo_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, return_query=False, available=None,use_status=None):
+def get_compatible_power(gpu_id, return_query=False):
+    gpu = get_component(gpu_id, active=None)
+    if not gpu or not gpu.power_usage_watts: return get_all_power(return_query=return_query)
+    
+    q = db.session().query(models.PowerComponent)
+    q = q.filter(models.PowerComponent.power_size_watts > gpu.power_usage_watts)
+    
+    return q if return_query else q.all()
+    
+
+def get_compatible_chassis(motherboard_id, active_only=True, return_query=False):
+    mobo = get_component(motherboard_id, active=None)
+    if not mobo: return get_all_chassis(return_query=return_query)
+    ff = mobo.form_factor
+    
+    if not ff: return get_all_chassis(return_query=return_query)
+    
+    if ff == 'Thin Mini-ITX': return get_all_chassis(return_query=return_query)
+    
+    q = db.session().query(models.ChassisComponent)
+    if ff == 'Mini-ITX':
+        q = q.filter(or_(models.ChassisComponent.form_factor == 'Mini-ITX',
+                         models.ChassisComponent.form_factor == 'Micro-ATX',
+                         models.ChassisComponent.form_factor == 'ATX',
+                         models.ChassisComponent.form_factor == 'Extended ATX',
+                         models.ChassisComponent.form_factor == 'XL ATX',
+                         models.ChassisComponent.form_factor == 'XL-ATX',))
+    elif ff == 'Micro-ATX':
+        q = q.filter(or_(models.ChassisComponent.form_factor == 'Micro-ATX',
+                         models.ChassisComponent.form_factor == 'ATX',
+                         models.ChassisComponent.form_factor == 'Extended ATX',
+                         models.ChassisComponent.form_factor == 'XL ATX',
+                         models.ChassisComponent.form_factor == 'XL-ATX',))
+    elif ff == 'ATX':
+        q = q.filter(or_(models.ChassisComponent.form_factor == 'ATX',
+                         models.ChassisComponent.form_factor == 'Extended ATX',
+                         models.ChassisComponent.form_factor == 'XL ATX',
+                         models.ChassisComponent.form_factor == 'XL-ATX',))
+    elif ff == 'Extended ATX':
+        q = q.filter(or_(models.ChassisComponent.form_factor == 'Extended ATX',
+                         models.ChassisComponent.form_factor == 'XL ATX',
+                         models.ChassisComponent.form_factor == 'XL-ATX',))
+    elif ff == 'XL ATX' or ff == 'XL-ATX':
+        q = q.filter(or_(models.ChassisComponent.form_factor == 'XL ATX',
+                         models.ChassisComponent.form_factor == 'XL-ATX',))
+    else:
+        return get_all_chassis(return_query=return_query)
+    
+    if active_only: q = q.filter(models.ChassisComponent.active == True)
+    
+    return q if return_query else q.all()
+    
+def filter_by_compatible_chassis(mobo_query, chassis_id):
+    chassis = get_component(chassis_id, None)
+    
+    if not chassis: return mobo_query
+    ff = chassis.form_factor
+    if not ff: return mobo_query
+    
+    if ff == 'XL-ATX' or ff == 'XL ATX': return mobo_query
+    elif ff == 'Extended ATX':
+        return mobo_query.filter(and_(models.MotherboardComponent.form_factor != 'XL-ATX',
+                                      models.MotherboardComponent.form_factor != 'XL ATX'))
+    elif ff == 'ATX':
+        return mobo_query.filter(and_(models.MotherboardComponent.form_factor != 'Extended ATX',
+                                      models.MotherboardComponent.form_factor != 'XL-ATX',
+                                      models.MotherboardComponent.form_factor != 'XL ATX'))
+    elif ff == 'Micro ATX':
+        return mobo_query.filter(and_(models.MotherboardComponent.form_factor != 'ATX',
+                                      models.MotherboardComponent.form_factor != 'Extended ATX',
+                                      models.MotherboardComponent.form_factor != 'XL-ATX',
+                                      models.MotherboardComponent.form_factor != 'XL ATX'))
+    elif ff == 'Mini-ITX':
+        return mobo_query.filter(and_(models.MotherboardComponent.form_factor != 'Micro ATX',
+                                      models.MotherboardComponent.form_factor != 'ATX',
+                                      models.MotherboardComponent.form_factor != 'Extended ATX',
+                                      models.MotherboardComponent.form_factor != 'XL-ATX',
+                                      models.MotherboardComponent.form_factor != 'XL ATX'))
+    elif ff == 'Thin Mini-ITX':
+        return mobo_query.filter(models.MotherboardComponent.form_factor == 'Thin Mini-ITX')
+    else: return mobo_query
+
+def get_compatible_mobo_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, chassis_id=None, return_query=False, available=None,use_status=None):
     """
     MOBO constraints:
     - CPU YES
@@ -506,6 +589,12 @@ def get_compatible_mobo_map(motherboard_id=None, gpu_id=None, memory_id=None, di
     return map of compatible and incompatible components
     """
     if not compat_q: compat_q = db.session().query(models.MotherboardComponent).filter(models.MotherboardComponent.active == True)
+    
+    """
+    filter out by incompatible chassis
+    """
+    if chassis_id:
+        compat_q = filter_by_compatible_chassis(compat_q, chassis_id)
         
     """ additional filters """
     if available != None: compat_q = compat_q.filter(models.MotherboardComponent.available == available)

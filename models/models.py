@@ -31,6 +31,8 @@ class BaseComponent(Base):
     socket = Column('socket', String(500))
     unlocked = Column('unlocked', Boolean)
     
+    form_factor = Column('form_factor', String(500))
+    
     recommended = Column('recommended', Boolean)
     
     chipset_vendor = Column('chipset_vendor', String(500))
@@ -48,6 +50,8 @@ class BaseComponent(Base):
     msrp = Column('msrp', Float)
     
     dimms = Column('dimms', Integer)
+    
+    power_usage_watts = Column('power_usage_watts', Integer)
     
     type = Column('data_type_discriminator', String(45))
 
@@ -190,6 +194,8 @@ class StorageComponent(BaseComponent):
 
 class PowerComponent(BaseComponent):
     
+    power_size_watts = Column('power_size_watts', Integer)
+    
     __mapper_args__ = {
         'polymorphic_identity' : 'POWER'
     }
@@ -232,7 +238,6 @@ class MotherboardComponent(BaseComponent):
     ####memory_spec = Column('memory_spec', String(500))
     ####memory_frequency = Column('memory_frequency', String(500))
     ####socket = Column('socket', String(500))
-    form_factor = Column('form_factor', String(500))
     memory_type = Column('memory_type', String(500))
     external_ports = Column('external_ports', String(500))
     pcie_bus = Column('pcie_bus', String(500))
