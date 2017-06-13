@@ -462,7 +462,9 @@ $(function(){
 				itemDiv.removeClass('equippable-item');
 			}
 			
-			itemListView.append(itemDiv);
+			/// if this item is equipped show it at the top
+			if (currentEquippedId === component.id) itemListView.prepend(itemDiv);
+			else itemListView.append(itemDiv);
 			
     	}
 	}
