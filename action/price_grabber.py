@@ -187,17 +187,13 @@ class AmazonExtractor(BaseExtractor):
             iteminfo = self.fetch_3p_item_info(comp.asin.strip())
             
             if not iteminfo or not iteminfo.rawdata:
-                comp.available = False
-                db.session().add(comp)
-                db.session().commit()
+                """ 6/16 we decided to not mark these as unavailable """
+                #comp.available = False
+                #db.session().add(comp)
+                #db.session().commit()
                 continue
             
             iteminforaw = iteminfo.rawdata
-            
-            """ delete all prices for this component from amazon """
-            for cprice in comp.prices:
-                if not cprice.retailer or cprice.retailer.name.lower() == 'amazon':
-                    db.session().delete(cprice)
             
             """
             now extract pricing information and create/update pricing records
@@ -205,11 +201,16 @@ class AmazonExtractor(BaseExtractor):
             offerinfolist = iteminforaw.find_all('offer')
             
             if len(offerinfolist) < 1:
-                comp.available = False
-                db.session().add(comp)
-                db.session().flush()
-                db.session().commit()
+                """ 6/16 we decided to not mark these as unavailable """
+                #comp.available = False
+                #db.session().add(comp)
+                #db.session().commit()
                 continue
+            
+            """ delete all prices for this component from amazon """
+            for cprice in comp.prices:
+                    if not cprice.retailer or cprice.retailer.name.lower() == 'amazon':
+                        db.session().delete(cprice)
             
             offerinfo = offerinfolist[0]
             

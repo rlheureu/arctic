@@ -26,7 +26,7 @@ def start_scheduler():
     # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     # Register jobs here
     """
-    schedule.every(45).minutes.do(jobqueue.put, price_grabber.sync_prices)
+    schedule.every(6).hours.do(jobqueue.put, price_grabber.sync_prices)
 
     # main worker thread
     def worker_main():
