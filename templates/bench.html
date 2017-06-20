@@ -461,9 +461,33 @@
     background-repeat: no-repeat;
     background-color: rgba(0,0,0,0.7);
     z-index: 10000;
-    position: fixed;
     width: 100%;
     height: 100%;
+  }
+  .report-card-preview-container{
+    background-color: #0e0d18;
+    color:white;
+    position:fixed;
+    z-index: 10;
+    bottom:0px;
+    width:100%;
+  }
+  .report-card-full-container{
+    background-color: #0e0d18;
+    color:white;
+    position:fixed;
+    z-index: 10;
+    width:100%;
+    display:none;
+  }
+  .performance-meter-row{
+    padding:10px;
+    vertical-align: center;
+    background-color: #131426;
+    margin: 5px;
+  }
+  .report-card-toggle{
+    cursor: pointer;
   }
   </style>
 {% endblock %}
@@ -476,6 +500,76 @@
   <br>
   
   <div class="loading loading-spinner">Loading&#8230;</div>
+  
+  <div class="report-card-preview-container">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <span class="pull-right report-card-toggle"><br>[EXPAND]<br></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 performance-meter-row">
+          <div style="height:20px; width:70%; border: dashed 2px #555555;padding:0px;display:inline-block;">
+            <div style="height:100%;background-color: green; width:30%;padding:5px;display:inline-block;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-card-full-container">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <span class="pull-right report-card-toggle"><br>[CLOSE]<br></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 performance-meter-row">
+          <div style="height:20px; width:70%; border: dashed 2px #555555;padding:0px;display:inline-block;">
+            <div style="height:100%;background-color: green; width:30%;padding:5px;display:inline-block;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <h3>Performance Health Bar</h3>
+          <p>The health bar above shows what your Rig is capable of. The size of the bar is based on the Processor you've selected and the health amount is based on the Graphics Card you've selected.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>FPS Performance of this Rig</h3>
+          <p>Select your Graphics Card and Processor above to see what kind of FPS you can expect on popular genres.</p>
+        </div>
+        <div class="col-md-8">
+          <br>
+          <table>
+            <tr>
+              <td class="fps-table-header">FPS Data</td>
+              <td class="fps-table-header">1080p</td>
+              <td class="fps-table-header">1440p</td>
+              <td class="fps-table-header">2160p</td>
+            </tr>
+            <tr>
+              <td class="fps-table-row-title">First-person Shooter</td>
+              <td class="fps-table-row-value">80fps</td>
+              <td class="fps-table-row-value">70fps</td>
+              <td class="fps-table-row-value">60fps</td>
+            </tr>
+            <tr>
+              <td class="fps-table-row-title">Open World</td>
+              <td class="fps-table-row-value">80fps</td>
+              <td class="fps-table-row-value">70fps</td>
+              <td class="fps-table-row-value">40fps</td>
+            </tr>
+          </table>
+          <br>
+        </div>
+      </div>
+    </div>
+  </div>
   
   <div class="container">
     <div class="row">
@@ -938,7 +1032,7 @@
   <!-- --------------- -->
   <div id="pick-part-modal" class="modal fade">
     <div class="modal-dialog modal-lg" style="height:100%;">
-        <div class="modal-content" style="height:87%;">
+        <div class="modal-content" style="height:75%;">
           <div style="text-align: center; padding:15px; border-bottom: solid 1px #c1c1c1;">
             <h3 class="modal-title" id="equip-modal-title"></h3>
             <div class="clearfix"></div>
@@ -967,8 +1061,6 @@
             <div class="clearfix"></div>
           </div>
           
-          <div class="ppm-loading-spinner">&nbsp;</div>
-          
           <div id="part-picker-tabs" class="hidden-sm hidden-xs">
             <br>
             <ul class="nav nav-tabs" role="tablist" style="padding-left:20px;">
@@ -980,7 +1072,10 @@
           <div class="tab-content" style="height:80%;">
           
             <!-- ITEM LIST -->
-            <div role="tabpanel" class="tab-pane active modal-content-styling"  id="part-item-list"></div>
+            <div role="tabpanel" class="tab-pane active modal-content-styling">
+              <div class="ppm-loading-spinner">&nbsp;</div>
+              <div id="part-item-list"></div>
+            </div>
             <div role="tabpanel" class="tab-pane modal-content-styling" id="chart">
               <br>
               <div id="cpu-chart-container">

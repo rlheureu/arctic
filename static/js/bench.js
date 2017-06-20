@@ -840,6 +840,53 @@ $(function(){
 	//
 	//
 	//
+	//
+	//
+	// Performance meter
+	//
+	var fullReportCardVisible = false;
+	function toggleResourceMonitor(closeOnly){
+		closeOnly = closeOnly || false;
+		
+		if (fullReportCardVisible) {
+			//
+			// close monitor
+			$('.report-card-full-container').animate(
+					{bottom:$('.report-card-preview-container').height() - $('.report-card-full-container').height()},
+					300,
+					function(){
+						$('.report-card-full-container').hide();
+						$('.report-card-preview-container').show();
+						fullReportCardVisible = false;
+					});
+			
+		} else if (!closeOnly) {
+			//
+			// opens monitor
+			$('.report-card-full-container').css('bottom', $('.report-card-preview-container').height() - $('.report-card-full-container').height());
+			$('.report-card-preview-container').hide();
+			$('.report-card-full-container').show();
+			$('.report-card-full-container').animate({bottom: 0}, 300);
+			fullReportCardVisible = true;
+		}
+	}
+	
+	// toggle if toggle button clicked
+	$('.report-card-toggle').click(function(){
+		toggleResourceMonitor();
+	});
+	
+	// don't propagate clicks
+	$('.report-card-full-container, .report-card-preview-container').click(function(e){
+		e.stopPropagation();
+	});
+	
+	
+	//
+	//
+	//
+	//
+	//
 	// ////////////////////////
 	//
 	// CHARTS
@@ -1248,6 +1295,7 @@ $(function(){
 	// remove any tooltip with class when it's not clicked on (or in)
 	$(document).click(function(){
 		$('.remove-click-away').remove();
+		toggleResourceMonitor(true);
 	});
 	
 });
