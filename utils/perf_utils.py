@@ -256,7 +256,52 @@ def get_color_for_fps(fpsval):
 def format_fps_for_table(fpsval):
     if not fpsval: return {'text': 'n/a', 'color' : '#6f6f6f'}
     else: return {'text': "{:.0f}".format(fpsval), 'color' : get_color_for_fps(fpsval)}
+
+def generate_combined_fps_table(cpu, gpu):
     
+    if not cpu or not gpu: raise ValueError('Both cpu and gpu must be provided')
+    
+    """ friendly genre names """
+    genredisplay = {'OPEN_WORLD':'Open world',
+                  'FPS':'First-person shooter',
+                  'RTS':'Real-time strategy',
+                  'ARPG':'Action role-playing'}
+    
+    fpstable ={}
+    fpstable['column_headers'] = ['1080p', '1440p', '2160p']
+    tablerows = []
+    
+    if (not cpu.fps_data or len(cpu.fps_data) == 0) or (not gpu.fps_data or len(gpu.fps_data) == 0): return
+    
+    """ determine genre list"""
+    cpu_genres = set()
+    gpu_genres = set()
+    for dp in cpu.fps_data: cpu_genres.add(dp.benchmark_type)
+    for dp in gpu.fps_data: gpu_genres.add(dp.benchmark_type)
+    
+    """ only look at overlapping genres """
+    genres = cpu_genres.intersection(gpu_genres)
+    
+    """ add CPU vals to map """
+    cpu_fps_map = {}
+    for dp in cpu.fps_data: cpu_fps_map[dp.benchmark_type] = dp.fps_average
+    
+    """
+    generate mapping
+    """
+    for dp in gpu.fps_data:
+        if not dp.benchmark_type in genres: continue 
+        genrename = genredisplay.get(dp.benchmark_type)
+        if not genrename: continue
+
+        tablerows.append({'name':genrename, 'values':[format_fps_for_table(min(dp.fps_average_1080p, cpu_fps_map.get(dp.benchmark_type))),
+                                                      format_fps_for_table(min(dp.fps_average_1440p, cpu_fps_map.get(dp.benchmark_type))),
+                                                      format_fps_for_table(min(dp.fps_average_2160p, cpu_fps_map.get(dp.benchmark_type)))]})
+    
+    
+    fpstable['values'] = sorted(tablerows, key=lambda row: row['name'])
+    return fpstable
+
 def populate_fps_display_table(component):
     
     """ friendly genre names """
@@ -290,10 +335,14 @@ def populate_fps_display_table(component):
         if comptype == 'cpu':
             """ add only fps average """
             tablerows.append({'name':genrename, 'values':[format_fps_for_table(dp.fps_average)]})
+            if dp.fps_average: setattr(component, 'fps_avg_' + dp.benchmark_type, int(dp.fps_average))
         elif comptype == 'gpu':
             tablerows.append({'name':genrename, 'values':[format_fps_for_table(dp.fps_average_1080p),
                                                           format_fps_for_table(dp.fps_average_1440p),
                                                           format_fps_for_table(dp.fps_average_2160p)]})
+            if dp.fps_average_1080p: setattr(component, 'fps_1080p_' + dp.benchmark_type, int(dp.fps_average_1080p))
+            if dp.fps_average_1440p: setattr(component, 'fps_1440p_' + dp.benchmark_type, int(dp.fps_average_1440p))
+            if dp.fps_average_2160p: setattr(component, 'fps_2160p_' + dp.benchmark_type, int(dp.fps_average_2160p))
     
     fpstable['values'] = sorted(tablerows, key=lambda row: row['name'])
     component.fps_data_table = fpstable

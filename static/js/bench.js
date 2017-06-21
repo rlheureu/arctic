@@ -351,24 +351,21 @@ $(function(){
 		$('#pick-part-modal').modal('show');
 	}
 
-	function constructFpsTable(component){
+	function constructFpsTable(fpsDataTable){
 		//
-		if (component.fps_data_table === undefined || component.fps_data_table === null) {
-			return null;
-		}
 		var tableHtml = '<table>';
-		if (component.fps_data_table.column_headers) {
+		if (fpsDataTable.column_headers) {
 			tableHtml += '<tr><td><b>Avg FPS</b></td>';
-			for (var i=0; i<component.fps_data_table.column_headers.length; i++) {
-				tableHtml += '<td class="fps-table-header">' + component.fps_data_table.column_headers[i] + '</td>';
+			for (var i=0; i<fpsDataTable.column_headers.length; i++) {
+				tableHtml += '<td class="fps-table-header">' + fpsDataTable.column_headers[i] + '</td>';
 			}
 			tableHtml += '</tr>';
 		} else {
 			tableHtml = '<b>Avg FPS</b><br>' + tableHtml;
 		}
 		
-		for (var i=0; i<component.fps_data_table.values.length; i++) {
-			var tableRow = component.fps_data_table.values[i];
+		for (var i=0; i<fpsDataTable.values.length; i++) {
+			var tableRow = fpsDataTable.values[i];
 			tableHtml += '<tr><td class="fps-table-row-title">' + tableRow.name + '</td>';
 			for (var j=0; j<tableRow.values.length;j++) {
 				tableHtml += '<td class="fps-table-row-value" style="color:'+tableRow.values[j].color+';">' + tableRow.values[j].text + '</td>';
@@ -395,8 +392,9 @@ $(function(){
 			contentLeft.append('<span class="part-item-sub fg-inc-red">INCOMPATIBLE</span>'); // incompatible text
 			titleSpan.addClass('fg-inc'); 	// title color
 		}
-		var fpsTable = constructFpsTable(component);
-		if (fpsTable) {
+		
+		if (component.fps_data_table) {
+			var fpsTable = constructFpsTable(component.fps_data_table);
 			contentLeft.append(fpsTable);
 		}
 		
@@ -620,6 +618,8 @@ $(function(){
 			}
 		}
 		$('.loading-spinner').hide();
+		
+		renderPerformanceMonitor();
 	}
 	
 	function toRigUseString(useEnum){
@@ -840,10 +840,55 @@ $(function(){
 	//
 	//
 	//
-	//
+	// ///////////////////////////////////////////
 	//
 	// Performance meter
 	//
+	// ///////////////////////////////////////////
+	//
+	//
+	
+	var genreSelector = [{name: 'First-person Shooter', selected:true, key: 'FPS'},
+	                     {name: 'Open World', 			selected:false, key: 'OPEN_WORLD'}];
+	var resolutionSelector = [{name: '1080p', selected:true, key: '1080p'},
+	 	                      {name: '1440p', selected:false, key: '1440p'},
+	 	                      {name: '2160p', selected:false, key: '2160p'}];
+	var selectedGenre = genreSelector[0];
+	var selectedResolution = resolutionSelector[0];
+	
+	function moveToNextSelection(optionsArray) {
+		var nextIndex = 0;
+		for (var i=0; i < optionsArray.length; i++) {
+			if (optionsArray[i].selected) {
+				optionsArray[i].selected = false;
+				if (i < optionsArray.length - 1 ) nextIndex = i + 1;
+				break;
+			}
+		}
+		optionsArray[nextIndex].selected = true;
+		return optionsArray[nextIndex];
+	}
+	
+	$('.health-bar-genre-selector').click(function(){
+		
+		selectedGenre = moveToNextSelection(genreSelector);
+		
+		$('.health-bar-genre-selector').empty();
+		$('.health-bar-genre-selector').append(selectedGenre.name);
+		
+		renderPerformanceMonitor();
+	});
+	
+	$('.health-bar-resolution-selector').click(function(){
+		
+		selectedResolution = moveToNextSelection(resolutionSelector);
+		
+		$('.health-bar-resolution-selector').empty();
+		$('.health-bar-resolution-selector').append(selectedResolution.name);
+		
+		renderPerformanceMonitor();
+	});
+	
 	var fullReportCardVisible = false;
 	function toggleResourceMonitor(closeOnly){
 		closeOnly = closeOnly || false;
@@ -881,6 +926,82 @@ $(function(){
 		e.stopPropagation();
 	});
 	
+	function renderPerformanceMonitor() {
+		// render based on rig information
+		if (currentRig.parts.cpu_id) {
+			
+			// get CPU fps
+			var cpuPart = partsCache[currentRig.parts.cpu_id];
+			if (currentRig.parts.gpu_id) {
+				var gpuPart = partsCache[currentRig.parts.gpu_id];
+				
+				renderHealthBar(gpuPart['fps_' + selectedResolution.key + '_' + selectedGenre.key], cpuPart['fps_avg_' + selectedGenre.key]);
+			} else {
+				renderHealthBar(null, cpuPart['fps_avg_' + selectedGenre.key]);
+			}
+			
+		} else {
+			renderHealthBar(null, null);
+		}
+		
+		// render chart
+		if (currentRig.parts.cpu_id && currentRig.parts.gpu_id) {
+			$.getJSON( "/fpstable", { cpu_id: currentRig.parts.cpu_id, gpu_id: currentRig.parts.gpu_id} , function( data ) {
+				var fpsTable = constructFpsTable(data);
+				$('#resource-monitor-fps-table').empty();
+				$('#resource-monitor-fps-table').append(fpsTable);
+			});
+		} else{
+			$('#resource-monitor-fps-table').empty();
+			$('#resource-monitor-fps-table').append('<h5>Please select a Processor and a Graphics Card</h5>');
+		}
+	}
+	
+	function renderHealthBar(gpuFps, cpuFps){
+		
+		$('.report-card-toggle').hide();
+		$('.health-bar').hide();
+		$('.health-meter').hide();
+		$('.cpu-meter-readout').empty();
+		$('.gpu-meter-readout').empty();
+		
+		if (!cpuFps) {
+			$('.performance-meter-container').hide();
+			return;
+		}
+		
+		$('.report-card-toggle').show();
+		
+		$('.performance-meter-container').show();
+		
+		var healthBarSize = parseInt((cpuFps/200)*100) + '%';
+		$('.health-bar').css('width', healthBarSize);
+		$('.health-bar').show();
+		$('.cpu-meter-readout').append(cpuFps + ' FPS<br>(Processor)');
+		var healthBarWidth = $('.health-bar:visible').width();
+		$('.cpu-meter-readout').css('left', healthBarWidth - 10 + 'px');
+		
+		if (gpuFps) {
+			var healthMeterSize = null;
+			if (gpuFps >= cpuFps) {
+				healthMeterSize = '100%';
+			} else {
+				healthMeterSize = parseInt((gpuFps/cpuFps) * 100) + '%';
+			}
+			$('.health-meter').text('');
+			$('.health-meter').show();
+			$('.gpu-meter-readout').append(gpuFps + (gpuFps > cpuFps ? ' FPS<br>(Graphics)<br>Limited by Processor!' : ' FPS<br>(Graphics)'));
+			$('.gpu-meter-readout').css('color', '#0e0d18');
+			$('.health-meter').animate({width:healthMeterSize}, 500, function(){
+				var healthMeterWidth = gpuFps > cpuFps ? healthBarWidth : $('.health-meter:visible').width();
+				$('.gpu-meter-readout').css('left', healthMeterWidth - 10 + 'px');
+				$('.gpu-meter-readout').css('color', 'white');
+			});
+		} else{
+			$('.health-meter').css('width', '');
+			$('.health-meter').text('Select a GPU');
+		}
+	}
 	
 	//
 	//

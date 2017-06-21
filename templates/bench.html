@@ -484,9 +484,37 @@
     padding:10px;
     vertical-align: center;
     background-color: #131426;
-    margin: 5px;
+  }
+  .performance-meter-container{
+    padding-bottom: 10px;
   }
   .report-card-toggle{
+    cursor: pointer;
+  }
+  .health-bar{
+    height:20px;
+    width:0%;
+    border: dashed 2px #555555;
+    padding:0px;
+    display:inline-block;
+  }
+  .health-meter{
+    height:100%;
+    background-color: green;
+    width:0%;
+    padding:5px;
+    display:inline-block;
+  }
+  .cpu-meter-readout{
+    font-size: 10px;
+  }
+  .gpu-meter-readout{
+    font-size: 10px;
+  }
+  .health-bar-genre-selector{
+    cursor: pointer;
+  }
+  .health-bar-resolution-selector{
     cursor: pointer;
   }
   </style>
@@ -505,15 +533,12 @@
     <div class="container">
       <div class="row">
         <div class="col-xs-12">
-          <span class="pull-right report-card-toggle"><br>[EXPAND]<br></span>
+          <span class="pull-right report-card-toggle" style="padding:5px;">[EXPAND]</span>
         </div>
       </div>
-      <div class="row">
-        <div class="col-xs-12 performance-meter-row">
-          <div style="height:20px; width:70%; border: dashed 2px #555555;padding:0px;display:inline-block;">
-            <div style="height:100%;background-color: green; width:30%;padding:5px;display:inline-block;"></div>
-          </div>
-        </div>
+      <div class="row performance-meter-container">
+        <div class="col-xs-4 col-md-2"><a class="health-bar-genre-selector">First-person Shooter</a> @ <a class="health-bar-resolution-selector">1080p</a></div>
+        <div class="col-xs-8 col-md-10 performance-meter-row report-card-toggle"><div class="health-bar"><div class="health-meter"></div></div></div>
       </div>
     </div>
   </div>
@@ -522,49 +547,35 @@
     <div class="container">
       <div class="row">
         <div class="col-xs-12">
-          <span class="pull-right report-card-toggle"><br>[CLOSE]<br></span>
+          <span class="pull-right report-card-toggle" style="padding:5px;">[CLOSE]</span>
         </div>
       </div>
+      <div class="row performance-meter-container">
+        <div class="col-xs-4 col-md-2"><a class="health-bar-genre-selector">First-person Shooter</a> @ <a class="health-bar-resolution-selector">1080p</a></div>
+        <div class="col-xs-8 col-md-10 performance-meter-row"><div class="health-bar"><div class="health-meter"></div></div></div>
+      </div>
       <div class="row">
-        <div class="col-xs-12 performance-meter-row">
-          <div style="height:20px; width:70%; border: dashed 2px #555555;padding:0px;display:inline-block;">
-            <div style="height:100%;background-color: green; width:30%;padding:5px;display:inline-block;"></div>
-          </div>
-        </div>
+        <div class="col-xs-4 col-md-2"></div>
+        <div class="col-xs-8 col-md-10 cpu-meter-readout"></div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4 col-md-2"></div>
+        <div class="col-xs-8 col-md-10 gpu-meter-readout"></div>
       </div>
       <div class="row">
         <div class="col-xs-12">
-          <h3>Performance Health Bar</h3>
+          <h4>Performance Health Bar</h4>
           <p>The health bar above shows what your Rig is capable of. The size of the bar is based on the Processor you've selected and the health amount is based on the Graphics Card you've selected.</p>
         </div>
       </div>
       <div class="row">
         <div class="col-md-4">
-          <h3>FPS Performance of this Rig</h3>
+          <h4>FPS Performance of this Rig</h4>
           <p>Select your Graphics Card and Processor above to see what kind of FPS you can expect on popular genres.</p>
         </div>
         <div class="col-md-8">
           <br>
-          <table>
-            <tr>
-              <td class="fps-table-header">FPS Data</td>
-              <td class="fps-table-header">1080p</td>
-              <td class="fps-table-header">1440p</td>
-              <td class="fps-table-header">2160p</td>
-            </tr>
-            <tr>
-              <td class="fps-table-row-title">First-person Shooter</td>
-              <td class="fps-table-row-value">80fps</td>
-              <td class="fps-table-row-value">70fps</td>
-              <td class="fps-table-row-value">60fps</td>
-            </tr>
-            <tr>
-              <td class="fps-table-row-title">Open World</td>
-              <td class="fps-table-row-value">80fps</td>
-              <td class="fps-table-row-value">70fps</td>
-              <td class="fps-table-row-value">40fps</td>
-            </tr>
-          </table>
+          <div id="resource-monitor-fps-table"></div>
           <br>
         </div>
       </div>
@@ -1064,7 +1075,7 @@
           <div id="part-picker-tabs" class="hidden-sm hidden-xs">
             <br>
             <ul class="nav nav-tabs" role="tablist" style="padding-left:20px;">
-              <li role="presentation" class="active"><a id="part-item-list-tab" href="#part-item-list" aria-controls="home" role="tab" data-toggle="tab">List All Parts</a></li>
+              <li role="presentation" class="active"><a id="part-item-list-tab" href="#part-item-list-tab-panel" aria-controls="home" role="tab" data-toggle="tab">List All Parts</a></li>
               <li role="presentation"><a href="#chart" aria-controls="profile" role="tab" data-toggle="tab" id="chart-tab-selector">FPS Chart&nbsp;&nbsp;<span class="label label-info">Beta</span></a></li>
             </ul>
           </div>
@@ -1072,7 +1083,7 @@
           <div class="tab-content" style="height:80%;">
           
             <!-- ITEM LIST -->
-            <div role="tabpanel" class="tab-pane active modal-content-styling">
+            <div role="tabpanel" id="part-item-list-tab-panel" class="tab-pane active modal-content-styling">
               <div class="ppm-loading-spinner">&nbsp;</div>
               <div id="part-item-list"></div>
             </div>

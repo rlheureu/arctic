@@ -471,6 +471,19 @@ def manufacturers_get():
     target = request.args.get('target')
     return json.dumps(dataaccess.get_manufacturers(target))
 
+@app.route("/fpstable", methods=['GET'])
+def get_combined_fps_table():
+
+    cpu_id = request.args.get('cpu_id')
+    gpu_id = request.args.get('gpu_id')
+    
+    cpu = dataaccess.get_component(cpu_id)
+    gpu = dataaccess.get_component(gpu_id)
+    
+    fpstable = perf_utils.generate_combined_fps_table(cpu, gpu)
+    fpstable = json.dumps(fpstable)
+    return fpstable, 200, {'Content-Type': 'application/json'}    
+
 @app.route("/parts/search", methods=['GET'])
 def parts_search():
 
