@@ -354,10 +354,12 @@ $(function(){
 	function constructFpsTable(fpsDataTable){
 		//
 		var tableHtml = '<table>';
+		var columns = 1;
 		if (fpsDataTable.column_headers) {
 			tableHtml += '<tr><td><b>Avg FPS</b></td>';
 			for (var i=0; i<fpsDataTable.column_headers.length; i++) {
 				tableHtml += '<td class="fps-table-header">' + fpsDataTable.column_headers[i] + '</td>';
+				columns += 1;
 			}
 			tableHtml += '</tr>';
 		} else {
@@ -372,6 +374,15 @@ $(function(){
 			}
 			tableHtml += '</tr>'
 		}
+		
+		if (fpsDataTable.sources) {
+			var srcStr = '';
+			for (var i=0; i<fpsDataTable.sources.length; i++) {
+				srcStr += fpsDataTable.sources[i] + (i < fpsDataTable.sources.length - 1 ? ', ' : '');
+			}
+			tableHtml += '<tr><td colspan="' + columns + '">Sources: ' + srcStr + '</td></tr>';
+		}
+		
 		tableHtml += '</table>';
 		
 		return '<br>' + tableHtml;

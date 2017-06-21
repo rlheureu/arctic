@@ -269,6 +269,7 @@ def generate_combined_fps_table(cpu, gpu):
     
     fpstable ={}
     fpstable['column_headers'] = ['1080p', '1440p', '2160p']
+    fpstable['sources'] = set()
     tablerows = []
     
     if (not cpu.fps_data or len(cpu.fps_data) == 0) or (not gpu.fps_data or len(gpu.fps_data) == 0): return
@@ -284,7 +285,9 @@ def generate_combined_fps_table(cpu, gpu):
     
     """ add CPU vals to map """
     cpu_fps_map = {}
-    for dp in cpu.fps_data: cpu_fps_map[dp.benchmark_type] = dp.fps_average
+    for dp in cpu.fps_data:
+        cpu_fps_map[dp.benchmark_type] = dp.fps_average
+        fpstable.get('sources').add('<a target="_blank" href="{}">{}</a>'.format(dp.source_url, dp.source_description) if dp.source_url else 'Estimated')
     
     """
     generate mapping
@@ -297,9 +300,11 @@ def generate_combined_fps_table(cpu, gpu):
         tablerows.append({'name':genrename, 'values':[format_fps_for_table(min(dp.fps_average_1080p, cpu_fps_map.get(dp.benchmark_type))),
                                                       format_fps_for_table(min(dp.fps_average_1440p, cpu_fps_map.get(dp.benchmark_type))),
                                                       format_fps_for_table(min(dp.fps_average_2160p, cpu_fps_map.get(dp.benchmark_type)))]})
-    
+        
+        fpstable.get('sources').add('<a target="_blank" href="{}">{}</a>'.format(dp.source_url, dp.source_description) if dp.source_url else 'Estimated')
     
     fpstable['values'] = sorted(tablerows, key=lambda row: row['name'])
+    fpstable['sources'] = list(fpstable.get('sources'))
     return fpstable
 
 def populate_fps_display_table(component):
@@ -324,6 +329,7 @@ def populate_fps_display_table(component):
     
     fpstable['comptype'] = comptype
     fpstable['column_headers'] = headers
+    fpstable['sources'] = set()
     tablerows = []
     
     if not component.fps_data or len(component.fps_data) == 0: return
@@ -331,6 +337,8 @@ def populate_fps_display_table(component):
     for dp in component.fps_data:
         genrename = genredisplay.get(dp.benchmark_type)
         if not genrename: continue
+        
+        fpstable.get('sources').add('<a target="_blank" href="{}">{}</a>'.format(dp.source_url, dp.source_description) if dp.source_url else 'Estimated')
         
         if comptype == 'cpu':
             """ add only fps average """
@@ -345,6 +353,7 @@ def populate_fps_display_table(component):
             if dp.fps_average_2160p: setattr(component, 'fps_2160p_' + dp.benchmark_type, int(dp.fps_average_2160p))
     
     fpstable['values'] = sorted(tablerows, key=lambda row: row['name'])
+    fpstable['sources'] = list(fpstable.get('sources'))
     component.fps_data_table = fpstable
         
         
