@@ -629,7 +629,23 @@ $(function(){
 			}
 		}
 		$('.loading-spinner').hide();
-		
+
+		// determine genres to allow for genre toggle (based on cpu)
+		var possibleGenres = [{name: 'First-person Shooter', key: 'FPS'},
+		                     {name: 'Open World', key: 'OPEN_WORLD'},
+		                     {name: 'PlayerUnknown\'s Battlegrounds', selected:false, key: 'PUBG'}];
+		genreSelector = [];
+		if (currentRig.parts.cpu_id) {
+			for (var i=0; i<possibleGenres.length; i++) {
+				var fpsDataKey = 'fps_avg_' + possibleGenres[i].key;
+				var cpuPart = partsCache[currentRig.parts.cpu_id];
+				if (cpuPart[fpsDataKey]) {
+					genreSelector.push({name : possibleGenres[i].name, selected : (i == 0), key : possibleGenres[i].key});
+				}	
+			}
+			genreSelector[0].selected = true;
+			selectedGenre = genreSelector[0];
+		}
 		renderPerformanceMonitor();
 	}
 	
@@ -859,33 +875,44 @@ $(function(){
 	//
 	//
 	
-	var genreSelector = [{name: 'First-person Shooter', selected:true, key: 'FPS'},
-	                     {name: 'Open World', 			selected:false, key: 'OPEN_WORLD'}];
+	var genreSelector = null;
+	var selectedGenre = null;
+	
 	var resolutionSelector = [{name: '1080p', selected:true, key: '1080p'},
 	 	                      {name: '1440p', selected:false, key: '1440p'},
 	 	                      {name: '2160p', selected:false, key: '2160p'}];
-	var selectedGenre = genreSelector[0];
 	var selectedResolution = resolutionSelector[0];
 	
 	function moveToNextSelection(optionsArray) {
 		var nextIndex = 0;
+		var noneSelected = true;
 		for (var i=0; i < optionsArray.length; i++) {
 			if (optionsArray[i].selected) {
+				
+				if (optionsArray.length === 1) return optionsArray[i];
+				
 				optionsArray[i].selected = false;
 				if (i < optionsArray.length - 1 ) nextIndex = i + 1;
+				noneSelected = false;
 				break;
 			}
 		}
-		optionsArray[nextIndex].selected = true;
-		return optionsArray[nextIndex];
+		
+		if (noneSelected) {
+			return null;
+		} else {
+			optionsArray[nextIndex].selected = true;
+			return optionsArray[nextIndex];
+		}
+		
 	}
 	
 	$('.health-bar-genre-selector').click(function(){
 		
-		selectedGenre = moveToNextSelection(genreSelector);
 		
 		$('.health-bar-genre-selector').empty();
-		$('.health-bar-genre-selector').append(selectedGenre.name);
+		selectedGenre = moveToNextSelection(genreSelector);
+		if(selectedGenre) $('.health-bar-genre-selector').append(selectedGenre.name);
 		
 		renderPerformanceMonitor();
 	});
@@ -939,7 +966,7 @@ $(function(){
 	
 	function renderPerformanceMonitor() {
 		// render based on rig information
-		if (currentRig.parts.cpu_id) {
+		if (currentRig.parts.cpu_id && selectedGenre) {
 			
 			// get CPU fps
 			var cpuPart = partsCache[currentRig.parts.cpu_id];
@@ -969,6 +996,11 @@ $(function(){
 	}
 	
 	function renderHealthBar(gpuFps, cpuFps){
+		
+		if (selectedGenre) {
+			$('.health-bar-genre-selector').empty();
+			$('.health-bar-genre-selector').append(selectedGenre.name);
+		}
 		
 		$('.report-card-toggle').hide();
 		$('.health-bar').hide();

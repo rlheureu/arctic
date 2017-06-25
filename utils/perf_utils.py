@@ -265,7 +265,8 @@ def generate_combined_fps_table(cpu, gpu):
     genredisplay = {'OPEN_WORLD':'Open world',
                   'FPS':'First-person shooter',
                   'RTS':'Real-time strategy',
-                  'ARPG':'Action role-playing'}
+                  'ARPG':'Action role-playing',
+                  'PUBG':'PlayerUnknown\'s Battlegrounds'}
     
     fpstable ={}
     fpstable['column_headers'] = ['1080p', '1440p', '2160p']
@@ -313,7 +314,8 @@ def populate_fps_display_table(component):
     genredisplay = {'OPEN_WORLD':'Open world',
                   'FPS':'First-person shooter',
                   'RTS':'Real-time strategy',
-                  'ARPG':'Action role-playing'}
+                  'ARPG':'Action role-playing',
+                  'PUBG':'PlayerUnknown\'s Battlegrounds'}
     
     fpstable ={}
     comptype = None    
