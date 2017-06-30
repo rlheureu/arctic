@@ -12,6 +12,9 @@ import subprocess
 import os
 from sqlalchemy.sql.sqltypes import Float
 from decimal import Decimal
+from hashids import Hashids
+
+HID = Hashids(salt="get all the cheese!") 
 
 def enum(**enums):
     return type('Enum', (), enums)
@@ -167,3 +170,11 @@ def local_time(datetime, fmt='%m/%d/%Y %H:%M'):
     local_tz = timezone('US/Pacific')
     local_datetime = datetime_aware.astimezone(local_tz)
     return local_datetime.strftime(fmt)
+
+def obfuscate_int(intval):
+    if intval and isinstance(intval, int): return HID.encode(intval)
+    else: raise ValueError('You must pass in a value and it must be an int')
+
+def unobfuscate_string(strval):
+    if strval and isinstance(strval, str): return HID.decode(strval)[0]
+    else: raise ValueError('You must pass in a value and it must be a string')
