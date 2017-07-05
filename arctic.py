@@ -387,8 +387,9 @@ def bench(obfuscated_id=None):
     
     """ create a rig since one does not exist """
     sessionrig = dataaccess.save_rig({}, None) ###This is always an anonymous rig
+    context['rig'] = sessionrig
     session['rigsessionid'] = gen_utils.obfuscate_int(int(sessionrig.id))
-    context['permalink'] = '{}/bench/{}'.format(appconfig.FULL_APP_URL,gen_utils.obfuscate_int(int(rig_id)))
+    context['permalink'] = '{}/bench/{}'.format(appconfig.FULL_APP_URL, session['rigsessionid'])
     context['anonymous_rig'] = True
     context['my_rig'] = True
     

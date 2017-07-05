@@ -650,7 +650,7 @@
     	$('#signin-button').click(function(){
     		var email = $('#signin-email').val();
     		var password = $('#signin-password').val();
-    		$.post('loginuser', {email:email,password:password}).success(function(data){
+    		$.post('/loginuser', {email:email,password:password}).success(function(data){
     			if (data.authenticated === true){
     				ArcticBasics.loginComplete();
     			} else{
