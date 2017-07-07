@@ -419,3 +419,10 @@ class ComponentPrice(Base):
     foreign_id = Column('foreign_id', String(128))
     updated_at = Column('updated_at', DateTime)
 
+class ArcticProperties(Base):
+    __tablename__ = 'arctic_properties'
+
+    id = Column('id', Integer, primary_key=True)
+    property_name = Column('property_name', String(128))
+    property_value = Column('property_value', String(1024))
+    

@@ -22,7 +22,7 @@ from flask_security.datastore import SQLAlchemyUserDatastore
 from action import fbauth, arctic_auth, new_user, account_claims, \
     recommendations, price_grabber, jobs
 from action.price_grabber import AmazonExtractor
-from database import dataaccess
+from database import dataaccess, arctic_db_properties
 from database.database import db
 from models.models import User, Rig, BaseComponent
 from utils import perf_utils, retaildata_utils, sort_utils
@@ -116,6 +116,99 @@ def home():
 def sharecube():
     context = {}
     return render_template('sharecube.html', **context)
+
+@app.route("/widget", methods=['GET'])
+def widget():
+    context = {}
+    
+    """ Widget demo has hardcoded components """
+    context['app_start_time'] = APPSTART_TIME
+    
+    return render_template('widget.html', **context)
+
+@app.route("/widgetgetparts", methods=['GET'])
+def widgetgetparts():
+    
+    render_parts = []
+    reqdict = request.args.to_dict()
+    
+    if reqdict.get('ids'):
+        """
+        list of IDs provided for explicit parts
+        """
+        
+        ids = reqdict.get('ids')
+        
+        for cid in ids.split(','):
+            comp = dataaccess.get_component(cid, active=None)
+            if comp: render_parts.append(comp)
+        
+    else:
+    
+        getpartsparams = ['motherboard_id', 'gpu_id', 'memory_id', 'display_id', 'cpu_id', 'target', 'chassis_id']
+        for k in reqdict.keys():
+            if k not in getpartsparams:
+                del reqdict[k]
+            
+        
+        """
+        get compatible parts
+        """
+        compat_parts = dataaccess.get_compatible_parts(**reqdict)
+        compat_parts = [] if not compat_parts else compat_parts # default to empty list
+        
+        """
+        get all parts
+        """
+        all_parts = dataaccess.get_compatible_parts(target=reqdict.get('target'))
+        all_parts = [] if not all_parts else all_parts # default to empty list
+        
+        """
+        join the lists (and remove duplicates)!
+        """
+        added = set()
+        for part in compat_parts:
+            added.add(part.id)
+            part.compatible = True
+            render_parts.append(part)
+        
+        for part in all_parts:
+            if part.id not in added:
+                part.compatible = False
+                render_parts.append(part)
+    
+    
+    """
+    FOR THE WIDGET FILTER OUT PARTS THAT ORIGIN DOES NOT OFFER
+    """
+    widgetidsstr = arctic_db_properties.get_property('WIDGET_IDS')
+    idlist = []
+    for idstr in widgetidsstr.split(','):
+        idlist.append(int(idstr.strip()))
+    render_parts = [p for p in render_parts if p.id in idlist]
+    
+         
+    """
+    set performance color for parts
+    """
+    perf_utils.set_performance_color_for_parts(render_parts)
+    
+    """
+    populate prices
+    """
+    retaildata_utils.populate_prices(render_parts)
+    
+    """
+    populate fps table
+    """
+    [perf_utils.populate_fps_display_table(part) for part in render_parts]
+    
+    """
+    sort by sort order
+    """
+    render_parts = sorted(render_parts, cmp=sort_utils.sort_by_available_and_recommended, reverse=True)
+    render_parts = json.dumps(render_parts, cls=jsonify_sql_alchemy_model(), check_circular=False)
+    return render_parts, 200, {'Content-Type': 'application/json'}
 
 @app.route("/loginuser", methods=['POST'])
 def loginuser():

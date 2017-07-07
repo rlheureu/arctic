@@ -197,3 +197,10 @@ CREATE TABLE `arctic_component_price` (
   CONSTRAINT `price_component` FOREIGN KEY (`component_id`) REFERENCES `arctic_component` (`arctic_component_id`),
   CONSTRAINT `price_retailer` FOREIGN KEY (`retailer_id`) REFERENCES `arctic_retailer` (`arctic_retailer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `arctic_properties` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `property_name` varchar(128) NOT NULL DEFAULT '',
+  `property_value` varchar(1024) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
