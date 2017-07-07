@@ -614,10 +614,8 @@ $(function(){
 			// set center cube and avatar cubes
 			$('#ac-cubedisplay-widget').attr('src','/static/cube-images/ac-cube-small-' + worstComponentDetail.perf_color + '.png');
 			$('#bench-cube-title').addClass('border-' + worstComponentDetail.perf_color);
-			$('#bench-cube-subtitle').html(constructPerformanceNote(worstComponentDetail)).addClass('fg-' + worstComponentDetail.perf_color);
+			$('#bench-cube-subtitle').html(constructPerformanceNote(worstComponentDetail)).removeClass().addClass('fg-' + worstComponentDetail.perf_color);
 			
-			
-			$('#resolution-selector').show();
 			
 			$('#expected-performance-section').show();
 			
@@ -660,12 +658,15 @@ $(function(){
 		}
 		$('.loading-spinner').hide();
 
+		//
+		//
 		// determine genres to allow for genre toggle (based on cpu)
 		var possibleGenres = [{name: 'First-person Shooter', key: 'FPS'},
-		                     {name: 'Open World', key: 'OPEN_WORLD'},
-		                     {name: 'PlayerUnknown\'s Battlegrounds', key: 'PUBG'}];
+		                     {name: 'Open World', key: 'OPEN_WORLD'}];
 		genreSelector = [];
 		if (currentRig.parts.cpu_id) {
+			$('#resolution-selector').show();
+			
 			for (var i=0; i<possibleGenres.length; i++) {
 				var fpsDataKey = 'fps_avg_' + possibleGenres[i].key;
 				var cpuPart = partsCache[currentRig.parts.cpu_id];
@@ -675,6 +676,24 @@ $(function(){
 			}
 			genreSelector[0].selected = true;
 		}
+		
+		//
+		//
+		// determine and select resolutions
+		selectedResolution = '1080p';
+		possibleResolutions = {'1080p':true, '1440p': false, '2160p': false};
+		if (currentRig.parts.gpu_id) {
+			for (var i=0; i<possibleGenres.length; i++) {
+				var gpuPart = partsCache[currentRig.parts.gpu_id];
+				if (gpuPart['fps_1440p_' + possibleGenres[i].key]) possibleResolutions['1440p'] = true;
+				if (gpuPart['fps_2160p_' + possibleGenres[i].key]) possibleResolutions['2160p'] = true;
+				
+				if (possibleResolutions['1440p'] && possibleResolutions['2160p']) break;
+			}
+		}
+		
+		//
+		// finally render performance monitor
 		renderPerformanceMonitor();
 	}
 	
@@ -910,6 +929,7 @@ $(function(){
 	
 	var genreSelector = null;
 	var selectedResolution = '1080p';
+	var possibleResolutions = {'1080p':true, '1440p': false, '2160p': false};
 	
 	$('.resolution-select-btn').click(function(){
 		selectedResolution = $(this).data('resolution');
@@ -919,6 +939,18 @@ $(function(){
 	});
 	
 	function renderPerformanceMonitor() {
+		
+		//
+		// modify selected resolution button
+		$('.resolution-select-btn').removeClass('active');
+		$('.resolution-select-btn[data-resolution="' + selectedResolution + '"]').addClass('active');
+		
+		//
+		// disable resolution buttons if they are not possible
+		for (theKey in possibleResolutions) {
+			if (possibleResolutions[theKey]) $('.resolution-select-btn[data-resolution="' + theKey + '"]').removeAttr('disabled', 'disabled');
+			else  $('.resolution-select-btn[data-resolution="' + theKey + '"]').attr('disabled', 'disabled');
+		}
 		
 		$('.performance-meter-holder').hide();
 		

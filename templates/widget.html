@@ -277,9 +277,9 @@
         background-color: transparent;
         padding-left:8px;
         padding-right:8px;
-        border:solid 4px #14243d;
-        outline: 1px solid #2c91df;
-        color:#2c91df;
+        border:solid 4px #2d0000;
+        outline: 1px solid #b90000;
+        color: #bf1b1b;
         display:inline-block;
         padding-top: 7px;
         padding-bottom: 23px;
@@ -290,20 +290,20 @@
       .ac-btn:hover{
         background-color: #14243d;
         text-decoration: none;
-        outline: 1px solid #2c91df;
-        color:#2c91df;
+        outline: 1px solid #b90000;
+        color:#ff2a2a;
       }
       .ac-btn:disabled {
-        color: #254f6f;
-        outline-color: #254f6f;
+        color: #560000;
+        outline-color: #540000;
       }
       .ac-btn:disabled:hover {
-        color: #254f6f;
-        outline-color: #254f6f;
+        color: #560000;
+        outline-color: #540000;
         background-color: transparent;
       }
       .ac-btn.active{
-        background-color: #154469;
+        background-color: #3c0707;
         font-weight: bold;
       }
       nav{
@@ -843,7 +843,7 @@
       display:none;
     }
     .performance-meter-row{
-      padding:10px;
+      padding:0px;
       vertical-align: center;
       background-color: #131426;
     }
@@ -894,13 +894,13 @@
             <div class="row">
               <div class="col-md-6 text-center">
                 <div data-equip-type="cpu" data-equip-title="Select a Processor">
-                  <span class="acbench-item-heading equip-clickable" style="display:inline-block; padding-bottom:27px;">Processor</span>
+                  <button class="ac-btn equip-clickable" style="display:inline-block; margin-bottom:40px;">Select Processor</button>
                   <div class="equip-clickable item-slot-section ac-cpu-section"></div>
                 </div>
               </div>
               <div class="col-md-6 text-center">
                 <div data-equip-type="gpu" data-equip-title="Select a Graphics Card">
-                  <span class="acbench-item-heading equip-clickable" style="display:inline-block; padding-bottom:27px;">Graphics Card</span>
+                  <button class="ac-btn equip-clickable" style="display:inline-block; margin-bottom:40px;">Select Graphics Card</button>
                   <div class="equip-clickable item-slot-section ac-gpu-section"></div>
                 </div>
               </div>
