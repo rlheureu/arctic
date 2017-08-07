@@ -9,12 +9,12 @@
     <body>
     
     <h1>Canvas Big</h1>
-    <div id="bigcanvas" style="width:280px;height:300px;"></div>
+<!--     <div id="bigcanvas" style="width:500px;height:300px;"></div> -->
     <hr>
     
     
     <h1>Canvas Small</h1>
-    <div id="smallcanvas" style="width:280px;height:200px;"></div>
+    <div id="smallcanvas" style="width:400px;height:175px;"></div>
     <hr>
     
     </body>
@@ -173,12 +173,12 @@
             	roundRect(ctx, xPosBar, yPos, barSizeProportion, barHeight, barHeight - 5, true, false);
                 //ctx.fillRect(xPosBar, yPos, barSizeProportion, barHeight);
                 
-                ctx.fillStyle = 'red'; // GPU
+                ctx.fillStyle = '#FF0000'; // GPU
                 roundRect(ctx, xPosBar, yPos, Math.min(barFillProportion, barSizeProportion), barHeight, barHeight - 5, true, false);
                 //ctx.fillRect(xPosBar, yPos, Math.min(barFillProportion, barSizeProportion), barHeight);
                 
                 var fontSize = 13;
-                ctx.font = fontSize + 'px \'Open sans\', sans-serif';
+                ctx.font = fontSize + 'px sans-serif';
                 ctx.textAlign = 'left';
                 ctx.fillStyle = 'white';
                 var textLines = getLines(ctx, bars[i].title, xPosBar - 20);
@@ -189,8 +189,9 @@
                 }
             }
     		
-    
-    		ctx.font = '12px';
+            var fontSize = 10;
+            ctx.font = fontSize + 'px \'Fjalla one\', sans-serif';
+    		ctx.font = '10px';
     		ctx.textAlign = 'right';
     		ctx.fillStyle = 'white';
     		ctx.fillText('200FPS Max', canvas.width - 5, 15);
@@ -203,7 +204,7 @@
     	                    {'title' : 'First-person shooter','barSizeFps' : 196,'barFillFps': 100},
     	                    {'title' : 'Open world','barSizeFps' : 120,'barFillFps': 100}
 	                       ];
-    	drawBars('bigcanvas', barsToRender);
+    	//drawBars('bigcanvas', barsToRender);
     	drawBars('smallcanvas', barsToRender);
     	
     	window.setTimeout(function(){
@@ -211,7 +212,7 @@
                                 {'title' : 'First-person shooter', 'barSizeFps' : 180, 'barFillFps': 50},
                                 {'title' : 'Open world','barSizeFps' : 110,'barFillFps': 90}
                                ];
-            drawBars('bigcanvas', changedBars);
+            //drawBars('bigcanvas', changedBars);
             drawBars('smallcanvas', changedBars);
             
             window.setTimeout(function(){
@@ -219,7 +220,7 @@
                                     {'title' : 'First-person shooter','barSizeFps' : 150,'barFillFps': 199},
                                     {'title' : 'Open world','barSizeFps' : 60,'barFillFps': 43}
                                    ];
-                drawBars('bigcanvas', changedBars);
+                //drawBars('bigcanvas', changedBars);
                 drawBars('smallcanvas', changedBars);
                 console.log('called render again!');
             }, 1300);

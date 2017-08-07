@@ -126,6 +126,12 @@ def widget():
     
     return render_template('widget.html', **context)
 
+@app.route("/canvastest", methods=['GET'])
+def canvastest():
+    context = {}
+    
+    return render_template('canvas.html', **context)
+
 @app.route("/widgetgetparts", methods=['GET'])
 def widgetgetparts():
     
