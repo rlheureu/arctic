@@ -170,7 +170,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-8 col-md-offset-2 text-center" id="the-cube-js-div" style="height: 200px;padding-top:25px;">
+        <div class="col-md-8 col-md-offset-2 text-center" id="the-cube-js-div" style="padding-top:25px;">
           
         </div>
       </div>
@@ -339,10 +339,6 @@
             if (selectedGpu) params['g'] = selectedGpu.id;
             $.getJSON('/pp', params)
             .success(function(data){
-                console.log('we made it');
-                console.log(data);
-                console.log(data.renderbars)
-                
                 drawBars('the-cube-js-div', data.renderbars);
             });
             
@@ -358,10 +354,7 @@
                 datumTokenizer : Bloodhound.tokenizers.obj.nonword('display_name')
             });
             
-            $('#' + elmId).typeahead({
-                minLength : 0,
-                highlight : true
-            }, {
+            $('#' + elmId).typeahead({ minLength : 0, highlight : true}, {
                 limit: 15,
                 name : elmId + '_Dataset',
                 source : function(q, sync) {
@@ -420,20 +413,25 @@
         // ////////
         var initializedCanvas = {};
         
-        function initCanvasInDiv(divElmId) {
+        function initCanvasInDiv(divElmId, w, h) {
             
-            if (initializedCanvas[divElmId]) return initializedCanvas[divElmId];
+            var canvas = null;
+            if (initializedCanvas[divElmId]) {
+                canvas = initializedCanvas[divElmId];
+                canvas.id = "canvas_" + divElmId;
+                
+            } else {
+                canvas = document.createElement('canvas');
+                var div = document.getElementById(divElmId);
+                div.appendChild(canvas);
+                initializedCanvas[divElmId] = canvas;
+            }
             
-            var canvas = document.createElement('canvas');
-            var div = document.getElementById(divElmId);
-    
-            canvas.id = "canvas_" + divElmId;
-            canvas.width = div.clientWidth;
-            canvas.height = div.clientHeight;
+            canvas.width = w * (window.devicePixelRatio || 1);
+            canvas.height = h * (window.devicePixelRatio || 1);
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
             
-            div.appendChild(canvas);
-            
-            initializedCanvas[divElmId] = canvas;
             return canvas;
         }
     
@@ -542,55 +540,146 @@
         }
         
         function renderInsideElement(elmId, bars, stepCount, maxSteps) {
-    
-            var canvas = initCanvasInDiv(elmId);
+            
+            var reportTitle = 'FPS Performance Report';
+            var barMargin = 16; // bar margin (space between bars)
+            var barHeight = 13; // bar height
+            var legendWidth = 220;
+            var legendHeight = 48;
+            var legendPadding = 15;
+            var sectionHeight = ((barMargin - barHeight) * 2) + barHeight *3;
+            var sectionPaddingBottom = 50;
+            var titleSectionHeight = 100;
+            var cpuBarsColor = '#8c1717';
+            var gpuBarsColor = '#FF0000';
+            var backgroundColor = '#121526';
+            var backgroundBarsColor = '#000000';
+            
+            var cWidth = document.getElementById(elmId).clientWidth - 40;
+            var cHeight = (bars.length * (sectionHeight + sectionPaddingBottom)) + (legendPadding * 2) + legendHeight + titleSectionHeight;
+            
+            var canvas = initCanvasInDiv(elmId, cWidth, cHeight);
     
             var ctx = canvas.getContext('2d');
             
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (window.devicePixelRatio && window.devicePixelRatio > 1) {
+                console.log(window.devicePixelRatio);
+                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            }
             
-            ctx.fillStyle = '#121526';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, cWidth, cHeight);
+            
+            ctx.fillStyle = backgroundColor;
+            ctx.fillRect(0, 0, cWidth, cHeight);
+            
+            ctx.font = '22px  \'Fjalla one\', sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = 'white';
+            ctx.fillText(reportTitle, 15, 40);
             
             for (var i=0; i<bars.length; i++){
                 
-                var barHeight = canvas.height * 0.04;
-                var yPos = ((i + 1)/(bars.length + 1)) * canvas.height;
+                var yPos = (i * (sectionHeight + sectionPaddingBottom)) + titleSectionHeight;
                 var xPosText = 10;
                 
-                var xPosBar = canvas.width * (0.35);
+                var textColRatio = 0.3;
+                if (cWidth < 500) textColRatio = 0.5;
+                if (cWidth < 370) textColRatio = 0.55;
+                
+                var xPosBar = cWidth * textColRatio;
 
-                var maxBarWidth = (canvas.width * (0.65)) - 20;
+                var maxBarWidth = cWidth - xPosBar - 20;
                 
                 // determine proportion for this bar
-                var barFill = bars[i].barFillFps1080pBefore + (stepCount * bars[i].barFillStepSize1080p);
-                var barFillProportion = (maxBarWidth / 200) * barFill;
+                var barFill1080p = bars[i].barFillFps1080pBefore + (stepCount * bars[i].barFillStepSize1080p);
+                var barFillProportion1080p = (maxBarWidth / 200) * barFill1080p;
+                var barFill1440p = bars[i].barFillFps1440pBefore + (stepCount * bars[i].barFillStepSize1440p);
+                var barFillProportion1440p = (maxBarWidth / 200) * barFill1440p;
+                var barFill2160p = bars[i].barFillFps2160pBefore + (stepCount * bars[i].barFillStepSize2160p);
+                var barFillProportion2160p = (maxBarWidth / 200) * barFill2160p;
                 var barSize = bars[i].barSizeFpsBefore + (stepCount * bars[i].barSizeStepSize);
                 var barSizeProportion = (maxBarWidth / 200) * barSize;
                 
-                
-                ctx.fillStyle = 'black'; // background
+                //
+                // FILL BARS BACKGROUND
+                ctx.fillStyle = backgroundBarsColor;
                 roundRect(ctx, xPosBar, yPos, maxBarWidth, barHeight, barHeight - 5, true, false);
-                //ctx.fillRect(xPosBar, yPos, maxBarWidth, barHeight);
+                roundRect(ctx, xPosBar, yPos + barMargin, maxBarWidth, barHeight, barHeight - 5, true, false);
+                roundRect(ctx, xPosBar, yPos + (barMargin * 2), maxBarWidth, barHeight, barHeight - 5, true, false);
                 
-                ctx.fillStyle = '#460000'; // CPU
+                //
+                // FILL BARS CPU
+                ctx.fillStyle = cpuBarsColor; // CPU
                 roundRect(ctx, xPosBar, yPos, barSizeProportion, barHeight, barHeight - 5, true, false);
-                //ctx.fillRect(xPosBar, yPos, barSizeProportion, barHeight);
+                roundRect(ctx, xPosBar, yPos + barMargin, barSizeProportion, barHeight, barHeight - 5, true, false);
+                roundRect(ctx, xPosBar, yPos + (barMargin * 2), barSizeProportion, barHeight, barHeight - 5, true, false);
                 
-                ctx.fillStyle = '#FF0000'; // GPU
-                roundRect(ctx, xPosBar, yPos, Math.min(barFillProportion, barSizeProportion), barHeight, barHeight - 5, true, false);
-                //ctx.fillRect(xPosBar, yPos, Math.min(barFillProportion, barSizeProportion), barHeight);
+                //
+                // FILL BARS GPU
+                ctx.fillStyle = gpuBarsColor; // GPU
+                if (barFillProportion1080p) roundRect(ctx, xPosBar, yPos, Math.min(barFillProportion1080p, barSizeProportion), barHeight, barHeight - 5, true, false);
+                if (barFillProportion1440p) roundRect(ctx, xPosBar, yPos + barMargin, Math.min(barFillProportion1440p, barSizeProportion), barHeight, barHeight - 5, true, false);
+                if (barFillProportion2160p) roundRect(ctx, xPosBar, yPos + (barMargin * 2), Math.min(barFillProportion2160p, barSizeProportion), barHeight, barHeight - 5, true, false);
                 
-                var fontSize = 13;
-                ctx.font = fontSize + 'px  \'Fjalla one\', sans-serif';
+                //
+                // create tick and bar labels
+                var tickFontSize = 10;
+                ctx.font = tickFontSize + 'px  \'Open sans\', sans-serif';
                 ctx.textAlign = 'left';
                 ctx.fillStyle = 'white';
-                var textLines = getLines(ctx, bars[i].title, xPosBar - 20);
+                ctx.fillText('1080p', xPosBar - (tickFontSize * 4), yPos + (barHeight/2) + (tickFontSize/2));
+                ctx.fillText('1440p', xPosBar - (tickFontSize * 4), yPos + (barHeight/2) + (tickFontSize/2) + (barMargin));
+                ctx.fillText('2160p', xPosBar - (tickFontSize * 4), yPos + (barHeight/2) + (tickFontSize/2) + (barMargin*2));
+                
+                //
+                // create tick marks
+                var tickOverlap = 3; // how much to overlap top and bottom
+                var tickHeight = sectionHeight + tickOverlap*2;
+                var tickLabelYPos = yPos + tickHeight + tickOverlap + tickFontSize;
+                ctx.fillStyle = '#FFFFFF'; // ticks
+                ctx.fillRect(xPosBar + (maxBarWidth * 0.15), yPos - tickOverlap, 1, tickHeight); //30 fps
+                ctx.fillRect(xPosBar + (maxBarWidth * 0.3), yPos - tickOverlap, 1, tickHeight); //60 fps
+                ctx.fillRect(xPosBar + (maxBarWidth * 0.6), yPos - tickOverlap, 1, tickHeight); //120 fps
+                ctx.fillText('30', xPosBar + (maxBarWidth * 0.15) - (tickFontSize/2), tickLabelYPos);
+                ctx.fillText('60', xPosBar + (maxBarWidth * 0.3) - (tickFontSize/2), tickLabelYPos);
+                ctx.fillText('120', xPosBar + (maxBarWidth * 0.6) - (tickFontSize/2), tickLabelYPos);
+                
+                //
+                // bar group labels (genres)
+                var fontSize = 17;
+                ctx.font = fontSize + 'px  \'Fjalla one\', sans-serif';
+                var textLines = getLines(ctx, bars[i].title, xPosBar - 60);
+                var gapSize = sectionHeight / (textLines.length + 1);
                 for (var j=0; j<textLines.length; j++) {
-                    var textYPos = yPos + 9 + (j*fontSize);
-                    if (textLines.length > 1) textYPos = textYPos - (fontSize/2);
+                    var textYPos = yPos + (gapSize * (j + 1)) + (fontSize/2);
+                    if (j > 0) {
+                        textYPos += (fontSize/2) * j;
+                    }
                     ctx.fillText(textLines[j], 15, textYPos);
                 }
+                
+                //
+                // legend
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(cWidth/2 - legendWidth/2, cHeight - legendHeight - 15, legendWidth, legendHeight); //30 fps
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '12px  \'Fjalla one\', sans-serif';
+                ctx.fillText('Legend', cWidth/2 - 13, cHeight - legendHeight);
+                ctx.font = '10px  \'Fjalla one\', sans-serif';
+                ctx.fillText('CPU Max Framerate', (cWidth/2) - (legendWidth/2) + 22, cHeight - 10 - legendHeight * 0.35);
+                ctx.fillText('Expected FPS', (cWidth/2) + 22, cHeight - 10 - legendHeight * 0.35);
+                ctx.beginPath();
+                ctx.arc((cWidth/2) - (legendWidth/2) + 15, cHeight - 15 - legendHeight * 0.35, 4, 0, Math.PI * 2, true); // CPU circle
+                ctx.fillStyle = cpuBarsColor; // CPU
+                ctx.fill();
+                ctx.closePath();
+                
+                ctx.beginPath();
+                ctx.arc((cWidth/2) + 15, cHeight - 15 - legendHeight * 0.35, 4, 0, Math.PI * 2, true); // GPU circle
+                ctx.fillStyle = gpuBarsColor; // GPU
+                ctx.fill();
+                ctx.closePath();
+                
             }
             
             var fontSize = 10;
@@ -598,7 +687,7 @@
             ctx.font = '10px';
             ctx.textAlign = 'right';
             ctx.fillStyle = 'white';
-            ctx.fillText('200FPS Max', canvas.width - 5, 15);
+            ctx.fillText('200FPS Max', cWidth - 5, 15);
     
             if (stepCount < maxSteps) window.setTimeout(renderInsideElement, 15, elmId, bars, stepCount + 1, maxSteps);
         }

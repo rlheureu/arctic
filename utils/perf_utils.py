@@ -379,9 +379,9 @@ def get_performance_profile(cpu, gpu):
             if not fpsdata:
                 fpsdata = {}
                 databygenre[dp.benchmark_type] = fpsdata
-            fpsdata['fps1080p'] = int(dp.fps_average_1080p) if dp.fps_average_1080p else 1
-            fpsdata['fps1440p'] = int(dp.fps_average_1440p) if dp.fps_average_1440p else 1
-            fpsdata['fps2160p'] = int(dp.fps_average_2160p) if dp.fps_average_2160p else 1
+            fpsdata['fps1080p'] = int(dp.fps_average_1080p) if dp.fps_average_1080p else 0
+            fpsdata['fps1440p'] = int(dp.fps_average_1440p) if dp.fps_average_1440p else 0
+            fpsdata['fps2160p'] = int(dp.fps_average_2160p) if dp.fps_average_2160p else 0
     
     for genre in databygenre.keys():
         gdata = databygenre.get(genre)
