@@ -45,6 +45,84 @@
       position: relative;
       top: 191px;
     }
+    
+    .lp-cube-image{
+      width: 60px;
+      padding-left: -10px;
+      padding-right: 15px;
+    }
+    
+    .tt-query {
+      -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    }
+    .tt-hint {
+      color: #ccc;
+    }
+    .tt-menu {    /* used to be tt-dropdown-menu in older versions */
+      width: 422px;
+      margin-top: 4px;
+      padding: 4px 0;
+      background-color: #091933;
+      border: 1px solid #ccc;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      font-size: 15px;
+      text-align: left;
+      -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+         -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+              box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    }
+    .tt-suggestion {
+      padding: 3px 20px;
+      line-height: 24px;
+      cursor: pointer;
+    }
+    .tt-suggestion.tt-cursor,.tt-suggestion:hover {
+      color: #ffffff;
+      background-color:#000000;
+    }
+    .tt-suggestion p {
+      margin: 0;
+    }
+    .scrollable-dropdown-menu .tt-menu {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .tt-item-right {
+      display: inline-block;
+    }
+    .tt-item-left {
+      display: inline-block;
+      vertical-align: top;
+    }
+    .tt-item-price{
+      font-size: 13px;
+      color: #00bf00;
+    }
+    
+    
+    
+    input[type="text"].lpp-input {
+      outline: none;
+      border:none;
+      border-bottom: solid 2px #54505C;
+      background: transparent;
+      font-weight: 700;
+      width:300px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    input[type="text"].lpp-input:focus {
+      outline: none;
+      border:none;
+      border-bottom: solid 2px #54505C;
+      background: transparent;
+      font-weight: 700;
+      width:300px;
+      font-size: 16px;
+    }
+    
   </style>
 {% endblock %}
 
@@ -57,22 +135,50 @@
         <div class="col-md-2"></div>
         <div class="col-md-8" style="text-align: center;">
           <br><div class="hidden-xs hidden-sm"><br><br><br></div>
-          <img src="//d2h81apir9utb4.cloudfront.net/images/Top-logo.png" style="width:200px;">
           <br><br>
         </div>
         <div class="col-md-2"></div>
       </div>
       <div class="row">
-        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">BUILD YOUR NEXT PC GAMING RIG</h1></div>
+        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">Predicting Performance</h1></div>
       </div>
       <div class="row">
         <div class="col-md-8 col-md-offset-2" style="text-align: center;">
           <br>
-          <p style="color:#ccc; font-size:15px;">Amdahl Cube makes PC gaming hardware easier to understand. Find parts, learn about their performance characteristics, and gain confidence that you're getting the best value for your dollar.</p>
+          <p style="color:#ccc; font-size:15px;">
+            Step 1: Select a Processor and a Graphics Card<br>
+            Step 2: Visualize Performance Data<br>
+            Step 3: ???<br>
+            Step 4: Profit<br>
+          </p>
           <br>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-2 text-center">
+          <br><br>
+          
+          <div class="scrollable-dropdown-menu">
+            <input type="text" class="typeahead lpp-input" id="cpu-ta-input" placeholder="Select Processor"/>
+          </div>
+        </div>
+        <div class="col-md-4 text-center">
+          <br><br>
+          <div class="scrollable-dropdown-menu">
+            <input type="text" class="typeahead lpp-input" id="gpu-ta-input" placeholder="Select Graphics Card"/>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 text-center" id="the-cube-js-div" style="height: 200px;padding-top:25px;">
+          
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <br><br><br><br><br><br><br>
           <a href="/bench" class="blue-link" style="font-size: 15px;">Build Your Cube</a>
           <br><br><br><br><br><br><br>
-          
         </div>
       </div>
     </div>
@@ -207,4 +313,301 @@
     </div>
   </div>
   
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript" src="/static/js/typeahead.bundle.min.js"></script>
+<script type="text/javascript">
+
+    $(function(){
+        
+        var selectedGpu = null;
+        var selectedCpu = null;
+        
+        function refreshBars(){
+            if (selectedCpu === null && selectedGpu === null) {
+                var barsToRender = [
+                                    {'title' : 'First-person shooter','barSizeFps' : 5,'barFillFps': 2},
+                                    {'title' : 'Open world','barSizeFps' : 5,'barFillFps': 2}
+                                   ];
+                //drawBars('bigcanvas', barsToRender);
+                drawBars('the-cube-js-div', barsToRender);
+            }
+            
+            var params = {};
+            if (selectedCpu) params['c'] = selectedCpu.id;
+            if (selectedGpu) params['g'] = selectedGpu.id;
+            $.getJSON('/pp', params)
+            .success(function(data){
+                console.log('we made it');
+                console.log(data);
+                console.log(data.renderbars)
+                
+                drawBars('the-cube-js-div', data.renderbars);
+            });
+            
+            
+            var genreKeys = ['PUBG', 'FPS', 'OPEN_WORLD'];
+        }
+        
+        function initTypeAhead(compList, elmId, suggest, cType) {
+            var engine = new Bloodhound({
+                local : compList,
+                identify : function(obj) { return obj.id; },
+                queryTokenizer : Bloodhound.tokenizers.nonword,
+                datumTokenizer : Bloodhound.tokenizers.obj.nonword('display_name')
+            });
+            
+            $('#' + elmId).typeahead({
+                minLength : 0,
+                highlight : true
+            }, {
+                limit: 15,
+                name : elmId + '_Dataset',
+                source : function(q, sync) {
+                    if (q === '') sync(engine.get(suggest));
+                    else {
+                        engine.search(q, sync);
+                    }
+                },
+                display: 'display_name',
+                templates: {
+                    suggestion: function(obj) {
+                        var suggHtml = '<div class="fg-' + obj.perf_color + '">';
+                        suggHtml += '<div class="tt-item-left"><img class="lp-cube-image" src="/static/cube-images/ac-cube-small-' + obj.perf_color + '.png" /></div>';
+                        suggHtml += '<div class="tt-item-right" style="display:inline-block;">' + obj.display_name;
+                        suggHtml += '<br><span class="tt-item-price">' + obj.priceformatted + '</span></div></div>';
+                        return suggHtml;
+                    }
+                }
+            }).bind('typeahead:select', function(jqueryevent, obj){
+                
+                if (cType === 'CPU') selectedCpu = obj;
+                else if (cType === 'GPU') selectedGpu = obj;
+                
+                $('#' + elmId).removeClass(function(idx, className){
+                    var classes = className.split(' ');
+                    for (var i=0;i<classes.length;i++) {
+                        if (classes[i].startsWith('fg')) {
+                            return classes[i];
+                        }
+                    }
+                }).addClass('fg-' + obj.perf_color);
+                
+                refreshBars();
+                
+                // deselect input
+                $('input').blur();
+                
+            }).bind('typeahead:active', function(){
+                $('#' + elmId).typeahead('val', null);
+            });
+        }
+        
+        $.getJSON('/landingpageparts', function(jsonData){
+            
+            initTypeAhead(jsonData.cpus, 'cpu-ta-input', jsonData.suggest.cpu, 'CPU');
+            initTypeAhead(jsonData.gpus, 'gpu-ta-input', jsonData.suggest.gpu, 'GPU');
+        });
+
+        
+        //
+        //
+        //
+        //
+        //
+        // RENDERING BARS
+        // ////////
+        var initializedCanvas = {};
+        
+        function initCanvasInDiv(divElmId) {
+            
+            if (initializedCanvas[divElmId]) return initializedCanvas[divElmId];
+            
+            var canvas = document.createElement('canvas');
+            var div = document.getElementById(divElmId);
+    
+            canvas.id = "canvas_" + divElmId;
+            canvas.width = div.clientWidth;
+            canvas.height = div.clientHeight;
+            
+            div.appendChild(canvas);
+            
+            initializedCanvas[divElmId] = canvas;
+            return canvas;
+        }
+    
+        
+        var renderedBarsByElm = {};
+        function drawBars(elmId, bars) {
+            // the list of bars passed in are to be rendered on the canvas
+            // this method will call the render function the necessary
+            // number of times in order to animate the changing size of the bars
+            
+            // there are two bars for each genre
+            // they both need to be animated?
+            
+                    
+            var renderedBars = renderedBarsByElm[elmId]; // if multiple canvases
+            if (!renderedBars) {
+                renderedBars = {};
+                renderedBarsByElm[elmId] = renderedBars;
+            }
+            
+            if (Object.keys(renderedBars).length === 0) {
+                // first render so populate with initial bars
+                for (var i=0; i<bars.length; i++) {
+                    renderedBars[bars[i]['title']] = {};
+                    renderedBars[bars[i]['title']].fill1080p = bars[i]['barFillFps1080p'];
+                    renderedBars[bars[i]['title']].fill1440p = bars[i]['barFillFps1440p'];
+                    renderedBars[bars[i]['title']].fill2160p = bars[i]['barFillFps2160p'];
+                    renderedBars[bars[i]['title']].size = bars[i]['barSizeFps'];
+                }
+            }
+            
+            // now determine step size
+            var stepCount = 30; // 60 fps and half second animation time
+            var stepSizes = {};
+            for (var i=0; i<bars.length; i++) {
+                bars[i]['barFillStepSize1080p'] = (bars[i]['barFillFps1080p'] - renderedBars[bars[i]['title']].fill1080p) / stepCount;
+                bars[i]['barFillStepSize1440p'] = (bars[i]['barFillFps1440p'] - renderedBars[bars[i]['title']].fill1440p) / stepCount;
+                bars[i]['barFillStepSize2160p'] = (bars[i]['barFillFps2160p'] - renderedBars[bars[i]['title']].fill2160p) / stepCount;
+                bars[i]['barFillFps1080pBefore'] = renderedBars[bars[i]['title']].fill1080p;
+                bars[i]['barFillFps1440pBefore'] = renderedBars[bars[i]['title']].fill1440p;
+                bars[i]['barFillFps2160pBefore'] = renderedBars[bars[i]['title']].fill2160p;
+                
+                bars[i]['barSizeStepSize'] = (bars[i]['barSizeFps'] - renderedBars[bars[i]['title']].size) / stepCount;
+                bars[i]['barSizeFpsBefore'] = renderedBars[bars[i]['title']].size;
+                
+                renderedBars[bars[i]['title']].fill1080p = bars[i]['barFillFps1080p']; // update the old size
+                renderedBars[bars[i]['title']].fill1440p = bars[i]['barFillFps1440p']; // update the old size
+                renderedBars[bars[i]['title']].fill2160p = bars[i]['barFillFps2160p']; // update the old size
+                renderedBars[bars[i]['title']].size = bars[i]['barSizeFps']; // update the old size
+            }
+            
+            renderInsideElement(elmId, bars, 0, 30);
+        }
+        
+        function getLines(ctx, text, maxWidth) {
+            var words = text.split(" ");
+            var lines = [];
+            var currentLine = words[0];
+
+            for (var i = 1; i < words.length; i++) {
+                var word = words[i];
+                var width = ctx.measureText(currentLine + " " + word).width;
+                if (width < maxWidth) {
+                    currentLine += " " + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+        
+        function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+            if (typeof stroke == 'undefined') {
+                stroke = true;
+            }
+            if (typeof radius === 'undefined') {
+                radius = 5;
+            }
+            if (typeof radius === 'number') {
+                radius = {tl: radius, tr: radius, br: radius, bl: radius};
+            } else {
+                var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+                for (var side in defaultRadius) {
+                    radius[side] = radius[side] || defaultRadius[side];
+                    }
+            }
+            ctx.beginPath();
+            ctx.moveTo(x + radius.tl, y);
+            ctx.lineTo(x + width - radius.tr, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+            ctx.lineTo(x + width, y + height - radius.br);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+            ctx.lineTo(x + radius.bl, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+            ctx.lineTo(x, y + radius.tl);
+            ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+            ctx.closePath();
+            if (fill) {
+                ctx.fill();
+            }
+            if (stroke) {
+                ctx.stroke();
+            }
+        }
+        
+        function renderInsideElement(elmId, bars, stepCount, maxSteps) {
+    
+            var canvas = initCanvasInDiv(elmId);
+    
+            var ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#121526';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            for (var i=0; i<bars.length; i++){
+                
+                var barHeight = canvas.height * 0.04;
+                var yPos = ((i + 1)/(bars.length + 1)) * canvas.height;
+                var xPosText = 10;
+                
+                var xPosBar = canvas.width * (0.35);
+
+                var maxBarWidth = (canvas.width * (0.65)) - 20;
+                
+                // determine proportion for this bar
+                var barFill = bars[i].barFillFps1080pBefore + (stepCount * bars[i].barFillStepSize1080p);
+                var barFillProportion = (maxBarWidth / 200) * barFill;
+                var barSize = bars[i].barSizeFpsBefore + (stepCount * bars[i].barSizeStepSize);
+                var barSizeProportion = (maxBarWidth / 200) * barSize;
+                
+                
+                ctx.fillStyle = 'black'; // background
+                roundRect(ctx, xPosBar, yPos, maxBarWidth, barHeight, barHeight - 5, true, false);
+                //ctx.fillRect(xPosBar, yPos, maxBarWidth, barHeight);
+                
+                ctx.fillStyle = '#460000'; // CPU
+                roundRect(ctx, xPosBar, yPos, barSizeProportion, barHeight, barHeight - 5, true, false);
+                //ctx.fillRect(xPosBar, yPos, barSizeProportion, barHeight);
+                
+                ctx.fillStyle = '#FF0000'; // GPU
+                roundRect(ctx, xPosBar, yPos, Math.min(barFillProportion, barSizeProportion), barHeight, barHeight - 5, true, false);
+                //ctx.fillRect(xPosBar, yPos, Math.min(barFillProportion, barSizeProportion), barHeight);
+                
+                var fontSize = 13;
+                ctx.font = fontSize + 'px  \'Fjalla one\', sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = 'white';
+                var textLines = getLines(ctx, bars[i].title, xPosBar - 20);
+                for (var j=0; j<textLines.length; j++) {
+                    var textYPos = yPos + 9 + (j*fontSize);
+                    if (textLines.length > 1) textYPos = textYPos - (fontSize/2);
+                    ctx.fillText(textLines[j], 15, textYPos);
+                }
+            }
+            
+            var fontSize = 10;
+            ctx.font = fontSize + 'px \'Fjalla one\', sans-serif';
+            ctx.font = '10px';
+            ctx.textAlign = 'right';
+            ctx.fillStyle = 'white';
+            ctx.fillText('200FPS Max', canvas.width - 5, 15);
+    
+            if (stepCount < maxSteps) window.setTimeout(renderInsideElement, 15, elmId, bars, stepCount + 1, maxSteps);
+        }
+    
+        
+        
+        
+        
+    });
+
+</script>
 {% endblock %}

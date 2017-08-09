@@ -24,11 +24,12 @@ from action import fbauth, arctic_auth, new_user, account_claims, \
 from action.price_grabber import AmazonExtractor
 from database import dataaccess, arctic_db_properties
 from database.database import db
-from models.models import User, Rig, BaseComponent
+from models.models import User, Rig, BaseComponent, CPUComponent, GPUComponent
 from utils import perf_utils, retaildata_utils, sort_utils
 from utils.exception import ClaimInvalidException
 from utils.gen_utils import jsonify_sql_alchemy_model
 import time
+
 
 
 app = Flask(__name__)
@@ -131,6 +132,67 @@ def canvastest():
     context = {}
     
     return render_template('canvas.html', **context)
+
+@app.route("/pp", methods=['GET'])
+def performanceprofile():
+    reqdict = request.args.to_dict()
+    cpuid = reqdict.get('c')
+    gpuid = reqdict.get('g')
+    
+    cpu = dataaccess.get_component(cpuid) if cpuid else None
+    gpu = dataaccess.get_component(gpuid) if gpuid else None
+    
+    pp = perf_utils.get_performance_profile(cpu, gpu)
+    pp = json.dumps(pp)
+    return pp, 200, {'Content-Type': 'application/json'}
+
+@app.route("/landingpageparts", methods=['GET'])
+def landingpageparts():
+    
+    landing_page_ids = arctic_db_properties.get_property('LANDING_PAGE_IDS')
+    idstrings = landing_page_ids.split(',')
+    cids = []
+    [cids.append(int(cid)) for cid in idstrings]
+    
+    render_parts = dataaccess.get_components(cids)
+    
+    """
+    set performance color for parts
+    """
+    perf_utils.set_performance_color_for_parts(render_parts)
+    
+    """
+    populate prices
+    """
+    retaildata_utils.populate_prices(render_parts)
+    
+    """
+    populate fps table
+    """
+    [perf_utils.populate_fps_display_table(part) for part in render_parts]
+    
+    """
+    sort by arctic property list
+    """
+    compdict = {}
+    for comp in render_parts: compdict[comp.id] = comp
+    render_parts = []
+    for cid in cids: render_parts.append(compdict.get(cid))
+    
+    suggestionlist = {'cpu':[], 'gpu':[]}
+    retparts = {'cpus':[], 'gpus':[], 'suggest': suggestionlist}
+    suggest_max = 15
+    for comp in render_parts:
+        if isinstance(comp, CPUComponent):
+            retparts['cpus'].append(comp)
+            if len(suggestionlist['cpu']) < suggest_max: suggestionlist['cpu'].append(comp.id)
+        elif isinstance(comp, GPUComponent):
+            retparts['gpus'].append(comp)
+            if len(suggestionlist['gpu']) < suggest_max: suggestionlist['gpu'].append(comp.id)
+    
+    render_parts = json.dumps(retparts, cls=jsonify_sql_alchemy_model(), check_circular=False)
+    return render_parts, 200, {'Content-Type': 'application/json'}
+
 
 @app.route("/widgetgetparts", methods=['GET'])
 def widgetgetparts():

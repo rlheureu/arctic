@@ -6,6 +6,13 @@ Performance Utility
 """
 from models.models import CPUComponent, GPUComponent
 
+""" friendly genre names """
+GENRE_DISPLAY_NAMES = {'OPEN_WORLD':'Open world',
+              'FPS':'First-person shooter',
+              'RTS':'Real-time strategy',
+              'ARPG':'Action role-playing',
+              'PUBG':'PlayerUnknown\'s Battlegrounds'}
+
 def to_datapoint_json(fd):
     rgbcolors = fd.component.get_rgb_colors()
     return {
@@ -261,13 +268,6 @@ def generate_combined_fps_table(cpu, gpu):
     
     if not cpu or not gpu: raise ValueError('Both cpu and gpu must be provided')
     
-    """ friendly genre names """
-    genredisplay = {'OPEN_WORLD':'Open world',
-                  'FPS':'First-person shooter',
-                  'RTS':'Real-time strategy',
-                  'ARPG':'Action role-playing',
-                  'PUBG':'PlayerUnknown\'s Battlegrounds'}
-    
     fpstable ={}
     fpstable['column_headers'] = ['1080p', '1440p', '2160p']
     fpstable['sources'] = set()
@@ -295,7 +295,7 @@ def generate_combined_fps_table(cpu, gpu):
     """
     for dp in gpu.fps_data:
         if not dp.benchmark_type in genres: continue 
-        genrename = genredisplay.get(dp.benchmark_type)
+        genrename = GENRE_DISPLAY_NAMES.get(dp.benchmark_type)
         if not genrename: continue
 
         tablerows.append({'name':genrename, 'values':[format_fps_for_table(min(dp.fps_average_1080p, cpu_fps_map.get(dp.benchmark_type))),
@@ -310,12 +310,7 @@ def generate_combined_fps_table(cpu, gpu):
 
 def populate_fps_display_table(component):
     
-    """ friendly genre names """
-    genredisplay = {'OPEN_WORLD':'Open world',
-                  'FPS':'First-person shooter',
-                  'RTS':'Real-time strategy',
-                  'ARPG':'Action role-playing',
-                  'PUBG':'PlayerUnknown\'s Battlegrounds'}
+    
     
     fpstable ={}
     comptype = None    
@@ -337,7 +332,7 @@ def populate_fps_display_table(component):
     if not component.fps_data or len(component.fps_data) == 0: return
     
     for dp in component.fps_data:
-        genrename = genredisplay.get(dp.benchmark_type)
+        genrename = GENRE_DISPLAY_NAMES.get(dp.benchmark_type)
         if not genrename: continue
         
         fpstable.get('sources').add('<a target="_blank" href="{}">{}</a>'.format(dp.source_url, dp.source_description) if dp.source_url else 'Estimated')
@@ -358,5 +353,50 @@ def populate_fps_display_table(component):
     fpstable['sources'] = list(fpstable.get('sources'))
     component.fps_data_table = fpstable
         
+def get_performance_profile(cpu, gpu):
+    
+    """
+    this method will return something like this:
+    
+    list of genres and their associated fps data
+    
+    """
+    renderbars = []
+    retdata = {"renderbars" : renderbars}
+    
+    databygenre = {}
+    if cpu:
+        for dp in cpu.fps_data:
+            fpsdata = databygenre.get(dp.benchmark_type)
+            if not fpsdata:
+                fpsdata = {}
+                databygenre[dp.benchmark_type] = fpsdata
+            fpsdata['maxfps'] = int(dp.fps_average) if dp.fps_average else None
+    
+    if gpu:
+        for dp in gpu.fps_data:
+            fpsdata = databygenre.get(dp.benchmark_type)
+            if not fpsdata:
+                fpsdata = {}
+                databygenre[dp.benchmark_type] = fpsdata
+            fpsdata['fps1080p'] = int(dp.fps_average_1080p) if dp.fps_average_1080p else 1
+            fpsdata['fps1440p'] = int(dp.fps_average_1440p) if dp.fps_average_1440p else 1
+            fpsdata['fps2160p'] = int(dp.fps_average_2160p) if dp.fps_average_2160p else 1
+    
+    for genre in databygenre.keys():
+        gdata = databygenre.get(genre)
         
+        if cpu and not gdata.get('maxfps'): continue
+        if gpu and not gdata.get('fps1080p'): continue
+        
+        healthbarobj = {}
+        healthbarobj['title'] = GENRE_DISPLAY_NAMES.get(genre)
+        healthbarobj['barSizeFps'] = gdata.get('maxfps')
+        healthbarobj['barFillFps1080p'] = gdata.get('fps1080p')
+        healthbarobj['barFillFps1440p'] = gdata.get('fps1440p')
+        healthbarobj['barFillFps2160p'] = gdata.get('fps2160p')
+        
+        renderbars.append(healthbarobj)
+    
+    return retdata
         

@@ -142,6 +142,14 @@ def get_component(component_id, active=True):
     else:
         return None
 
+def get_components(component_ids, active=True):
+    if component_ids:
+        q = db.session().query(models.BaseComponent).filter(models.BaseComponent.id.in_(component_ids))
+        if active != None: q = q.filter(models.BaseComponent.active == active)
+        return q.all()
+    else:
+        return None
+
 def get_retailer_by_name(retailername):
     
     return db.session().query(models.Retailer).filter(models.Retailer.name == retailername).first()
@@ -645,7 +653,7 @@ def get_compatible_memory_map(motherboard_id=None, gpu_id=None, memory_id=None, 
         return compat_q
     else:
         return compat_q.all()
-    
+
 
 def get_compatible_cpu_map(motherboard_id=None, gpu_id=None, memory_id=None, display_id=None, cpu_id=None, return_query=False):
     """
