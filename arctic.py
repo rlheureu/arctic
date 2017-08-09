@@ -133,6 +133,12 @@ def canvastest():
     
     return render_template('canvas.html', **context)
 
+@app.route("/subscribe", methods=['GET'])
+def subscribe():
+    context = {}
+    
+    return render_template('subscribe.html', **context)
+
 @app.route("/pp", methods=['GET'])
 def performanceprofile():
     reqdict = request.args.to_dict()

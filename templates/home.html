@@ -12,6 +12,15 @@
       margin-left: 0;
       margin-right: 0;
       border-bottom: solid 12px #394a65;
+    
+    }
+    .ppsection{
+      width:100%;
+      background-image: url("//d2h81apir9utb4.cloudfront.net/images/section3bg-image.jpg");
+      background-position: center top;
+      background-repeat:no-repeat;
+      border-bottom: solid 12px #394a65;
+      display: none; 
     }
     .section3{
       width:100%;
@@ -100,27 +109,54 @@
       font-size: 13px;
       color: #00bf00;
     }
+    .twitter-typeahead{
+     width: 97%;
+    }
+    .tt-dropdown-menu{
+        width: 102%;
+    }
     
-    
+    ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:    #00dcff;
+    }
+    :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+       color:    #00dcff;
+       opacity:  1;
+    }
+    ::-moz-placeholder { /* Mozilla Firefox 19+ */
+       color:    #00dcff;
+       opacity:  1;
+    }
+    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+       color:    #00dcff;
+    }
+    ::-ms-input-placeholder { /* Microsoft Edge */
+       color:    #00dcff;
+    }
     
     input[type="text"].lpp-input {
       outline: none;
       border:none;
-      border-bottom: solid 2px #54505C;
+      border-bottom: solid 3px #00dcff;
       background: transparent;
       font-weight: 700;
-      width:300px;
+      min-width: 100%;
       font-size: 16px;
-      cursor: pointer;
+      color: #eeeeee;
+       cursor: pointer;
     }
     input[type="text"].lpp-input:focus {
+      border-bottom: solid 5px #00dcff;
+    }
+    input[type="email"].subscribe-input {
       outline: none;
       border:none;
-      border-bottom: solid 2px #54505C;
+      border-bottom: solid 3px #00dcff;
       background: transparent;
       font-weight: 700;
-      width:300px;
+      width:100%;
       font-size: 16px;
+      color: #eeeeee;
     }
     
   </style>
@@ -134,55 +170,60 @@
       <div class="row">
         <div class="col-md-2"></div>
         <div class="col-md-8" style="text-align: center;">
-          <br><div class="hidden-xs hidden-sm"><br><br><br></div>
+          <div class="hidden-xs hidden-sm"><br></div>
           <br><br>
         </div>
         <div class="col-md-2"></div>
       </div>
       <div class="row">
-        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">Predicting Performance</h1></div>
+        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">HOW WILL IT PERFORM?</h1></div>
       </div>
       <div class="row">
         <div class="col-md-8 col-md-offset-2" style="text-align: center;">
           <br>
-          <p style="color:#ccc; font-size:15px;">
-            Step 1: Select a Processor and a Graphics Card<br>
-            Step 2: Visualize Performance Data<br>
-            Step 3: ???<br>
-            Step 4: Profit<br>
+          <p style="color:#eee; font-size:17px;">
+            Considering new parts? Know performance data before you buy.<br>Drop the parts in below to see how they'll perform before you buy!<br>
           </p>
-          <br>
+          <br><br>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4 col-md-offset-2 text-center">
-          <br><br>
-          
+        <div class="col-md-4 col-md-offset-2">
+          <br>
+          <p style="color:#eee; font-size:20px; font-weight: bold;">Select your parts here</p>
+          <br>
           <div class="scrollable-dropdown-menu">
             <input type="text" class="typeahead lpp-input" id="cpu-ta-input" placeholder="Select Processor"/>
           </div>
-        </div>
-        <div class="col-md-4 text-center">
           <br><br>
           <div class="scrollable-dropdown-menu">
             <input type="text" class="typeahead lpp-input" id="gpu-ta-input" placeholder="Select Graphics Card"/>
           </div>
+          <br><br>
+          <br><br>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-8 col-md-offset-2 text-center" id="the-cube-js-div" style="padding-top:25px;">
-          
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <br><br><br><br><br><br><br>
-          <a href="/bench" class="blue-link" style="font-size: 15px;">Build Your Cube</a>
-          <br><br><br><br><br><br><br>
+        <div class="col-md-3 col-md-offset-1">
+          <br>
+          <p style="color:#eee; font-size:20px; font-weight: bold;">Don't see what you're looking for?</p>
+          <p style="color:#eee;">If you'd like to us to notify you when new performance data is available subscribe to our mailing list below.</p>
+          <div class="text-center">
+            <br>
+            <a href="/subscribe" class="ac-btn">Subscribe to be notified</a>
+            <br><br>
+          </div>
         </div>
       </div>
     </div>
   
+  </div>
+  <div class="ppsection">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1 text-center" id="the-cube-js-div" style="padding-top:25px;">
+          
+        </div>
+      </div>
+    </div>
   </div>
   <div class="section3">
     <div class="container">
@@ -325,14 +366,6 @@
         var selectedCpu = null;
         
         function refreshBars(){
-            if (selectedCpu === null && selectedGpu === null) {
-                var barsToRender = [
-                                    {'title' : 'First-person shooter','barSizeFps' : 5,'barFillFps': 2},
-                                    {'title' : 'Open world','barSizeFps' : 5,'barFillFps': 2}
-                                   ];
-                //drawBars('bigcanvas', barsToRender);
-                drawBars('the-cube-js-div', barsToRender);
-            }
             
             var params = {};
             if (selectedCpu) params['c'] = selectedCpu.id;
@@ -374,6 +407,8 @@
                     }
                 }
             }).bind('typeahead:select', function(jqueryevent, obj){
+                
+                if (!$('.ppsection').is(":visible")) $('.ppsection').show();
                 
                 if (cType === 'CPU') selectedCpu = obj;
                 else if (cType === 'GPU') selectedGpu = obj;
@@ -456,10 +491,10 @@
                 // first render so populate with initial bars
                 for (var i=0; i<bars.length; i++) {
                     renderedBars[bars[i]['title']] = {};
-                    renderedBars[bars[i]['title']].fill1080p = bars[i]['barFillFps1080p'];
-                    renderedBars[bars[i]['title']].fill1440p = bars[i]['barFillFps1440p'];
-                    renderedBars[bars[i]['title']].fill2160p = bars[i]['barFillFps2160p'];
-                    renderedBars[bars[i]['title']].size = bars[i]['barSizeFps'];
+                    renderedBars[bars[i]['title']].fill1080p = 0;
+                    renderedBars[bars[i]['title']].fill1440p = 0;
+                    renderedBars[bars[i]['title']].fill2160p = 0;
+                    renderedBars[bars[i]['title']].size = 0;
                 }
             }
             
@@ -550,10 +585,11 @@
             var sectionHeight = ((barMargin - barHeight) * 2) + barHeight *3;
             var sectionPaddingBottom = 50;
             var titleSectionHeight = 100;
-            var cpuBarsColor = '#8c1717';
+            var cpuBarsColor = '#04bf1e';
             var gpuBarsColor = '#FF0000';
             var backgroundColor = '#121526';
             var backgroundBarsColor = '#000000';
+            var barBorderRadius = barHeight/4;
             
             var cWidth = document.getElementById(elmId).clientWidth - 40;
             var cHeight = (bars.length * (sectionHeight + sectionPaddingBottom)) + (legendPadding * 2) + legendHeight + titleSectionHeight;
@@ -569,8 +605,8 @@
             
             ctx.clearRect(0, 0, cWidth, cHeight);
             
-            ctx.fillStyle = backgroundColor;
-            ctx.fillRect(0, 0, cWidth, cHeight);
+            //ctx.fillStyle = backgroundColor;
+            //ctx.fillRect(0, 0, cWidth, cHeight);
             
             ctx.font = '22px  \'Fjalla one\', sans-serif';
             ctx.textAlign = 'left';
@@ -603,23 +639,23 @@
                 //
                 // FILL BARS BACKGROUND
                 ctx.fillStyle = backgroundBarsColor;
-                roundRect(ctx, xPosBar, yPos, maxBarWidth, barHeight, barHeight - 5, true, false);
-                roundRect(ctx, xPosBar, yPos + barMargin, maxBarWidth, barHeight, barHeight - 5, true, false);
-                roundRect(ctx, xPosBar, yPos + (barMargin * 2), maxBarWidth, barHeight, barHeight - 5, true, false);
+                roundRect(ctx, xPosBar, yPos, maxBarWidth, barHeight, barBorderRadius, true, false);
+                roundRect(ctx, xPosBar, yPos + barMargin, maxBarWidth, barHeight, barBorderRadius, true, false);
+                roundRect(ctx, xPosBar, yPos + (barMargin * 2), maxBarWidth, barHeight, barBorderRadius, true, false);
                 
                 //
                 // FILL BARS CPU
                 ctx.fillStyle = cpuBarsColor; // CPU
-                roundRect(ctx, xPosBar, yPos, barSizeProportion, barHeight, barHeight - 5, true, false);
-                roundRect(ctx, xPosBar, yPos + barMargin, barSizeProportion, barHeight, barHeight - 5, true, false);
-                roundRect(ctx, xPosBar, yPos + (barMargin * 2), barSizeProportion, barHeight, barHeight - 5, true, false);
+                roundRect(ctx, xPosBar, yPos, barSizeProportion, barHeight, barBorderRadius, true, false);
+                roundRect(ctx, xPosBar, yPos + barMargin, barSizeProportion, barHeight, barBorderRadius, true, false);
+                roundRect(ctx, xPosBar, yPos + (barMargin * 2), barSizeProportion, barHeight, barBorderRadius, true, false);
                 
                 //
                 // FILL BARS GPU
                 ctx.fillStyle = gpuBarsColor; // GPU
-                if (barFillProportion1080p) roundRect(ctx, xPosBar, yPos, Math.min(barFillProportion1080p, barSizeProportion), barHeight, barHeight - 5, true, false);
-                if (barFillProportion1440p) roundRect(ctx, xPosBar, yPos + barMargin, Math.min(barFillProportion1440p, barSizeProportion), barHeight, barHeight - 5, true, false);
-                if (barFillProportion2160p) roundRect(ctx, xPosBar, yPos + (barMargin * 2), Math.min(barFillProportion2160p, barSizeProportion), barHeight, barHeight - 5, true, false);
+                if (barFillProportion1080p) roundRect(ctx, xPosBar, yPos, Math.min(barFillProportion1080p, barSizeProportion), barHeight, barBorderRadius, true, false);
+                if (barFillProportion1440p) roundRect(ctx, xPosBar, yPos + barMargin, Math.min(barFillProportion1440p, barSizeProportion), barHeight, barBorderRadius, true, false);
+                if (barFillProportion2160p) roundRect(ctx, xPosBar, yPos + (barMargin * 2), Math.min(barFillProportion2160p, barSizeProportion), barHeight, barBorderRadius, true, false);
                 
                 //
                 // create tick and bar labels
