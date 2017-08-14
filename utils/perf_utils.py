@@ -352,7 +352,27 @@ def populate_fps_display_table(component):
     fpstable['values'] = sorted(tablerows, key=lambda row: row['name'])
     fpstable['sources'] = list(fpstable.get('sources'))
     component.fps_data_table = fpstable
+
+def get_max_performance(complist):
+    """
+    Checks list for lowest performance and returns that has max performance (bottleneck)
+    
+    :param complist: list of components
+    :returns: dict object with performance info
+    """
+    lowest = None
+    for comp in complist:
+        if not comp: continue
+        if not lowest:
+            lowest = comp
+            continue
         
+        if comp.get_performance_color_coded() < lowest.get_performance_color_coded():
+            lowest = comp
+    
+    return {'color' : lowest.get_performance_color(), 'string' : lowest.max_performance} if lowest else None
+        
+
 def get_performance_profile(cpu, gpu):
     
     """
@@ -363,6 +383,9 @@ def get_performance_profile(cpu, gpu):
     """
     renderbars = []
     retdata = {"renderbars" : renderbars}
+    
+    pcolordata = get_max_performance([cpu,gpu])
+    retdata["performance"] = pcolordata
     
     databygenre = {}
     if cpu:
@@ -383,6 +406,7 @@ def get_performance_profile(cpu, gpu):
             fpsdata['fps1440p'] = int(dp.fps_average_1440p) if dp.fps_average_1440p else 0
             fpsdata['fps2160p'] = int(dp.fps_average_2160p) if dp.fps_average_2160p else 0
     
+    perf_strings = []
     for genre in databygenre.keys():
         gdata = databygenre.get(genre)
         
@@ -397,6 +421,23 @@ def get_performance_profile(cpu, gpu):
         healthbarobj['barFillFps2160p'] = gdata.get('fps2160p')
         
         renderbars.append(healthbarobj)
+        
+        """ prepare rending of long string. """
+        maxfps = None
+        if gpu and gpu: maxfps = min(gdata.get('maxfps'), gdata.get('fps1080p'))
+        elif gpu: maxfps = gdata.get('fps1080p')
+        elif cpu: maxfps = gdata.get('maxfps')
+        
+        perflongstr = "For {} type games this rig should hit {}FPS at 1080p on average".format(GENRE_DISPLAY_NAMES.get(genre).lower(), maxfps)
+        perf_strings.append(perflongstr)
+    
+    if pcolordata:
+        thisthese = "this part" if (cpu and not gpu) or (gpu and not cpu) else "these parts"
+        explainstr = "With {} you should be able to comfortably acheive {}.".format(thisthese, pcolordata['string'])
+        for perfstring in perf_strings:
+            explainstr += " {}.".format(perfstring)
+        
+        retdata['explain'] = explainstr
     
     return retdata
         

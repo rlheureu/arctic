@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block styling %}
+  {{ super() }}
+
+{% endblock %}
+
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <br><br><br>
+            <h3>Amdahl Cube Mailing List Sign up</h3>
+            <br><br>
+            <a href="/" class="ac-btn">Back to home page</a>
+        </div>
+    </div>
+    
+  </div>
+  <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us13.list-manage.com","uuid":"890ae45442acd7189245c110a","lid":"657d2cd15b"}) })</script>
+{% endblock %}

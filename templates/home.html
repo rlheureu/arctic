@@ -54,12 +54,25 @@
       position: relative;
       top: 191px;
     }
-    
     .lp-cube-image{
       width: 60px;
       padding-left: -10px;
       padding-right: 15px;
     }
+    #max-performance-text{
+      padding-top: 40px;
+      padding-left: 15px;
+      font-size: 21px;
+    }
+    #max-performance-long-text{
+      color: #ddd;
+    }
+    .home-report-title-text{
+      font-size: 28px;
+      color: #ffffff;
+      font-family: 'Fjalla one', sans-serif;
+    }
+    
     
     .tt-query {
       -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -176,13 +189,13 @@
         <div class="col-md-2"></div>
       </div>
       <div class="row">
-        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">HOW WILL IT PERFORM?</h1></div>
+        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">KNOW MORE BEFORE BUYING</h1></div>
       </div>
       <div class="row">
         <div class="col-md-8 col-md-offset-2" style="text-align: center;">
           <br>
           <p style="color:#eee; font-size:17px;">
-            Considering new parts? Know performance data before you buy.<br>Drop the parts in below to see how they'll perform before you buy!<br>
+            See how your next gaming PC will perform before you buy it.<br>Drop in your parts below to get a report.<br>
           </p>
           <br><br>
         </div>
@@ -219,8 +232,32 @@
   <div class="ppsection">
     <div class="container">
       <div class="row">
-        <div class="col-md-10 col-md-offset-1 text-center" id="the-cube-js-div" style="padding-top:25px;">
+        <div class="col-md-10 col-md-offset-1 text-center">
+          <br>
+          <span class="home-report-title-text">FPS Performance Report</span>
+          <br>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-7 col-md-offset-1 text-center" id="the-cube-js-div" style="padding-top:25px;">
           
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-sm-4"><img src="/static/cube-images/ac-cube-small-default.png" id="max-performance-cube-image" /></div>
+                <div class="col-sm-6"><div id="max-performance-text"></div></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <p id="max-performance-long-text">This rig is expected to perform, on average, at 4k@60. One first-person shooter games it is expected to have an average of 120fps at 1080p.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <br>
+                    <a href="/bench" class="blue-link" style="font-size: 15px;">Start your build now</a>
+                </div>
+            </div>
         </div>
       </div>
     </div>
@@ -372,7 +409,18 @@
             if (selectedGpu) params['g'] = selectedGpu.id;
             $.getJSON('/pp', params)
             .success(function(data){
+                
+                // render bars
                 drawBars('the-cube-js-div', data.renderbars);
+                
+                // update performance info
+                if (data.performance) {
+                    $('#max-performance-cube-image').attr('src', '/static/cube-images/ac-cube-small-' + data.performance.color + '.png');
+                    $('#max-performance-text').text(data.performance.string).removeClass().addClass('fg-' + data.performance.color);
+                    $('#max-performance-long-text').text(data.explain);
+                } else {
+                    
+                }
             });
             
             
@@ -576,7 +624,7 @@
         
         function renderInsideElement(elmId, bars, stepCount, maxSteps) {
             
-            var reportTitle = 'FPS Performance Report';
+            //var reportTitle = 'FPS Performance Report';
             var barMargin = 16; // bar margin (space between bars)
             var barHeight = 13; // bar height
             var legendWidth = 220;
@@ -592,7 +640,7 @@
             var barBorderRadius = barHeight/4;
             
             var cWidth = document.getElementById(elmId).clientWidth - 40;
-            var cHeight = (bars.length * (sectionHeight + sectionPaddingBottom)) + (legendPadding * 2) + legendHeight + titleSectionHeight;
+            var cHeight = (bars.length * (sectionHeight + sectionPaddingBottom)) + (legendPadding * 2) + legendHeight;
             
             var canvas = initCanvasInDiv(elmId, cWidth, cHeight);
     
@@ -611,11 +659,11 @@
             ctx.font = '22px  \'Fjalla one\', sans-serif';
             ctx.textAlign = 'left';
             ctx.fillStyle = 'white';
-            ctx.fillText(reportTitle, 15, 40);
+            //ctx.fillText(reportTitle, 15, 40);
             
             for (var i=0; i<bars.length; i++){
                 
-                var yPos = (i * (sectionHeight + sectionPaddingBottom)) + titleSectionHeight;
+                var yPos = (i * (sectionHeight + sectionPaddingBottom));
                 var xPosText = 10;
                 
                 var textColRatio = 0.3;
@@ -639,9 +687,9 @@
                 //
                 // FILL BARS BACKGROUND
                 ctx.fillStyle = backgroundBarsColor;
-                roundRect(ctx, xPosBar, yPos, maxBarWidth, barHeight, barBorderRadius, true, false);
-                roundRect(ctx, xPosBar, yPos + barMargin, maxBarWidth, barHeight, barBorderRadius, true, false);
-                roundRect(ctx, xPosBar, yPos + (barMargin * 2), maxBarWidth, barHeight, barBorderRadius, true, false);
+                //roundRect(ctx, xPosBar, yPos, maxBarWidth, barHeight, barBorderRadius, true, false);
+                //roundRect(ctx, xPosBar, yPos + barMargin, maxBarWidth, barHeight, barBorderRadius, true, false);
+                //roundRect(ctx, xPosBar, yPos + (barMargin * 2), maxBarWidth, barHeight, barBorderRadius, true, false);
                 
                 //
                 // FILL BARS CPU
@@ -694,36 +742,38 @@
                     ctx.fillText(textLines[j], 15, textYPos);
                 }
                 
-                //
-                // legend
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(cWidth/2 - legendWidth/2, cHeight - legendHeight - 15, legendWidth, legendHeight); //30 fps
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '12px  \'Fjalla one\', sans-serif';
-                ctx.fillText('Legend', cWidth/2 - 13, cHeight - legendHeight);
-                ctx.font = '10px  \'Fjalla one\', sans-serif';
-                ctx.fillText('CPU Max Framerate', (cWidth/2) - (legendWidth/2) + 22, cHeight - 10 - legendHeight * 0.35);
-                ctx.fillText('Expected FPS', (cWidth/2) + 22, cHeight - 10 - legendHeight * 0.35);
-                ctx.beginPath();
-                ctx.arc((cWidth/2) - (legendWidth/2) + 15, cHeight - 15 - legendHeight * 0.35, 4, 0, Math.PI * 2, true); // CPU circle
-                ctx.fillStyle = cpuBarsColor; // CPU
-                ctx.fill();
-                ctx.closePath();
                 
-                ctx.beginPath();
-                ctx.arc((cWidth/2) + 15, cHeight - 15 - legendHeight * 0.35, 4, 0, Math.PI * 2, true); // GPU circle
-                ctx.fillStyle = gpuBarsColor; // GPU
-                ctx.fill();
-                ctx.closePath();
                 
             }
+            
+            //
+            // legend
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(cWidth/2 - legendWidth/2, cHeight - legendHeight - 15, legendWidth, legendHeight); //30 fps
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px  \'Fjalla one\', sans-serif';
+            ctx.fillText('Legend', cWidth/2 - 13, cHeight - legendHeight);
+            ctx.font = '10px  \'Fjalla one\', sans-serif';
+            ctx.fillText('CPU Max Framerate', (cWidth/2) - (legendWidth/2) + 22, cHeight - 10 - legendHeight * 0.35);
+            ctx.fillText('Expected FPS', (cWidth/2) + 22, cHeight - 10 - legendHeight * 0.35);
+            ctx.beginPath();
+            ctx.arc((cWidth/2) - (legendWidth/2) + 15, cHeight - 15 - legendHeight * 0.35, 4, 0, Math.PI * 2, true); // CPU circle
+            ctx.fillStyle = cpuBarsColor; // CPU
+            ctx.fill();
+            ctx.closePath();
+            
+            ctx.beginPath();
+            ctx.arc((cWidth/2) + 15, cHeight - 15 - legendHeight * 0.35, 4, 0, Math.PI * 2, true); // GPU circle
+            ctx.fillStyle = gpuBarsColor; // GPU
+            ctx.fill();
+            ctx.closePath();
             
             var fontSize = 10;
             ctx.font = fontSize + 'px \'Fjalla one\', sans-serif';
             ctx.font = '10px';
             ctx.textAlign = 'right';
             ctx.fillStyle = 'white';
-            ctx.fillText('200FPS Max', cWidth - 5, 15);
+            //ctx.fillText('200FPS Max', cWidth - 5, 15);
     
             if (stepCount < maxSteps) window.setTimeout(renderInsideElement, 15, elmId, bars, stepCount + 1, maxSteps);
         }
