@@ -64,15 +64,26 @@
       padding-left: 15px;
       font-size: 21px;
     }
-    #max-performance-long-text{
+    .pp-explainer-text{
       color: #ddd;
+      padding-top:10px;
+    }
+    #pp-price-text{
+      color: #04bf1e;
+      font-size: 19px;
+      font-weight: bold;
     }
     .home-report-title-text{
       font-size: 28px;
       color: #ffffff;
       font-family: 'Fjalla one', sans-serif;
     }
-    
+    table#buy-on-amazon-table td{
+      padding:10px;
+    }
+    #buy-on-amazon-table{
+      width: 100%;
+    }
     
     .tt-query {
       -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -113,6 +124,7 @@
     }
     .tt-item-right {
       display: inline-block;
+      max-width: 300px;
     }
     .tt-item-left {
       display: inline-block;
@@ -201,7 +213,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4 col-md-offset-2">
+        <div class="col-md-4 col-md-offset-2" id="pp-select-parts-div">
           <br>
           <p style="color:#eee; font-size:20px; font-weight: bold;">Select your parts here</p>
           <br>
@@ -232,30 +244,38 @@
   <div class="ppsection">
     <div class="container">
       <div class="row">
-        <div class="col-md-10 col-md-offset-1 text-center">
+        <div class="col-xs-7">
           <br>
           <span class="home-report-title-text">FPS Performance Report</span>
           <br>
         </div>
+        <div class="col-xs-5 text-right">
+            <br>
+            <a href="/bench" class="blue-link" style="font-size: 15px;">Build Cube</a>
+        </div>
       </div>
       <div class="row">
-        <div class="col-md-7 col-md-offset-1 text-center" id="the-cube-js-div" style="padding-top:25px;">
+        <div class="col-md-8 text-center" id="the-cube-js-div" style="padding-top:25px;">
           
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="row">
-                <div class="col-sm-4"><img src="/static/cube-images/ac-cube-small-default.png" id="max-performance-cube-image" /></div>
-                <div class="col-sm-6"><div id="max-performance-text"></div></div>
+                <div class="col-xs-4"><img src="/static/cube-images/ac-cube-small-default.png" id="max-performance-cube-image" /></div>
+                <div class="col-xs-6"><div id="max-performance-text"></div></div>
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    <p id="max-performance-long-text">This rig is expected to perform, on average, at 4k@60. One first-person shooter games it is expected to have an average of 120fps at 1080p.</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12 text-center">
+                    <p class="pp-explainer-text" id="max-performance-long-text"></p>
+                    <p class="pp-explainer-text">The total purchase price for the selected parts is:</p>
+                    <div class="text-center">
+                        <span id="pp-price-text">$500.87</span><small>&nbsp;&nbsp;On Amazon</small>
+                    </div>
+                    <div>
+                        <br>
+                        <table id="buy-on-amazon-table"></table>
+                        <br>
+                    </div>
                     <br>
-                    <a href="/bench" class="blue-link" style="font-size: 15px;">Start your build now</a>
                 </div>
             </div>
         </div>
@@ -401,6 +421,14 @@
         
         var selectedGpu = null;
         var selectedCpu = null;
+        var neverScrolled = true;
+        
+        function constructBuyTableRow(comp){
+            var trHtml = '<tr><td class="fg-' + comp.perf_color + '">';
+            trHtml += comp.display_name;
+            trHtml += '</td><td><a href="' + comp.buyurl + '">' + comp.priceformatted + '</td></tr>';
+            return trHtml;
+        }
         
         function refreshBars(){
             
@@ -418,6 +446,12 @@
                     $('#max-performance-cube-image').attr('src', '/static/cube-images/ac-cube-small-' + data.performance.color + '.png');
                     $('#max-performance-text').text(data.performance.string).removeClass().addClass('fg-' + data.performance.color);
                     $('#max-performance-long-text').text(data.explain);
+                    $('#pp-price-text').text(data.total_price);
+                    
+                    $('#buy-on-amazon-table').empty();
+                    if (selectedCpu) $('#buy-on-amazon-table').append(constructBuyTableRow(selectedCpu));
+                    if (selectedGpu) $('#buy-on-amazon-table').append(constructBuyTableRow(selectedGpu));
+                    
                 } else {
                     
                 }
@@ -474,6 +508,11 @@
                 
                 // deselect input
                 $('input').blur();
+                
+                if (neverScrolled) {
+                    neverScrolled = false;
+                    $('html, body').animate({scrollTop: $("#pp-select-parts-div").offset().top}, 400);
+                }
                 
             }).bind('typeahead:active', function(){
                 $('#' + elmId).typeahead('val', null);

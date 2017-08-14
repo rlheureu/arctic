@@ -5,6 +5,7 @@ Performance Utility
 
 """
 from models.models import CPUComponent, GPUComponent
+from utils import retaildata_utils
 
 """ friendly genre names """
 GENRE_DISPLAY_NAMES = {'OPEN_WORLD':'Open world',
@@ -371,7 +372,28 @@ def get_max_performance(complist):
             lowest = comp
     
     return {'color' : lowest.get_performance_color(), 'string' : lowest.max_performance} if lowest else None
+
+def total_prices(complist):
+    """
+    Adds up current prices for each component and returns string with formatted price
+    """
+    rawprice = 0
+    for comp in complist:
+        if not comp: continue
         
+        lowest = None
+        for price in comp.prices:
+            if not price: continue
+            if not price.price: continue
+            if not lowest:
+                lowest = price.price
+                continue
+            if price.price < lowest: lowest = price
+        
+        if lowest: rawprice += lowest
+    
+    return retaildata_utils.format_int_price(rawprice)
+            
 
 def get_performance_profile(cpu, gpu):
     
@@ -438,6 +460,8 @@ def get_performance_profile(cpu, gpu):
             explainstr += " {}.".format(perfstring)
         
         retdata['explain'] = explainstr
+    
+    retdata['total_price'] = total_prices([gpu, cpu])
     
     return retdata
         
