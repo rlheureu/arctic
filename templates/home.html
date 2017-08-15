@@ -302,7 +302,11 @@
         function constructBuyTableRow(comp){
             var trHtml = '<tr><td class="fg-' + comp.perf_color + '">';
             trHtml += comp.display_name;
-            trHtml += '</td><td><a href="' + comp.buyurl + '">' + comp.priceformatted + '</td></tr>';
+            if (comp.priceformatted) {
+                trHtml += '</td><td><a target="_blank" href="' + comp.buyurl + '">' + comp.priceformatted + '</td></tr>';
+            } else {
+                trHtml += '</td><td>Price unavailable</td></tr>';
+            }
             return trHtml;
         }
         
@@ -378,7 +382,11 @@
                         var suggHtml = '<div class="fg-' + obj.perf_color + '">';
                         suggHtml += '<div class="tt-item-left"><img class="lp-cube-image" src="/static/cube-images/ac-cube-small-' + obj.perf_color + '.png" /></div>';
                         suggHtml += '<div class="tt-item-right" style="display:inline-block;">' + obj.display_name;
-                        suggHtml += '<br><span class="tt-item-price">' + obj.priceformatted + '</span></div></div>';
+                        if (obj.priceformatted) {
+                            suggHtml += '<br><span class="tt-item-price">' + obj.priceformatted + '</span>'  + '</div></div>';
+                        } else {
+                            suggHtml += '<br><small style="color:#ccc;">Pricing unavailable</small>' + '</div></div>';
+                        }
                         return suggHtml;
                     }
                 }
