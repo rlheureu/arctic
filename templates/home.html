@@ -2,7 +2,7 @@
 {% block styling %}
   {{ super() }}
   <style type="text/css">
-    .section1{
+    .section1-old{
       width:100%;
       background-image: url("//d2h81apir9utb4.cloudfront.net/images/section1-bg.jpg");
       background-repeat:no-repeat;
@@ -11,15 +11,9 @@
       width: 100%;
       margin-left: 0;
       margin-right: 0;
-      border-bottom: solid 12px #394a65;
     
     }
     .ppsection{
-      width:100%;
-      background-image: url("//d2h81apir9utb4.cloudfront.net/images/section3bg-image.jpg");
-      background-position: center top;
-      background-repeat:no-repeat;
-      border-bottom: solid 12px #394a65;
       display: none; 
     }
     .section3{
@@ -74,15 +68,28 @@
       font-weight: bold;
     }
     .home-report-title-text{
-      font-size: 28px;
+      font-size: 17px;
       color: #ffffff;
-      font-family: 'Fjalla one', sans-serif;
+      font-family: 'Open sans', sans-serif;
+      font-weight: bold;
     }
     table#buy-on-amazon-table td{
       padding:10px;
     }
     #buy-on-amazon-table{
       width: 100%;
+    }
+    .color-meter-obj{
+      display:inline-block;
+      height:5px;
+      width: 16%;
+      padding:0px;
+      margin:0px;
+      border:0px;
+      cursor: pointer;
+    }
+    .color-meter-obj-selected{
+      height:15px;
     }
     
     .tt-query {
@@ -142,27 +149,27 @@
     }
     
     ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-    color:    #00dcff;
+    color:    #ffffff;
     }
     :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-       color:    #00dcff;
+       color:    #ffffff;
        opacity:  1;
     }
     ::-moz-placeholder { /* Mozilla Firefox 19+ */
-       color:    #00dcff;
+       color:    #ffffff;
        opacity:  1;
     }
     :-ms-input-placeholder { /* Internet Explorer 10-11 */
-       color:    #00dcff;
+       color:    #ffffff;
     }
     ::-ms-input-placeholder { /* Microsoft Edge */
-       color:    #00dcff;
+       color:    #ffffff;
     }
     
     input[type="text"].lpp-input {
       outline: none;
       border:none;
-      border-bottom: solid 3px #00dcff;
+      border-bottom: solid 2px #ffffff;
       background: transparent;
       font-weight: 700;
       min-width: 100%;
@@ -171,12 +178,12 @@
        cursor: pointer;
     }
     input[type="text"].lpp-input:focus {
-      border-bottom: solid 5px #00dcff;
+      border-bottom: solid 5px #ffffff;
     }
     input[type="email"].subscribe-input {
       outline: none;
       border:none;
-      border-bottom: solid 3px #00dcff;
+      border-bottom: solid 3px #ffffff;
       background: transparent;
       font-weight: 700;
       width:100%;
@@ -189,8 +196,7 @@
 
 
 {% block content %}
-  <div class="section1" id="top">
-  
+  <div>
     <div class="container">
       <div class="row">
         <div class="col-md-2"></div>
@@ -204,7 +210,7 @@
         <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">KNOW MORE BEFORE BUYING</h1></div>
       </div>
       <div class="row">
-        <div class="col-md-8 col-md-offset-2" style="text-align: center;">
+        <div class="col-md-8 col-md-offset-2 text-center">
           <br>
           <p style="color:#eee; font-size:17px;">
             See how your next gaming PC will perform before you buy it.<br>Drop in your parts below to get a report.<br>
@@ -213,201 +219,71 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4 col-md-offset-2" id="pp-select-parts-div">
+        <div class="col-md-6" id="pp-select-parts-div">
           <br>
-          <p style="color:#eee; font-size:20px; font-weight: bold;">Select your parts here</p>
-          <br>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
           <div class="scrollable-dropdown-menu">
             <input type="text" class="typeahead lpp-input" id="cpu-ta-input" placeholder="Select Processor"/>
           </div>
           <br><br>
+        </div>
+        <div class="col-md-4">
           <div class="scrollable-dropdown-menu">
             <input type="text" class="typeahead lpp-input" id="gpu-ta-input" placeholder="Select Graphics Card"/>
           </div>
           <br><br>
-          <br><br>
         </div>
-        <div class="col-md-3 col-md-offset-1">
-          <br>
-          <p style="color:#eee; font-size:20px; font-weight: bold;">Don't see what you're looking for?</p>
-          <p style="color:#eee;">If you'd like to us to notify you when new performance data is available subscribe to our mailing list below.</p>
-          <div class="text-center">
-            <br>
-            <a href="/subscribe" class="ac-btn">Subscribe to be notified</a>
-            <br><br>
-          </div>
+        <div class="col-md-4 text-center">
+          <a href="/bench" class="blue-link" style="font-size: 15px;" id="build-rig-link">Or Build Now</a>
         </div>
       </div>
     </div>
-  
-  </div>
-  <div class="ppsection">
-    <div class="container">
-      <div class="row">
-        <div class="col-xs-7">
-          <br>
-          <span class="home-report-title-text">FPS Performance Report</span>
-          <br>
-        </div>
-        <div class="col-xs-5 text-right">
-            <br>
-            <a href="/bench" class="blue-link" style="font-size: 15px;">Build Cube</a>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-8 text-center" id="the-cube-js-div" style="padding-top:25px;">
-          
-        </div>
-        <div class="col-md-4">
-            <div class="row">
-                <div class="col-xs-4"><img src="/static/cube-images/ac-cube-small-default.png" id="max-performance-cube-image" /></div>
-                <div class="col-xs-6"><div id="max-performance-text"></div></div>
+    <div class="ppsection">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-8">
+              <br>
+              <span class="home-report-title-text">Performance Report</span>
+              <br>
+              <div id="the-cube-js-div" style="padding-top:25px;"></div>
             </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <p class="pp-explainer-text" id="max-performance-long-text"></p>
-                    <p class="pp-explainer-text">The total purchase price for the selected parts is:</p>
-                    <div class="text-center">
-                        <span id="pp-price-text">$500.87</span><small>&nbsp;&nbsp;On Amazon</small>
+            <div class="col-sm-4">
+                <div class="row">
+                    <div class="col-xs-4"><img src="/static/cube-images/ac-cube-small-default.png" id="max-performance-cube-image" /></div>
+                    <div class="col-xs-6"><div id="max-performance-text"></div></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12" style="font-size: 0px; vertical-align: middle;">
+                        <div class="color-meter-obj bg-gray" id="color-meter-obj-gray"></div>
+                        <div class="color-meter-obj bg-green" id="color-meter-obj-green"></div>
+                        <div class="color-meter-obj bg-blue" id="color-meter-obj-blue"></div>
+                        <div class="color-meter-obj bg-orange" id="color-meter-obj-orange"></div>
+                        <div class="color-meter-obj bg-black" id="color-meter-obj-black"></div>
+                        <div class="color-meter-obj bg-purple" id="color-meter-obj-purple"></div>
                     </div>
-                    <div>
-                        <br>
-                        <table id="buy-on-amazon-table"></table>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p class="pp-explainer-text" id="max-performance-long-text"></p>
+                        <p class="pp-explainer-text">The total purchase price for the parts selected is:</p>
+                        <div class="text-center">
+                            <span id="pp-price-text">$500.87</span><small>&nbsp;&nbsp;On Amazon</small>
+                        </div>
+                        <div>
+                            <br>
+                            <table id="buy-on-amazon-table"></table>
+                            <br>
+                        </div>
                         <br>
                     </div>
-                    <br>
                 </div>
             </div>
+          </div>
+          
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="section3">
-    <div class="container">
-      <div class="row">
-        <br><br><br>
-        <div id="how-it-works"></div>
-        <br><br><br><br>
-        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;color:#eeeeee;">DESIGN YOUR RIG</h1></div>
-        <br><br><div class="hidden-xs hidden-sm"><br><br></div>
-      </div>
-      <div class="row">
-        <div class="col-md-8 col-md-offset-2" style="text-align: center;">
-          <p style="font-size: 30px; color: #eeeeee;">Building for performance simplified</p>
-          <hr style="border: 0; border-top: 4px solid #998; width: 300px;">
-          <p style="color: #eeeeee; font-size: 15px;">Amdahl Cube makes it easy to build a PC and understand the performance you can expect as you go.</p>
-          <br>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-3" style="text-align: center;">
-          <div class="hidden-xs hidden-sm">
-            <img src="//d2h81apir9utb4.cloudfront.net/images/icon_section3_1.png" style="width:80%;"> <!-- DESKTOP -->
-            <p style="color:#eeeeee;; font-size: 15px;">Designing a PC is as easy as equipping an item.</p>
-          </div>
-          <div class="hidden-md hidden-lg">
-            <img src="//d2h81apir9utb4.cloudfront.net/images/icon_section3_1.png" style="width:175px;"> <!-- MOBILE -->
-            <p style="color:#eeeeee;; font-size: 15px;">Designing a PC is as easy as equipping an item.</p>
-          </div>
-        </div>
-        <div class="col-sm-3" style="text-align: center;">
-          <div class="hidden-xs hidden-sm">
-            <img src="//d2h81apir9utb4.cloudfront.net/images/icon_section3_2.png" style="width:80%;"> <!-- DESKTOP -->
-            <p style="color:#eeeeee;; font-size: 15px;">Components that directly influence performance have been ranked and color coded.</p>
-          </div>
-          <div class="hidden-md hidden-lg">
-            <img src="//d2h81apir9utb4.cloudfront.net/images/icon_section3_2.png" style="width:175px;"> <!-- MOBILE -->
-            <p style="color:#eeeeee;; font-size: 15px;">Components that directly influence performance have been ranked and color coded.</p>
-          </div>
-        </div>
-        <div class="col-sm-3" style="text-align: center;">
-          <div class="hidden-xs hidden-sm">
-            <img src="//d2h81apir9utb4.cloudfront.net/images/icon_section3_3.png" style="width:80%;"> <!-- DESKTOP -->
-            <p style="color:#eeeeee;; font-size: 15px;">Match components of the same color to get a system at that performance tier.</p>
-          </div>
-          <div class="hidden-md hidden-lg">
-            <img src="//d2h81apir9utb4.cloudfront.net/images/icon_section3_3.png" style="width:175px;"> <!-- MOBILE -->
-            <p style="color:#eeeeee;; font-size: 15px;">Match components of the same color to get a system at that performance tier.</p>
-          </div>
-        </div>
-        <div class="col-sm-3" style="text-align: center;">
-          <div class="hidden-xs hidden-sm">
-            <img src="//d2h81apir9utb4.cloudfront.net/images/icon_section4_1.png" style="width:80%;"> <!-- DESKTOP -->
-            <p style="color:#eeeeee;; font-size: 15px;">Easily identify bottlenecks in your system and know which part to upgrade next.</p>
-          </div>
-          <div class="hidden-md hidden-lg">
-            <img src="//d2h81apir9utb4.cloudfront.net/images/icon_section4_1.png" style="width:175px;"> <!-- MOBILE -->
-            <p style="color:#eeeeee;; font-size: 15px;">Easily identify bottlenecks in your system and know which part to upgrade next.</p>
-          </div>
-        </div>
-      </div>
-      <div class="row"><div class="col-xs-12"><br><br><br><br><br><br></div></div>
-    </div>
-  </div>
-  
-  <div class="section4">
-    <div class="container">
-      <div class="row" style="text-align: center;">
-        <br><br><br>
-        <div id="showcase"></div>
-        <br><br><br><br>
-        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;color:#eee;">TAKE IT WITH YOU</h1></div>
-        <br><br><br><br><br>
-        <hr style="border: 0; border-top: 4px solid #eee; width: 300px;">
-        
-      </div>
-      <div class="row">
-        <div class="col-xs-4 text-center">
-          <div class="hidden-xs hidden-sm">
-            <img src="/static/images/icons_section4_social_twitter.png">
-          </div>
-          <div class="hidden-md hidden-lg">
-            <img src="/static/images/icons_section4_social_twitter.png" style="width:80px;">
-          </div>
-        </div>
-        <div class="col-xs-4 text-center">
-          <div class="hidden-xs hidden-sm">
-            <img src="/static/images/icons_section4_social_facebook.png">
-          </div>
-          <div class="hidden-md hidden-lg">
-            <img src="/static/images/icons_section4_social_facebook.png" style="width:80px;">
-          </div>
-        </div>
-        <div class="col-xs-4 text-center">
-          <div class="hidden-xs hidden-sm">
-            <img src="/static/images/icons_section4_social_reddit.png">
-          </div>
-          <div class="hidden-md hidden-lg">
-            <img src="/static/images/icons_section4_social_reddit.png" style="width:80px;">
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-8 col-md-offset-2" style="text-align: center;">
-          <br><br>
-          <p style="font-size: 30px; color:#eee;">A PC is a box at your feet and your ticket to new worlds and communities.</p>
-          <br>
-          <p style="color:#eee; font-size: 15px;">Take your cube with you to your favorite places. Share it with your PCMR friends. Post it for your Twitch followers. Take pride in your cube.</p>
-          <br><br><br><br><br>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="section5">
-  
-    <div class="container">
-      <div class="row">
-        <div class="col-md-8 col-md-offset-2" style="text-align: center;">
-          <br><br><br><br><br>
-          <p style="font-size: 30px; color:#eee;">We'll Be Ready</p>
-          <br>
-          <hr style="border: 0; border-top: 4px solid #eee; width: 300px;">
-          <br>
-          <p style="color:#eee; font-size: 15px;">PC hardware is always getting better. We'll keep you updated when new parts come out. Let us help you upgrade your rig or pick out the perfect rig for the friends that have your back in the arena.</p>
-          <br><br><br><br><br><br>
-        </div>
-      </div>
     </div>
   </div>
   
@@ -430,35 +306,53 @@
             return trHtml;
         }
         
-        function refreshBars(){
+        var ppDataCached = null;
+        
+        function renderPerformanceDataAndBars(data){
+            // render bars
+            drawBars('the-cube-js-div', data.renderbars);
+            
+            // update performance info
+            if (data.performance) {
+                $('#max-performance-cube-image').attr('src', '/static/cube-images/ac-cube-small-' + data.performance.color + '.png');
+                $('#max-performance-text').text(data.performance.string).removeClass().addClass('fg-' + data.performance.color);
+                $('#max-performance-long-text').text(data.explain);
+                $('#pp-price-text').text(data.total_price);
+                
+                $('#buy-on-amazon-table').empty();
+                if (selectedCpu) $('#buy-on-amazon-table').append(constructBuyTableRow(selectedCpu));
+                if (selectedGpu) $('#buy-on-amazon-table').append(constructBuyTableRow(selectedGpu));
+                
+                $('.color-meter-obj').removeClass('color-meter-obj-selected');
+                $('#color-meter-obj-' + data.performance.color).addClass('color-meter-obj-selected');
+                
+            } else {
+                //
+            }
+        }
+        
+        $('.color-meter-obj').click(function(){
+            // open legend modal
+            $('#legend-modal').modal('show');
+        });
+        
+        function refreshBars(fetchData){
+            
+            fetchData = fetchData || false;
             
             var params = {};
             if (selectedCpu) params['c'] = selectedCpu.id;
             if (selectedGpu) params['g'] = selectedGpu.id;
-            $.getJSON('/pp', params)
-            .success(function(data){
-                
-                // render bars
-                drawBars('the-cube-js-div', data.renderbars);
-                
-                // update performance info
-                if (data.performance) {
-                    $('#max-performance-cube-image').attr('src', '/static/cube-images/ac-cube-small-' + data.performance.color + '.png');
-                    $('#max-performance-text').text(data.performance.string).removeClass().addClass('fg-' + data.performance.color);
-                    $('#max-performance-long-text').text(data.explain);
-                    $('#pp-price-text').text(data.total_price);
-                    
-                    $('#buy-on-amazon-table').empty();
-                    if (selectedCpu) $('#buy-on-amazon-table').append(constructBuyTableRow(selectedCpu));
-                    if (selectedGpu) $('#buy-on-amazon-table').append(constructBuyTableRow(selectedGpu));
-                    
-                } else {
-                    
-                }
-            });
             
+            if (fetchData) {
+                $.getJSON('/pp', params).success(function(data){
+                    ppDataCached = data;
+                    renderPerformanceDataAndBars(data);
+                });
+            } else {
+                if (ppDataCached) renderPerformanceDataAndBars(ppDataCached);
+            }
             
-            var genreKeys = ['PUBG', 'FPS', 'OPEN_WORLD'];
         }
         
         function initTypeAhead(compList, elmId, suggest, cType) {
@@ -491,6 +385,7 @@
             }).bind('typeahead:select', function(jqueryevent, obj){
                 
                 if (!$('.ppsection').is(":visible")) $('.ppsection').show();
+                $('#build-rig-link').text('Build with selected parts');
                 
                 if (cType === 'CPU') selectedCpu = obj;
                 else if (cType === 'GPU') selectedGpu = obj;
@@ -504,14 +399,14 @@
                     }
                 }).addClass('fg-' + obj.perf_color);
                 
-                refreshBars();
+                refreshBars(true);
                 
                 // deselect input
                 $('input').blur();
                 
                 if (neverScrolled) {
                     neverScrolled = false;
-                    $('html, body').animate({scrollTop: $("#pp-select-parts-div").offset().top}, 400);
+                    $('html, body').animate({scrollTop: $("#pp-select-parts-div").offset().top-70}, 400);
                 }
                 
             }).bind('typeahead:active', function(){
@@ -525,6 +420,9 @@
             initTypeAhead(jsonData.gpus, 'gpu-ta-input', jsonData.suggest.gpu, 'GPU');
         });
 
+        $(window).resize(function(){
+            refreshBars();
+        })
         
         //
         //
@@ -588,6 +486,7 @@
             // now determine step size
             var stepCount = 30; // 60 fps and half second animation time
             var stepSizes = {};
+            var maxFps = 120;
             for (var i=0; i<bars.length; i++) {
                 bars[i]['barFillStepSize1080p'] = (bars[i]['barFillFps1080p'] - renderedBars[bars[i]['title']].fill1080p) / stepCount;
                 bars[i]['barFillStepSize1440p'] = (bars[i]['barFillFps1440p'] - renderedBars[bars[i]['title']].fill1440p) / stepCount;
@@ -603,9 +502,18 @@
                 renderedBars[bars[i]['title']].fill1440p = bars[i]['barFillFps1440p']; // update the old size
                 renderedBars[bars[i]['title']].fill2160p = bars[i]['barFillFps2160p']; // update the old size
                 renderedBars[bars[i]['title']].size = bars[i]['barSizeFps']; // update the old size
+                
+                // check max
+                if (bars[i]['barSizeFps'] && bars[i]['barSizeFps'] > maxFps) {
+                    maxFps = bars[i]['barSizeFps'];
+                } else if (bars[i]['barFillFps1080p'] && bars[i]['barFillFps1080p'] > maxFps) {
+                    maxFps = bars[i]['barFillFps1080p'];
+                }
+                
             }
             
-            renderInsideElement(elmId, bars, 0, 30);
+            maxFps = (maxFps == 0) ? 200 : maxFps;
+            renderInsideElement(elmId, bars, maxFps + 10, 0, 30);
         }
         
         function getLines(ctx, text, maxWidth) {
@@ -661,7 +569,7 @@
             }
         }
         
-        function renderInsideElement(elmId, bars, stepCount, maxSteps) {
+        function renderInsideElement(elmId, bars, barMaxFps, stepCount, maxSteps) {
             
             //var reportTitle = 'FPS Performance Report';
             var barMargin = 16; // bar margin (space between bars)
@@ -672,8 +580,8 @@
             var sectionHeight = ((barMargin - barHeight) * 2) + barHeight *3;
             var sectionPaddingBottom = 50;
             var titleSectionHeight = 100;
-            var cpuBarsColor = '#04bf1e';
-            var gpuBarsColor = '#FF0000';
+            var cpuBarsColor = '#FF0000';
+            var gpuBarsColor = '#04bf1e';
             var backgroundColor = '#121526';
             var backgroundBarsColor = '#000000';
             var barBorderRadius = barHeight/4;
@@ -695,7 +603,7 @@
             //ctx.fillStyle = backgroundColor;
             //ctx.fillRect(0, 0, cWidth, cHeight);
             
-            ctx.font = '22px  \'Fjalla one\', sans-serif';
+            ctx.font = '20px  \'Open sans\', sans-serif';
             ctx.textAlign = 'left';
             ctx.fillStyle = 'white';
             //ctx.fillText(reportTitle, 15, 40);
@@ -715,13 +623,13 @@
                 
                 // determine proportion for this bar
                 var barFill1080p = bars[i].barFillFps1080pBefore + (stepCount * bars[i].barFillStepSize1080p);
-                var barFillProportion1080p = (maxBarWidth / 200) * barFill1080p;
+                var barFillProportion1080p = (maxBarWidth / barMaxFps) * barFill1080p;
                 var barFill1440p = bars[i].barFillFps1440pBefore + (stepCount * bars[i].barFillStepSize1440p);
-                var barFillProportion1440p = (maxBarWidth / 200) * barFill1440p;
+                var barFillProportion1440p = (maxBarWidth / barMaxFps) * barFill1440p;
                 var barFill2160p = bars[i].barFillFps2160pBefore + (stepCount * bars[i].barFillStepSize2160p);
-                var barFillProportion2160p = (maxBarWidth / 200) * barFill2160p;
+                var barFillProportion2160p = (maxBarWidth / barMaxFps) * barFill2160p;
                 var barSize = bars[i].barSizeFpsBefore + (stepCount * bars[i].barSizeStepSize);
-                var barSizeProportion = (maxBarWidth / 200) * barSize;
+                var barSizeProportion = (maxBarWidth / barMaxFps) * barSize;
                 
                 //
                 // FILL BARS BACKGROUND
@@ -760,17 +668,17 @@
                 var tickHeight = sectionHeight + tickOverlap*2;
                 var tickLabelYPos = yPos + tickHeight + tickOverlap + tickFontSize;
                 ctx.fillStyle = '#FFFFFF'; // ticks
-                ctx.fillRect(xPosBar + (maxBarWidth * 0.15), yPos - tickOverlap, 1, tickHeight); //30 fps
-                ctx.fillRect(xPosBar + (maxBarWidth * 0.3), yPos - tickOverlap, 1, tickHeight); //60 fps
-                ctx.fillRect(xPosBar + (maxBarWidth * 0.6), yPos - tickOverlap, 1, tickHeight); //120 fps
-                ctx.fillText('30', xPosBar + (maxBarWidth * 0.15) - (tickFontSize/2), tickLabelYPos);
-                ctx.fillText('60', xPosBar + (maxBarWidth * 0.3) - (tickFontSize/2), tickLabelYPos);
-                ctx.fillText('120', xPosBar + (maxBarWidth * 0.6) - (tickFontSize/2), tickLabelYPos);
+                ctx.fillRect(xPosBar + (maxBarWidth * (30/barMaxFps)), yPos - tickOverlap, 1, tickHeight); //30 fps
+                ctx.fillRect(xPosBar + (maxBarWidth * (60/barMaxFps)), yPos - tickOverlap, 1, tickHeight); //60 fps
+                ctx.fillRect(xPosBar + (maxBarWidth * (120/barMaxFps)), yPos - tickOverlap, 1, tickHeight); //120 fps
+                ctx.fillText('30', xPosBar + (maxBarWidth * (30/barMaxFps)) - (tickFontSize/2), tickLabelYPos);
+                ctx.fillText('60', xPosBar + (maxBarWidth * (60/barMaxFps)) - (tickFontSize/2), tickLabelYPos);
+                ctx.fillText('120', xPosBar + (maxBarWidth * (120/barMaxFps)) - (tickFontSize/2), tickLabelYPos);
                 
                 //
                 // bar group labels (genres)
-                var fontSize = 17;
-                ctx.font = fontSize + 'px  \'Fjalla one\', sans-serif';
+                var fontSize = 14;
+                ctx.font = fontSize + 'px  \'Open sans\', sans-serif';
                 var textLines = getLines(ctx, bars[i].title, xPosBar - 60);
                 var gapSize = sectionHeight / (textLines.length + 1);
                 for (var j=0; j<textLines.length; j++) {
@@ -778,7 +686,7 @@
                     if (j > 0) {
                         textYPos += (fontSize/2) * j;
                     }
-                    ctx.fillText(textLines[j], 15, textYPos);
+                    ctx.fillText(textLines[j], 0, textYPos);
                 }
                 
                 
@@ -790,7 +698,7 @@
             ctx.fillStyle = '#000000';
             ctx.fillRect(cWidth/2 - legendWidth/2, cHeight - legendHeight - 15, legendWidth, legendHeight); //30 fps
             ctx.fillStyle = '#ffffff';
-            ctx.font = '12px  \'Fjalla one\', sans-serif';
+            ctx.font = '12px  \'Open sans\', sans-serif';
             ctx.fillText('Legend', cWidth/2 - 13, cHeight - legendHeight);
             ctx.font = '10px  \'Fjalla one\', sans-serif';
             ctx.fillText('CPU Max Framerate', (cWidth/2) - (legendWidth/2) + 22, cHeight - 10 - legendHeight * 0.35);
@@ -808,13 +716,13 @@
             ctx.closePath();
             
             var fontSize = 10;
-            ctx.font = fontSize + 'px \'Fjalla one\', sans-serif';
+            ctx.font = fontSize + 'px \'Open sans\', sans-serif';
             ctx.font = '10px';
             ctx.textAlign = 'right';
             ctx.fillStyle = 'white';
             //ctx.fillText('200FPS Max', cWidth - 5, 15);
     
-            if (stepCount < maxSteps) window.setTimeout(renderInsideElement, 15, elmId, bars, stepCount + 1, maxSteps);
+            if (stepCount < maxSteps) window.setTimeout(renderInsideElement, 15, elmId, bars, barMaxFps, stepCount + 1, maxSteps);
         }
     
         
