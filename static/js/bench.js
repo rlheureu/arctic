@@ -15,7 +15,10 @@ $(function(){
 	} else if (AC_GLOBALS.rig !== null) {
 		populateRigById(AC_GLOBALS.rig);
 		currentRig['rig_id'] = AC_GLOBALS.rig; // set ID for subsequent saves to update
-	} else {
+	} else if (AC_GLOBALS.cpu !== null || AC_GLOBALS.gpu !== null) {
+	    populateRigWithPreselected(AC_GLOBALS.cpu, AC_GLOBALS.gpu);
+	}
+	else {
 		// initial render
 		refreshPartsCache(renderRig);
 	}
@@ -36,6 +39,13 @@ $(function(){
 	// hide all "edited" labels
 	$('.label-edited').hide();
 	currentRig['edited'] = {};
+	
+	
+	function populateRigWithPreselected(preselectedCpu, preselectedGpu) {
+	    if (preselectedCpu) currentRig['parts']['cpu_id'] = parseInt(preselectedCpu);
+	    if (preselectedGpu) currentRig['parts']['gpu_id'] = parseInt(preselectedGpu);
+	    refreshPartsCache(renderRig);
+	}
 	
 	function populateRigById(rigId){
 		//

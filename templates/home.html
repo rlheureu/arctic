@@ -385,10 +385,19 @@
             }).bind('typeahead:select', function(jqueryevent, obj){
                 
                 if (!$('.ppsection').is(":visible")) $('.ppsection').show();
-                $('#build-rig-link').text('Build with selected parts');
                 
                 if (cType === 'CPU') selectedCpu = obj;
                 else if (cType === 'GPU') selectedGpu = obj;
+                
+                // modify what happens with build link
+                $('#build-rig-link').text('Build with selected parts');
+                $('#build-rig-link').click(function(e){
+                    e.preventDefault();
+                    var params = {};
+                    if (selectedCpu) params['cpu'] = selectedCpu.id;
+                    if (selectedGpu) params['gpu'] = selectedGpu.id;
+                    window.location = '/bench?' + $.param(params);
+                });
                 
                 $('#' + elmId).removeClass(function(idx, className){
                     var classes = className.split(' ');

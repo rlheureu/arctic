@@ -544,6 +544,8 @@ def bench():
     if request.args.get('name', None): context['cube_name'] = request.args.get('name')
     if request.args.get('preset', None): context['preset'] = request.args.get('preset')
     if request.args.get('use', None): context['use'] = request.args.get('use')
+    if request.args.get('cpu', None): context['cpu'] = request.args.get('cpu')
+    if request.args.get('gpu', None): context['gpu'] = request.args.get('gpu')
     upgrade = request.args.get('upgrade', None)
     if upgrade:
         context['upgrade'] = upgrade

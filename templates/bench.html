@@ -1074,6 +1074,8 @@
 			upgradeName : {% if upgrade_name %}'{{upgrade_name}}'{% else %}null{% endif %},
 			use : {% if use %}'{{use}}'{% elif rig and rig.use %}'{{rig.use}}'{% else %}null{% endif %},
 			rig : {% if rig %}'{{rig.id}}'{% else %}null{% endif %},
+			cpu : {% if cpu %}'{{cpu}}'{% else %}null{% endif %},
+			gpu : {% if gpu %}'{{gpu}}'{% else %}null{% endif %},
 			myRig : {% if my_rig %}true{% else %}false{% endif %},
 			unequippedParts : [{% if current_user.is_authenticated %}{% for part in current_user.get_unequipped_parts() %} {{part.component_id}} {% if not loop.last %},{% endif %} {% endfor %}{% endif %}]
 		};
