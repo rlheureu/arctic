@@ -207,7 +207,7 @@
         <div class="col-md-2"></div>
       </div>
       <div class="row">
-        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">KNOW MORE BEFORE BUYING</h1></div>
+        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">START BY SELECTING PARTS...</h1></div>
       </div>
       <div class="row">
         <div class="col-md-8 col-md-offset-2 text-center">
@@ -237,7 +237,7 @@
           <br><br>
         </div>
         <div class="col-md-4 text-center">
-          <a href="/bench" class="blue-link" style="font-size: 15px;" id="build-rig-link">Or Build Now</a>
+          <a href="/bench" class="blue-link" style="font-size: 15px;" id="build-rig-link">Skip Straight To Build</a>
         </div>
       </div>
     </div>
@@ -268,14 +268,11 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <p class="pp-explainer-text" id="max-performance-long-text"></p>
-                        <p class="pp-explainer-text">The total purchase price for the parts selected is:</p>
+                        
+                        <div><br><table id="buy-on-amazon-table"></table><br></div>
+                        
                         <div class="text-center">
-                            <span id="pp-price-text">$500.87</span><small>&nbsp;&nbsp;On Amazon</small>
-                        </div>
-                        <div>
-                            <br>
-                            <table id="buy-on-amazon-table"></table>
-                            <br>
+                            <span id="pp-price-text">$500.87</span><small>&nbsp;&nbsp;Total (Amazon)</small>
                         </div>
                         <br>
                     </div>
@@ -303,7 +300,7 @@
             var trHtml = '<tr><td class="fg-' + comp.perf_color + '">';
             trHtml += comp.display_name;
             if (comp.priceformatted) {
-                trHtml += '</td><td><a target="_blank" href="' + comp.buyurl + '">' + comp.priceformatted + '</td></tr>';
+                trHtml += '</td><td><a target="_blank" href="' + comp.buyurl + '">' + comp.priceformatted + ' (buy)</td></tr>';
             } else {
                 trHtml += '</td><td>Price unavailable</td></tr>';
             }
@@ -591,7 +588,7 @@
             //var reportTitle = 'FPS Performance Report';
             var barMargin = 16; // bar margin (space between bars)
             var barHeight = 13; // bar height
-            var legendWidth = 220;
+            var legendWidth = 250;
             var legendHeight = 48;
             var legendPadding = 15;
             var sectionHeight = ((barMargin - barHeight) * 2) + barHeight *3;
@@ -711,13 +708,14 @@
             }
             
             //
-            // legend
+            //
+            // Legend
             ctx.fillStyle = '#000000';
             ctx.fillRect(cWidth/2 - legendWidth/2, cHeight - legendHeight - 15, legendWidth, legendHeight); //30 fps
             ctx.fillStyle = '#ffffff';
             ctx.font = '12px  \'Open sans\', sans-serif';
-            ctx.fillText('Legend', cWidth/2 - 13, cHeight - legendHeight);
-            ctx.font = '10px  \'Fjalla one\', sans-serif';
+            ctx.fillText('Legend', cWidth/2 - 20, cHeight - legendHeight);
+            ctx.font = '10px  \'Open sans\', sans-serif';
             ctx.fillText('CPU Max Framerate', (cWidth/2) - (legendWidth/2) + 22, cHeight - 10 - legendHeight * 0.35);
             ctx.fillText('Expected FPS', (cWidth/2) + 22, cHeight - 10 - legendHeight * 0.35);
             ctx.beginPath();
