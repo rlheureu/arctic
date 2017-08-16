@@ -206,17 +206,19 @@
         </div>
         <div class="col-md-2"></div>
       </div>
-      <div class="row">
-        <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">START BY SELECTING PARTS...</h1></div>
-      </div>
-      <div class="row">
-        <div class="col-md-8 col-md-offset-2 text-center">
-          <br>
-          <p style="color:#eee; font-size:17px;">
-            See how your next gaming PC will perform before you buy it.<br>Drop in your parts below to get a report.<br>
-          </p>
-          <br><br>
-        </div>
+      <div class="header-title-home">
+          <div class="row">
+            <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">START BY SELECTING PARTS...</h1></div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 col-md-offset-2 text-center">
+              <br>
+              <p style="color:#eee; font-size:17px;">
+                See how your next gaming PC will perform before you buy it.<br>Drop in your parts below to get a report.<br>
+              </p>
+              <br><br>
+            </div>
+          </div>
       </div>
       <div class="row">
         <div class="col-md-6" id="pp-select-parts-div">
@@ -420,7 +422,15 @@
                 
                 if (neverScrolled) {
                     neverScrolled = false;
-                    $('html, body').animate({scrollTop: $("#pp-select-parts-div").offset().top-70}, 400);
+                    if ($(document).scrollTop() > 100) {
+                        $('html, body').animate({scrollTop: 0}, 0, 'linear', function(){
+                            $('.header-title-home').slideUp(400);
+                        });
+                    } else {
+                        $('.header-title-home').slideUp(400);
+                    }
+                    
+                    
                 }
                 
             }).bind('typeahead:active', function(){
