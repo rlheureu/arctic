@@ -4,12 +4,13 @@ import json
 import logging
 from operator import attrgetter
 import os
+import time
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from cherrypy._cpreqbody import Part
 from flask.app import Flask
-from flask.globals import request
+from flask.globals import request, session
 from flask.json import jsonify
 from flask.templating import render_template
 from flask.wrappers import Response
@@ -25,10 +26,10 @@ from action.price_grabber import AmazonExtractor
 from database import dataaccess, arctic_db_properties
 from database.database import db
 from models.models import User, Rig, BaseComponent, CPUComponent, GPUComponent
-from utils import perf_utils, retaildata_utils, sort_utils
+from utils import perf_utils, retaildata_utils, sort_utils, gen_utils
 from utils.exception import ClaimInvalidException
 from utils.gen_utils import jsonify_sql_alchemy_model
-import time
+import appconfig
 
 
 
@@ -518,31 +519,49 @@ def resetpassword():
 
     return jsonify({'success' : True})
 
-@app.route("/bench", methods=['GET'])
-def bench():
+@app.route('/bench', methods=['GET'])
+@app.route('/bench/<obfuscated_id>', methods=['GET'])
+def bench(obfuscated_id=None):
     
     context = {}
     context['currpagenav'] = 'build'
     
     """
-    If a RIG is being requested it will take precedence over other
-    arguments which would have instead continued the wizard
+    If a rig is being requested it will take precedence over other arguments
     """
-    rig_id = request.args.get('rig', None)
+    rig_id = None
+    if obfuscated_id:
+        print 'ob id is {}'.format(obfuscated_id)
+        rig_id = gen_utils.unobfuscate_string(str(obfuscated_id)) 
+    if not rig_id: rig_id = request.args.get('rig', None)
+    
+    """ check to see if there's a rig in the cookie and render that one """
+    myrig = False
+    if not rig_id and 'rigsessionid' in session:
+        rig_id = gen_utils.unobfuscate_string(session['rigsessionid'])
+        myrig = True
+    elif rig_id and 'rigsessionid' in session and rig_id == gen_utils.unobfuscate_string(session['rigsessionid']):
+        myrig=True
+    
     if rig_id:
         rig = dataaccess.get_rig(rig_id)
         context['rig'] = rig
         context['cube_name'] = rig.name
-        context['my_rig'] = (current_user!= None and current_user.is_authenticated and current_user.id == rig.user.id)
+        context['my_rig'] = myrig or (current_user!= None and current_user.is_authenticated and current_user.id == rig.user.id)
+        context['anonymous_rig'] = (rig.user == None)
+        context['permalink'] = '{}/bench/{}'.format(appconfig.FULL_APP_URL,gen_utils.obfuscate_int(int(rig_id)))
         if rig.upgrade_from_id:
             context['upgrade'] = rig.upgrade_from_id
             context['upgrade_name'] = rig.upgrade_from.name
         return render_template('bench.html', **context)
     
-    
-    """
-    Rig not being requested, this must be the wizard then:
-    """
+    """ create a rig since one does not exist """
+    sessionrig = dataaccess.save_rig({}, None) ###This is always an anonymous rig
+    context['rig'] = sessionrig
+    session['rigsessionid'] = gen_utils.obfuscate_int(int(sessionrig.id))
+    context['permalink'] = '{}/bench/{}'.format(appconfig.FULL_APP_URL, session['rigsessionid'])
+    context['anonymous_rig'] = True
+    context['my_rig'] = True
     
     if request.args.get('name', None): context['cube_name'] = request.args.get('name')
     if request.args.get('preset', None): context['preset'] = request.args.get('preset')
@@ -789,17 +808,32 @@ def get_parts():
 @app.route("/savecube", methods=['POST'])
 @login_required
 def save_cube():
-    """
     
-    get the data from the form
-    
-    """
-    print 'posted rig: {}'.format(str(request.form)) 
     
     rig = dataaccess.save_rig(request.form, current_user.get_id())
     
-    
     return jsonify({'rig_id' : rig.id})
+
+@app.route("/saveanon", methods=['POST'])
+def anon_save_cube():
+    
+    """
+    if there's no rig id use the session rig id
+    """
+    if not 'rig_id' in request.form and 'rigsessionid' in session:
+        rig_id = gen_utils.unobfuscate_string(str(session['rigsessionid']))
+        
+        anonrig = dataaccess.get_rig(rig_id)
+        
+        """ ensure this is really anon """
+        if not anonrig.user:
+            rigdict = request.form.to_dict()
+            rigdict['rig_id'] = rig_id
+            rig = dataaccess.save_rig(rigdict, None)
+        
+            return jsonify({'rig_id' : rig.id})
+    
+    return None
 
 @app.route("/deletecube", methods=['POST'])
 @login_required
@@ -953,6 +987,12 @@ def approvaltool():
     context['motherboards'] = mobosforapproval
     
     return render_template('approvaltool.html', **context)
+
+@app.context_processor
+def inject_app_info():
+    info = {}
+    if current_user.is_authenticated: info['logged_in'] = True
+    return info
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):

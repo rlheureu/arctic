@@ -581,8 +581,8 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6" style="color:#cccccc; font-size:14px;">
-        {% if my_rig %}
-        <a href="/showcase">Showcase</a>&nbsp;&nbsp;>&nbsp;&nbsp;{{rig.name}}
+        {% if my_rig and logged_in %}
+        <a href="/showcase">Showcase</a>&nbsp;&nbsp;>&nbsp;&nbsp;{% if rig.name %}{{rig.name}}{% else %}New Rig{% endif %}
         {% elif not rig %}
         
         {% endif %}
@@ -592,6 +592,7 @@
       <div class="col-md-6">
         <h1 id="bench-cube-title">Cube Name</h1>
         <span id="bench-cube-subtitle"></span>
+        <small><b>Permalink:</b> <a href="{{permalink}}">{{permalink}}</a></small>
       </div>
       <div class="col-md-6 align-text-right" style="padding-top:40px;">
         <div class="pull-right" style="display:inline-block;">
@@ -606,7 +607,7 @@
 <!--             &nbsp;&nbsp;&nbsp;&nbsp; -->
           </div>
           
-          {% if my_rig %}
+          {% if my_rig and logged_in %}
           <button class="ac-btn " id="own-this-button">
             <img src="/static/images/star_checked.png" id="owned_check"     style="width:15px;{% if rig.use != "owned" %}display:none;{% endif %}">
             <img src="/static/images/star_unchecked.png" id="owned_uncheck" style="width:15px;{% if rig.use == "owned" %}display:none;{% endif %}">
@@ -615,7 +616,7 @@
             <img style="width:10px;" src="/static/images/share-icon.png">
             &nbsp;&nbsp;Share</button>
           {% endif %}
-          {% if my_rig or not rig %}
+          {% if my_rig %}
           <button class="ac-btn " id="save-cube-button">Save Cube</button>
           {% else %}
           <a href="/bench" class="ac-btn">Build Your Own</a>
@@ -636,9 +637,14 @@
         <div class="col-md-12" style="background-color: #5c5a67; padding: 10px;">
           <div class="row">
             <div class="col-md-6">
+              {% if anonymous_rig %}
+              <span style="color: #a2a2a2;">This cube was anonymously built</span>
+              {% else %}
               <span style="color: #a2a2a2;">This cube belongs to: </span> <span style="font-weight: bold; color: #dcdcdc;">{{rig.user.profile_name}}</span>
+              {% endif %}
             </div>
             <div class="col-md-6">
+              {% if not anonymous_rig %}
               <span class="pull-right" style="color: #a2a2a2;">
                 View a different cube: &nbsp;&nbsp;&nbsp;
                 <select id="change-cube-select">
@@ -647,6 +653,7 @@
                   {% endfor %}
                 </select>
               </span>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -1077,6 +1084,7 @@
 			cpu : {% if cpu %}'{{cpu}}'{% else %}null{% endif %},
 			gpu : {% if gpu %}'{{gpu}}'{% else %}null{% endif %},
 			myRig : {% if my_rig %}true{% else %}false{% endif %},
+			anonRig : {% if anonymous_rig %}true{% else %}false{% endif %},
 			unequippedParts : [{% if current_user.is_authenticated %}{% for part in current_user.get_unequipped_parts() %} {{part.component_id}} {% if not loop.last %},{% endif %} {% endfor %}{% endif %}]
 		};
 	}();

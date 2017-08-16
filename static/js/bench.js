@@ -51,7 +51,7 @@ $(function(){
 		//
 		//
 		// GET RIG INFO, SET, AND RENDER
-		$.getJSON( "getrig", {rig_id: rigId}).success(function(data) {
+		$.getJSON( "/getrig", {rig_id: rigId}).success(function(data) {
 			var presetRig = JSON.parse(data.rig);
 			console.log(presetRig);
 			if (presetRig['motherboard_component_id'] !== undefined) currentRig['parts']['motherboard_id'] = presetRig['motherboard_component_id'];
@@ -200,6 +200,20 @@ $(function(){
 		
 		$('#part-item-list').empty();
 		$('#pick-part-modal').modal('hide');
+		
+		//
+		// do a silent save for the "anonymous" only if this rig is anonymous
+		if (AC_GLOBALS.anonRig) {
+			
+			var postRig = Object.assign({}, currentRig['parts']);
+			postRig['name'] = currentRig['name'];
+			postRig['owned'] = currentRig['owned'] && currentRig['owned'] === true;
+			
+			$.post('/saveanon', postRig).success(function(data){
+				console.log('rig silently saved: '+ data.rig_id); 
+			});
+		}
+		
 		renderRig();
 	});
 	
@@ -335,7 +349,7 @@ $(function(){
         var getPartsParams = {};
         getPartsParams.target = eType;
         $.extend(getPartsParams, currentRig['parts']);
-        $.getJSON( "getparts", getPartsParams).success(function(data) {
+        $.getJSON( "/getparts", getPartsParams).success(function(data) {
         	
         	renderFromPartsList(data, currentEquippedId);
         	
@@ -603,7 +617,7 @@ $(function(){
 			
 			// enable save button and share button
 			if (AC_GLOBALS.myRig) {
-				$('#save-cube-button').text('Update Cube');
+				$('#save-cube-button').text(AC_GLOBALS.anonRig ? 'Save Cube' : 'Update Cube');
 				$('#save-cube-button').show();
 				if (currentRig && (Object.keys(currentRig['edited']).length > 0 || currentRig['miscEdited'] === true)) {
 					$('#save-cube-button').attr('disabled', false);
@@ -633,7 +647,7 @@ $(function(){
 		}
 		
 		// render edited flags
-		if (currentRig.rig_id !== undefined && currentRig.rig_id !==null){
+		if (currentRig.rig_id !== undefined && currentRig.rig_id !==null && !AC_GLOBALS.anonRig){
 			for (comp in currentRig['edited']) {
 				renderEditedFlag(comp);
 			}
@@ -653,8 +667,10 @@ $(function(){
 					genreSelector.push({name : possibleGenres[i].name, selected : (i == 0), key : possibleGenres[i].key});
 				}	
 			}
-			genreSelector[0].selected = true;
-			selectedGenre = genreSelector[0];
+			if (genreSelector.length > 0) {
+				genreSelector[0].selected = true;
+				selectedGenre = genreSelector[0];	
+			}
 		}
 		renderPerformanceMonitor();
 	}
@@ -795,7 +811,7 @@ $(function(){
 			}
 		}
 		if (ids.length === 0) renderFunc();
-		$.getJSON( "getparts", {ids:ids}).success(function(data) {
+		$.getJSON( "/getparts", {ids:ids}).success(function(data) {
 			var partsList = data;
         	for (part in partsList) {
         		var component = partsList[part];
