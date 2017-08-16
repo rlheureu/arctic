@@ -101,17 +101,24 @@ def authenticate():
 def unauthorized():
     return redirect('/')
 
-
 @app.route("/", methods=['GET'])
-def home():
+@app.route('/l/<obfuscated_id>', methods=['GET'])
+def home(obfuscated_id=None):
     
     LOG.info('homepage requested')
     
-    context = {}
+    gpu = None
+    cpu = None
+    
+    if obfuscated_id:
+        comps = obfuscated_id.split('-')
+        cpu = gen_utils.unobfuscate_string(str(comps[0]))
+        gpu = gen_utils.unobfuscate_string(str(comps[1]))
+    
+    context = {'preselectcpu' : cpu, 'preselectgpu' : gpu}
     context['show_get_started'] = True
 
     return render_template('home.html', **context)
-
 
 @app.route("/sharecube", methods=['GET'])
 @login_required
@@ -153,6 +160,10 @@ def performanceprofile():
     if bmarks: bmarks = bmarks.split(',')
     
     pp = perf_utils.get_performance_profile(cpu, gpu, bmarks)
+    if cpuid and gpuid:
+        ocpu = gen_utils.obfuscate_int(int(cpuid))
+        ogpu = gen_utils.obfuscate_int(int(gpuid))
+        pp['obfuscatedlink'] = '{}/l/{}-{}'.format(appconfig.FULL_APP_URL, ocpu, ogpu)
     pp = json.dumps(pp)
     return pp, 200, {'Content-Type': 'application/json'}
 
