@@ -521,6 +521,7 @@ def resetpassword():
 
 @app.route('/bench', methods=['GET'])
 @app.route('/bench/<obfuscated_id>', methods=['GET'])
+@app.route('/b/<obfuscated_id>', methods=['GET'])
 def bench(obfuscated_id=None):
     
     context = {}
@@ -535,13 +536,17 @@ def bench(obfuscated_id=None):
         rig_id = gen_utils.unobfuscate_string(str(obfuscated_id)) 
     if not rig_id: rig_id = request.args.get('rig', None)
     
-    """ check to see if there's a rig in the cookie and render that one """
+    """
+    check to see if there's a rig in the cookie and render that one
+    note: if cpu/gpu/preset is specified ignore this step
+    """
     myrig = False
-    if not rig_id and 'rigsessionid' in session:
-        rig_id = gen_utils.unobfuscate_string(session['rigsessionid'])
-        myrig = True
-    elif rig_id and 'rigsessionid' in session and rig_id == gen_utils.unobfuscate_string(session['rigsessionid']):
-        myrig=True
+    if not request.args.get('cpu', None) and not request.args.get('cpu', None) and not request.args.get('preset', None) and not request.args.get('new', None):
+        if not rig_id and 'rigsessionid' in session:
+            rig_id = gen_utils.unobfuscate_string(session['rigsessionid'])
+            myrig = True
+        elif rig_id and 'rigsessionid' in session and rig_id == gen_utils.unobfuscate_string(session['rigsessionid']):
+            myrig=True
     
     if rig_id:
         rig = dataaccess.get_rig(rig_id)
@@ -549,7 +554,7 @@ def bench(obfuscated_id=None):
         context['cube_name'] = rig.name
         context['my_rig'] = myrig or (current_user!= None and current_user.is_authenticated and current_user.id == rig.user.id)
         context['anonymous_rig'] = (rig.user == None)
-        context['permalink'] = '{}/bench/{}'.format(appconfig.FULL_APP_URL,gen_utils.obfuscate_int(int(rig_id)))
+        context['permalink'] = '{}/b/{}'.format(appconfig.FULL_APP_URL,gen_utils.obfuscate_int(int(rig_id)))
         if rig.upgrade_from_id:
             context['upgrade'] = rig.upgrade_from_id
             context['upgrade_name'] = rig.upgrade_from.name
@@ -559,7 +564,7 @@ def bench(obfuscated_id=None):
     sessionrig = dataaccess.save_rig({}, None) ###This is always an anonymous rig
     context['rig'] = sessionrig
     session['rigsessionid'] = gen_utils.obfuscate_int(int(sessionrig.id))
-    context['permalink'] = '{}/bench/{}'.format(appconfig.FULL_APP_URL, session['rigsessionid'])
+    context['permalink'] = '{}/b/{}'.format(appconfig.FULL_APP_URL, session['rigsessionid'])
     context['anonymous_rig'] = True
     context['my_rig'] = True
     

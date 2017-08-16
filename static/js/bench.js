@@ -12,11 +12,11 @@ $(function(){
 	// prepare preset values
 	if (AC_GLOBALS.preset !== null) {
 		populateRigById(AC_GLOBALS.preset);
-	} else if (AC_GLOBALS.rig !== null) {
+	} else if (AC_GLOBALS.cpu !== null || AC_GLOBALS.gpu !== null) {
+        populateRigWithPreselected(AC_GLOBALS.cpu, AC_GLOBALS.gpu);
+    } else if (AC_GLOBALS.rig !== null) {
 		populateRigById(AC_GLOBALS.rig);
 		currentRig['rig_id'] = AC_GLOBALS.rig; // set ID for subsequent saves to update
-	} else if (AC_GLOBALS.cpu !== null || AC_GLOBALS.gpu !== null) {
-	    populateRigWithPreselected(AC_GLOBALS.cpu, AC_GLOBALS.gpu);
 	}
 	else {
 		// initial render
@@ -44,6 +44,7 @@ $(function(){
 	function populateRigWithPreselected(preselectedCpu, preselectedGpu) {
 	    if (preselectedCpu) currentRig['parts']['cpu_id'] = parseInt(preselectedCpu);
 	    if (preselectedGpu) currentRig['parts']['gpu_id'] = parseInt(preselectedGpu);
+	    currentRig['miscEdited'] = true;
 	    refreshPartsCache(renderRig);
 	}
 	
@@ -62,6 +63,7 @@ $(function(){
             if (presetRig['power_component_id'] !== undefined) currentRig['parts']['power_id'] = presetRig['power_component_id'];
             if (presetRig['storage_component_id'] !== undefined) currentRig['parts']['storage_id'] = presetRig['storage_component_id'];
             if (presetRig['chassis_component_id'] !== undefined) currentRig['parts']['chassis_id'] = presetRig['chassis_component_id'];
+            currentRig['miscEdited'] = true;
             refreshPartsCache(renderRig);
 		});
 	}
@@ -175,6 +177,19 @@ $(function(){
 	    renderRig();
 	}
 	
+	function silentlySave(){
+	    // very silently
+	    if (AC_GLOBALS.anonRig) {
+	        var postRig = Object.assign({}, currentRig['parts']);
+	        postRig['name'] = currentRig['name'];
+	        postRig['owned'] = currentRig['owned'] && currentRig['owned'] === true;
+	        
+	        $.post('/saveanon', postRig).success(function(data){
+	            console.log('rig silently saved: '+ data.rig_id); 
+	        });
+        }
+	}
+	
 	// selected item prior to save
 	var toEquip = null;
 	var equipType = null;
@@ -200,19 +215,6 @@ $(function(){
 		
 		$('#part-item-list').empty();
 		$('#pick-part-modal').modal('hide');
-		
-		//
-		// do a silent save for the "anonymous" only if this rig is anonymous
-		if (AC_GLOBALS.anonRig) {
-			
-			var postRig = Object.assign({}, currentRig['parts']);
-			postRig['name'] = currentRig['name'];
-			postRig['owned'] = currentRig['owned'] && currentRig['owned'] === true;
-			
-			$.post('/saveanon', postRig).success(function(data){
-				console.log('rig silently saved: '+ data.rig_id); 
-			});
-		}
 		
 		renderRig();
 	});
@@ -673,6 +675,10 @@ $(function(){
 			}
 		}
 		renderPerformanceMonitor();
+		
+	    //
+        // do a silent save if needed
+        silentlySave();
 	}
 	
 	function toRigUseString(useEnum){

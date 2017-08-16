@@ -582,7 +582,7 @@
     <div class="row">
       <div class="col-md-6" style="color:#cccccc; font-size:14px;">
         {% if my_rig and logged_in %}
-        <a href="/showcase">Showcase</a>&nbsp;&nbsp;>&nbsp;&nbsp;{% if rig.name %}{{rig.name}}{% else %}New Rig{% endif %}
+        <a href="/showcase">Showcase</a>&nbsp;&nbsp;>&nbsp;&nbsp;{% if rig.name and not anonymous_rig %}{{rig.name}}{% else %}New Rig{% endif %}
         {% elif not rig %}
         
         {% endif %}
@@ -592,7 +592,9 @@
       <div class="col-md-6">
         <h1 id="bench-cube-title">Cube Name</h1>
         <span id="bench-cube-subtitle"></span>
-        <small><b>Permalink:</b> <a href="{{permalink}}">{{permalink}}</a></small>
+        <small><b>Permalink:</b> </small><a href="{{permalink}}">{{permalink}}</a>
+        <br>
+        <a href="/bench?new=true" class="ac-btn ac-btn-sm">Start New Build</a>
       </div>
       <div class="col-md-6 align-text-right" style="padding-top:40px;">
         <div class="pull-right" style="display:inline-block;">
