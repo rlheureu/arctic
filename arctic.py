@@ -148,7 +148,10 @@ def performanceprofile():
     cpu = dataaccess.get_component(cpuid) if cpuid else None
     gpu = dataaccess.get_component(gpuid) if gpuid else None
     
-    pp = perf_utils.get_performance_profile(cpu, gpu)
+    bmarks = arctic_db_properties.get_property('LP_BENCHMARKS')
+    if bmarks: bmarks = bmarks.split(',')
+    
+    pp = perf_utils.get_performance_profile(cpu, gpu, bmarks)
     pp = json.dumps(pp)
     return pp, 200, {'Content-Type': 'application/json'}
 

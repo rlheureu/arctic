@@ -395,7 +395,7 @@ def total_prices(complist):
     return retaildata_utils.format_int_price(rawprice)
             
 
-def get_performance_profile(cpu, gpu):
+def get_performance_profile(cpu, gpu, includebenchmarks = None):
     
     """
     this method will return something like this:
@@ -403,40 +403,47 @@ def get_performance_profile(cpu, gpu):
     list of genres and their associated fps data
     
     """
+    
     renderbars = []
     retdata = {"renderbars" : renderbars}
     
     pcolordata = get_max_performance([cpu,gpu])
     retdata["performance"] = pcolordata
     
-    databygenre = {}
+    databybenchmark = {}
     if cpu:
         for dp in cpu.fps_data:
-            fpsdata = databygenre.get(dp.benchmark_type)
+            
+            if not dp.benchmark_type in includebenchmarks: continue
+            
+            fpsdata = databybenchmark.get(dp.benchmark_name)
             if not fpsdata:
                 fpsdata = {}
-                databygenre[dp.benchmark_type] = fpsdata
+                databybenchmark[dp.benchmark_name] = fpsdata
             fpsdata['maxfps'] = int(dp.fps_average) if dp.fps_average else None
     
     if gpu:
         for dp in gpu.fps_data:
-            fpsdata = databygenre.get(dp.benchmark_type)
+            
+            if not dp.benchmark_type in includebenchmarks: continue
+            
+            fpsdata = databybenchmark.get(dp.benchmark_name)
             if not fpsdata:
                 fpsdata = {}
-                databygenre[dp.benchmark_type] = fpsdata
+                databybenchmark[dp.benchmark_name] = fpsdata
             fpsdata['fps1080p'] = int(dp.fps_average_1080p) if dp.fps_average_1080p else 0
             fpsdata['fps1440p'] = int(dp.fps_average_1440p) if dp.fps_average_1440p else 0
             fpsdata['fps2160p'] = int(dp.fps_average_2160p) if dp.fps_average_2160p else 0
     
     perf_strings = []
-    for genre in databygenre.keys():
-        gdata = databygenre.get(genre)
+    for bmarkname in databybenchmark.keys():
+        gdata = databybenchmark.get(bmarkname)
         
         if cpu and not gdata.get('maxfps'): continue
         if gpu and not gdata.get('fps1080p'): continue
         
         healthbarobj = {}
-        healthbarobj['title'] = GENRE_DISPLAY_NAMES.get(genre)
+        healthbarobj['title'] = bmarkname
         healthbarobj['barSizeFps'] = gdata.get('maxfps')
         healthbarobj['barFillFps1080p'] = gdata.get('fps1080p')
         healthbarobj['barFillFps1440p'] = gdata.get('fps1440p')
@@ -450,7 +457,7 @@ def get_performance_profile(cpu, gpu):
         elif gpu: maxfps = gdata.get('fps1080p')
         elif cpu: maxfps = gdata.get('maxfps')
         
-        perflongstr = "For {} type games this rig should hit {}FPS at 1080p on average".format(GENRE_DISPLAY_NAMES.get(genre).lower(), maxfps)
+        perflongstr = "For {} (or similar games) this rig should hit {}FPS at 1080p on average".format(bmarkname, maxfps)
         perf_strings.append(perflongstr)
     
     if pcolordata:
