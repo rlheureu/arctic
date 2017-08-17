@@ -129,6 +129,7 @@ def home(obfuscated_id=None):
     
     context['preselectcpu'] = cpuid
     context['preselectgpu'] = gpuid
+    context['obfuscatedid'] = obfuscated_id
     context['fullappurl'] = appconfig.FULL_APP_URL
     context['show_get_started'] = True
 

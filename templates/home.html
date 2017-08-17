@@ -6,9 +6,14 @@
 {% if cpu and gpu and maxperf %}
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@AmdahlCube" />
-<meta name="twitter:title" content="Amdahl Cube CPU & GPU Performance" />
-<meta name="twitter:description" content="See report {{maxperf.string}} with {{cpu.display_name}} and {{gpu.display_name}}" />
+<meta name="twitter:title" content="{{maxperf.string}} Gaming Performance" />
+<meta name="twitter:description" content="CPU: {{cpu.display_name}}, GPU: {{gpu.display_name}}" />
 <meta name="twitter:image" content="{{fullappurl}}/static/cube-images/showcase-tiers-titled-{{maxperf.color}}.jpg" />
+
+<meta property="og:url" content="{{fullappurl}}/l/{{obfuscatedid}}" />
+<meta property="og:title" content="{{maxperf.string}} Gaming Performance" />
+<meta property="og:description" content="CPU: {{cpu.display_name}}, GPU: {{gpu.display_name}}" />
+<meta property="og:image" content="{{fullappurl}}/static/cube-images/showcase-tiers-titled-{{maxperf.color}}.jpg" />
 {% endif %}
 
 
