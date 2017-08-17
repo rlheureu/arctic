@@ -107,15 +107,28 @@ def home(obfuscated_id=None):
     
     LOG.info('homepage requested')
     
-    gpu = None
-    cpu = None
+    context = {}
+    
+    gpuid = None
+    cpuid = None
     
     if obfuscated_id:
         comps = obfuscated_id.split('-')
-        cpu = gen_utils.unobfuscate_string(str(comps[0]))
-        gpu = gen_utils.unobfuscate_string(str(comps[1]))
+        cpuid = gen_utils.unobfuscate_string(str(comps[0]))
+        gpuid = gen_utils.unobfuscate_string(str(comps[1]))
+        
+        cpu = dataaccess.get_component(cpuid)
+        gpu = dataaccess.get_component(gpuid)
+        
+        mp = perf_utils.get_max_performance([cpu, gpu])
+        
+        """ set twitter meta tags """
+        context['cpu'] = cpu
+        context['gpu'] = gpu
+        context['maxperf'] = mp
     
-    context = {'preselectcpu' : cpu, 'preselectgpu' : gpu}
+    context['preselectcpu'] = cpuid
+    context['preselectgpu'] = gpuid
     context['show_get_started'] = True
 
     return render_template('home.html', **context)

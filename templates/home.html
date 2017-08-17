@@ -1,4 +1,19 @@
 {% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+
+{% if cpu and gpu and maxperf %}
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@AmdahlCube" />
+<meta name="twitter:title" content="Amdahl Cube CPU & GPU Performance" />
+<meta name="twitter:description" content="See report {{maxperf.string}} with {{cpu.display_name}} and {{gpu.display_name}}" />
+<meta name="twitter:image" content="http://amdahlcube.com/static/cube-images/ac-cube-small-{{maxperf.color}}.png" />
+{% endif %}
+
+
+{% endblock %}
+
 {% block styling %}
   {{ super() }}
   <style type="text/css">
@@ -373,6 +388,7 @@
                     $('.max-performance-both-parts').show();
                     $('#only-cpu-selected-text').hide();
                     $('#only-gpu-selected-text').hide();
+                    
                 } else {
                     $('.max-performance-both-parts').hide();
                     if (selectedCpu) $('#only-cpu-selected-text').show();
