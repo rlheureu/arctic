@@ -205,6 +205,7 @@
 
 
 {% block content %}
+  
   <div>
     <div class="container">
       <div class="row">
@@ -489,6 +490,9 @@
                 
             }).bind('typeahead:active', function(){
                 $('#' + elmId).typeahead('val', null);
+            }).bind('typeahead:close', function(){
+                if (elmId.includes('gpu') && selectedGpu) $('#' + elmId).typeahead('val', selectedGpu.display_name);
+                if (elmId.includes('cpu') && selectedCpu) $('#' + elmId).typeahead('val', selectedCpu.display_name);
             });
         }
         
