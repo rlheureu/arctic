@@ -68,9 +68,12 @@
       color: #ddd;
       padding-top:10px;
     }
-    #pp-price-text{
+    #cpu-pp-price-div, #gpu-pp-price-div{
+      display:none;
+    }
+    .pp-price-text{
       color: #04bf1e;
-      font-size: 19px;
+      font-size: 17px;
       font-weight: bold;
     }
     .home-report-title-text{
@@ -212,6 +215,7 @@
         </div>
         <div class="col-md-2"></div>
       </div>
+      {% if not preselectcpu and not preselectgpu %}
       <div class="header-title-home">
           <div class="row">
             <div class="col-md-12 landing-header"><h1 style="padding:0px;margin:0px;">START BY SELECTING PARTS...</h1></div>
@@ -226,6 +230,7 @@
             </div>
           </div>
       </div>
+      {% endif %}
       <div class="row">
         <div class="col-md-6" id="pp-select-parts-div">
           <br>
@@ -233,14 +238,28 @@
       </div>
       <div class="row">
         <div class="col-md-4">
-          <div class="scrollable-dropdown-menu">
-            <input type="text" class="typeahead lpp-input" id="cpu-ta-input" placeholder="Select Processor"/>
+          <div class="row">
+            <div class="col-xs-9">
+                <div class="scrollable-dropdown-menu">
+                    <input type="text" class="typeahead lpp-input" id="cpu-ta-input" placeholder="Select Processor"/>
+                </div>
+            </div>
+            <div class="col-xs-3 text-right" id="cpu-pp-price-div">
+              <span id="cpu-pp-price-text" class="pp-price-text"></span><br><small id="cpu-pp-buylink"></small>
+            </div>
           </div>
           <br><br>
         </div>
         <div class="col-md-4">
-          <div class="scrollable-dropdown-menu">
-            <input type="text" class="typeahead lpp-input" id="gpu-ta-input" placeholder="Select Graphics Card"/>
+          <div class="row">
+            <div class="col-xs-9">
+                <div class="scrollable-dropdown-menu">
+                    <input type="text" class="typeahead lpp-input" id="gpu-ta-input" placeholder="Select Graphics Card"/>
+                </div>
+            </div>
+            <div class="col-xs-3 text-right" id="gpu-pp-price-div">
+              <span id="gpu-pp-price-text" class="pp-price-text"></span><br><small id="gpu-pp-buylink"></small>
+            </div>
           </div>
           <br><br>
         </div>
@@ -291,11 +310,6 @@
                     <div class="col-sm-12 max-performance-both-parts">
                         <p class="pp-explainer-text" id="max-performance-long-text"></p>
                         
-                        <div><br><table id="buy-on-amazon-table"></table><br></div>
-                        
-                        <div class="text-center">
-                            <span id="pp-price-text">$500.87</span><small>&nbsp;&nbsp;Total (Amazon)</small>
-                        </div>
                         <br>
                     </div>
                 </div>
@@ -319,17 +333,6 @@
         var selectedCpu = null;
         var neverScrolled = true;
         
-        function constructBuyTableRow(comp){
-            var trHtml = '<tr><td class="fg-' + comp.perf_color + '">';
-            trHtml += comp.display_name;
-            if (comp.priceformatted) {
-                trHtml += '</td><td><a target="_blank" href="' + comp.buyurl + '">' + comp.priceformatted + ' (buy)</td></tr>';
-            } else {
-                trHtml += '</td><td>Price unavailable</td></tr>';
-            }
-            return trHtml;
-        }
-        
         var ppDataCached = null;
         
         function renderPerformanceDataAndBars(data){
@@ -341,12 +344,29 @@
                 $('#max-performance-cube-image').attr('src', '/static/cube-images/ac-cube-small-' + data.performance.color + '.png');
                 $('#max-performance-text').text(data.performance.string).removeClass().addClass('fg-' + data.performance.color);
                 $('#max-performance-long-text').text(data.explain);
-                $('#pp-price-text').text(data.total_price);
+                
                 $('#share-report-permalink').html('<a href="' + data.obfuscatedlink + '">' + data.obfuscatedlink + '</a>');
                 
-                $('#buy-on-amazon-table').empty();
-                if (selectedCpu) $('#buy-on-amazon-table').append(constructBuyTableRow(selectedCpu));
-                if (selectedGpu) $('#buy-on-amazon-table').append(constructBuyTableRow(selectedGpu));
+                if (selectedCpu) {
+                    $('#cpu-pp-price-div').show();
+                    if (selectedCpu.priceformatted) {
+                        $('#cpu-pp-price-text').text(selectedCpu.priceformatted).addClass('pp-price-text');
+                        $('#cpu-pp-buylink').html('<a target="_blank" href="' + selectedCpu.buyurl + '">On Amazon</a>');
+                    } else {
+                        $('#cpu-pp-price-text').text('Price unavailable').removeClass('pp-price-text');
+                        $('#cpu-pp-buylink').html('');
+                    }
+                }
+                if (selectedGpu) {
+                    $('#gpu-pp-price-div').show();
+                    if (selectedGpu.priceformatted) {
+                        $('#gpu-pp-price-text').text(selectedGpu.priceformatted).addClass('pp-price-text');
+                        $('#gpu-pp-buylink').html('<a target="_blank" href="' + selectedGpu.buyurl + '">On Amazon</a>');
+                    } else {
+                        $('#gpu-pp-price-text').text('Price unavailable').removeClass('pp-price-text');
+                        $('#gpu-pp-buylink').html('');
+                    }
+                }
                 
                 if (selectedCpu && selectedGpu) {
                     $('.max-performance-both-parts').show();
