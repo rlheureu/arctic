@@ -8,7 +8,7 @@
 <meta name="twitter:site" content="@AmdahlCube" />
 <meta name="twitter:title" content="Amdahl Cube CPU & GPU Performance" />
 <meta name="twitter:description" content="See report {{maxperf.string}} with {{cpu.display_name}} and {{gpu.display_name}}" />
-<meta name="twitter:image" content="http://amdahlcube.com/static/cube-images/ac-cube-small-{{maxperf.color}}.png" />
+<meta name="twitter:image" content="{{fullappurl}}/static/cube-images/showcase-tiers-titled-{{maxperf.color}}.jpg" />
 {% endif %}
 
 
@@ -221,6 +221,8 @@
 
 {% block content %}
   
+  {% if cpu and gpu %}<div class="loading loading-spinner">Loading&#8230;</div>{% endif %}
+  
   <div>
     <div class="container">
       <div class="row">
@@ -240,7 +242,7 @@
             <div class="col-md-8 col-md-offset-2 text-center">
               <br>
               <p style="color:#eee; font-size:17px;">
-                See how your next gaming PC will perform before you buy it.<br>Drop in your parts below to get a report.<br>
+                The processor and graphics card selection define how well your system will play games. Experiment with different options to get the right performance level for you.
               </p>
               <br><br>
             </div>
@@ -292,6 +294,7 @@
               <span class="home-report-title-text">Performance Report</span>
               <br>
               <div id="the-cube-js-div" style="padding-top:25px;"></div>
+              <p style="font-style: italic;">Watch Dogs 2 presented at DirectX 11 Very High settings.<br>Battlefield 1 presented at DirectX 11 Ultra settings.</p>
             </div>
             <div class="col-sm-4">
                 <div class="row">
@@ -325,7 +328,7 @@
                 <div class="row">
                     <div class="col-sm-12 max-performance-both-parts">
                         <p class="pp-explainer-text" id="max-performance-long-text"></p>
-                        
+                        <p class="pp-explainer-text">These games were selected because they are great representations of popular, highly regarded genres - Open World games and First Person Shooter games. Most Open World and First Person Shooter games released in 2017 will perform similarly to these.</p>
                         <br>
                     </div>
                 </div>
@@ -359,7 +362,7 @@
             if (data.performance) {
                 $('#max-performance-cube-image').attr('src', '/static/cube-images/ac-cube-small-' + data.performance.color + '.png');
                 $('#max-performance-text').text(data.performance.string).removeClass().addClass('fg-' + data.performance.color);
-                $('#max-performance-long-text').text(data.explain);
+                $('#max-performance-long-text').html(data.explain);
                 
                 $('#share-report-permalink').html('<a href="' + data.obfuscatedlink + '">' + data.obfuscatedlink + '</a>');
                 
@@ -635,7 +638,9 @@
             }
             
             maxFps = (maxFps == 0) ? 200 : maxFps;
-            renderInsideElement(elmId, bars, maxFps + 10, 0, 30);
+            renderInsideElement(elmId, bars, maxFps + 10, 0, 30, function(){
+                $('.loading-spinner').hide();
+            });
         }
         
         function getLines(ctx, text, maxWidth) {
@@ -691,7 +696,7 @@
             }
         }
         
-        function renderInsideElement(elmId, bars, barMaxFps, stepCount, maxSteps) {
+        function renderInsideElement(elmId, bars, barMaxFps, stepCount, maxSteps, doneCallback) {
             
             //var reportTitle = 'FPS Performance Report';
             var barMargin = 16; // bar margin (space between bars)
@@ -849,7 +854,8 @@
             ctx.fillStyle = 'white';
             //ctx.fillText('200FPS Max', cWidth - 5, 15);
     
-            if (stepCount < maxSteps) window.setTimeout(renderInsideElement, 15, elmId, bars, barMaxFps, stepCount + 1, maxSteps);
+            if (stepCount < maxSteps) window.setTimeout(renderInsideElement, 15, elmId, bars, barMaxFps, stepCount + 1, maxSteps, doneCallback);
+            else doneCallback();
         }
     
         

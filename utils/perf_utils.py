@@ -457,14 +457,13 @@ def get_performance_profile(cpu, gpu, includebenchmarks = None):
         elif gpu: maxfps = gdata.get('fps1080p')
         elif cpu: maxfps = gdata.get('maxfps')
         
-        perflongstr = "For {} (or similar games) this rig should hit {}FPS at 1080p on average".format(bmarkname, maxfps)
+        perflongstr = "<br>{}:  {}FPS at 1080p average".format(bmarkname, maxfps)
         perf_strings.append(perflongstr)
     
     if pcolordata:
-        thisthese = "this part" if (cpu and not gpu) or (gpu and not cpu) else "these parts"
-        explainstr = "With {} you should be able to comfortably acheive {}.".format(thisthese, pcolordata['string'])
+        explainstr = "Performance rating: {}<br><br>Max performance predictions:<br>".format(pcolordata['string'])
         for perfstring in perf_strings:
-            explainstr += " {}.".format(perfstring)
+            explainstr += perfstring
         
         retdata['explain'] = explainstr
     
