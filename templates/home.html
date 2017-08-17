@@ -80,7 +80,7 @@
       padding-right: 15px;
     }
     #max-performance-text{
-      padding-top: 40px;
+      padding-top: 4px;
       padding-left: 15px;
       font-size: 21px;
     }
@@ -119,6 +119,12 @@
     }
     .color-meter-obj-selected{
       height:15px;
+    }
+    .perf-rating-title{
+      font-size: 14px;
+      font-weight: bold;
+      color: #bbbbbb;
+      padding-top:13px;
     }
     
     .tt-query {
@@ -312,7 +318,7 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-4 max-performance-both-parts"><img src="/static/cube-images/ac-cube-small-default.png" id="max-performance-cube-image" /></div>
-                    <div class="col-xs-6 max-performance-both-parts"><div id="max-performance-text"></div></div>
+                    <div class="col-xs-6 max-performance-both-parts"><div class="perf-rating-title">Performance rating</div><div id="max-performance-text"></div></div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12 max-performance-both-parts" style="font-size: 0px; vertical-align: middle;">
@@ -327,7 +333,9 @@
                 <div class="row">
                     <div class="col-xs-12 max-performance-both-parts text-center">
                         <br>
-                        <b>Share this report: </b><br><span id="share-report-permalink"></span>
+                        <b>Share this report: </b><br><span style="font-size: 15px;" id="share-report-permalink"></span>
+                        <br>
+                        
                     </div>
                 </div>
                 <div class="row">

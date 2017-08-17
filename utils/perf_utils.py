@@ -461,7 +461,7 @@ def get_performance_profile(cpu, gpu, includebenchmarks = None):
         perf_strings.append(perflongstr)
     
     if pcolordata:
-        explainstr = "Performance rating: {}<br><br>Max performance predictions:<br>".format(pcolordata['string'])
+        explainstr = "Max performance predictions:<br>".format(pcolordata['string'])
         for perfstring in perf_strings:
             explainstr += perfstring
         
